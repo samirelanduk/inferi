@@ -31,3 +31,20 @@ class VariablePropertyTests(TestCase):
     def test_variable_length(self):
         var = Variable(11, 45, 23, 12, 9)
         self.assertEqual(var.length(), 5)
+
+
+    def test_variable_name(self):
+        var = Variable(11, 45, 23, 12, 9, name="heights")
+        self.assertIs(var.name(), var._name)
+
+
+    def test_can_update_variable_name(self):
+        var = Variable(11, 45, 23, 12, 9, name="heights")
+        var.name("weights")
+        self.assertEqual(var.name(), "weights")
+
+
+    def test_variable_name_must_be_str(self):
+        var = Variable(11, 45, 23, 12, 9)
+        with self.assertRaises(TypeError):
+            var.name(100)

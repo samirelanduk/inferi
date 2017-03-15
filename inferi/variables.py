@@ -29,5 +29,22 @@ class Variable(list):
         """Returns the number of measurements in this variable.
 
         :rtype: ``int``"""
-        
+
         return len(self)
+
+
+    def name(self, name=None):
+        """Returns the Variable's name. If an argument is given, the name will
+        be set to that value.
+
+        :param str name: The new name of this measurement to set.
+        :rtype: ``str``"""
+        
+        if name is None:
+            return self._name
+        else:
+            if not isinstance(name, str):
+                raise TypeError(
+                 "Variable name must be str, not '%s'" % str(name)
+                )
+            self._name = name
