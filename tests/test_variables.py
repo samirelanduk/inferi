@@ -16,3 +16,10 @@ class VariableCreationTests(TestCase):
     def test_name_must_be_str(self):
         with self.assertRaises(TypeError):
             Variable(11, 45, 23, 12, 9, name=100)
+
+
+    def test_variable_repr(self):
+        var = Variable(11, 45, 23, 12, 9)
+        self.assertEqual(str(var), "<Variable: [11, 45, 23, 12, 9]>")
+        var = Variable(11, 45, 23, 12, 9, name="heights")
+        self.assertEqual(str(var), "<'heights': [11, 45, 23, 12, 9]>")
