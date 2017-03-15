@@ -23,3 +23,11 @@ class Variable(list):
             return "<'%s': %s>" % (self._name, list.__repr__(self))
         else:
             return "<Variable: %s>" % list.__repr__(self)
+
+
+    def length(self):
+        """Returns the number of measurements in this variable.
+
+        :rtype: ``int``"""
+        
+        return len(self)

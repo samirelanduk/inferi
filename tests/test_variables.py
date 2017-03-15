@@ -23,3 +23,11 @@ class VariableCreationTests(TestCase):
         self.assertEqual(str(var), "<Variable: [11, 45, 23, 12, 9]>")
         var = Variable(11, 45, 23, 12, 9, name="heights")
         self.assertEqual(str(var), "<'heights': [11, 45, 23, 12, 9]>")
+
+
+
+class VariablePropertyTests(TestCase):
+
+    def test_variable_length(self):
+        var = Variable(11, 45, 23, 12, 9)
+        self.assertEqual(var.length(), 5)
