@@ -36,7 +36,7 @@ class Series(list):
 
 
     def name(self, name=None):
-        """Returns the Series's name. If an argument is given, the name will
+        """Returns the series' name. If an argument is given, the name will
         be set to that value.
 
         :param str name: The new name of this measurement to set.
@@ -53,10 +53,18 @@ class Series(list):
 
 
     def mean(self):
+        """Returns the arithmetic mean of the series.
+
+        :rtype: ``float``"""
+
         return sum(self) / len(self)
 
 
     def median(self):
+        """Returns the median of the series.
+
+        :rtype: ``float``"""
+
         sorted_values = sorted(self)
         if self.length() % 2:
             return sorted_values[int((self.length() / 2) - 0.5)]
@@ -66,6 +74,11 @@ class Series(list):
 
 
     def mode(self):
+        """Returns the mode of the series. If there more than one value occurs
+        the most frequently, ``None`` will be returned.
+
+        :rtype: ``float``"""
+
         values = Counter(self)
         highest_frequency = max(values.values())
         modes = [value for value in values if values[value] == highest_frequency]
