@@ -66,6 +66,13 @@ class SeriesModificationTests(TestCase):
             series.remove(45)
 
 
+    def test_cannot_pop_last_item_from_series(self):
+        series = Series(11, 45)
+        series.pop()
+        with self.assertRaises(EmptySeriesError):
+            series.pop()
+
+
 
 class SeriesCentralityTests(TestCase):
 

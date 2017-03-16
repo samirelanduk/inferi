@@ -45,6 +45,12 @@ class Series(list):
         list.remove(self, *args, **kwargs)
 
 
+    def pop(self, *args, **kwargs):
+        if self.length() == 1:
+            raise EmptySeriesError("Cannot pop a series' last item")
+        list.pop(self, *args, **kwargs)
+
+
     def name(self, name=None):
         """Returns the series' name. If an argument is given, the name will
         be set to that value.
