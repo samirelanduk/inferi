@@ -57,6 +57,16 @@ class SeriesPropertyTests(TestCase):
 
 
 
+class SeriesModificationTests(TestCase):
+
+    def test_cannot_remove_last_item_from_series(self):
+        series = Series(11, 45)
+        series.remove(11)
+        with self.assertRaises(EmptySeriesError):
+            series.remove(45)
+
+
+
 class SeriesCentralityTests(TestCase):
 
     def test_can_get_series_mean(self):
