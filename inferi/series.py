@@ -1,5 +1,7 @@
 """Contains the basic Series class and its methods."""
 
+from collections import Counter
+
 class Series(list):
     """A Series represents a set of measurements made on a collection of
     entities, such as the heights of a group of football players, or the
@@ -61,3 +63,11 @@ class Series(list):
         else:
             midway = int(self.length() / 2)
             return (sorted_values[midway - 1] + sorted_values[midway]) / 2
+
+
+    def mode(self):
+        values = Counter(self)
+        highest_frequency = max(values.values())
+        modes = [value for value in values if values[value] == highest_frequency]
+        if len(modes) == 1:
+            return modes[0]

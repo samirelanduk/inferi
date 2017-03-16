@@ -66,3 +66,13 @@ class SeriesCentralityTests(TestCase):
     def test_can_get_even_series_median(self):
         series = Series(11, 45, 23, 12, 10, 15)
         self.assertEqual(series.median(), 13.5)
+
+
+    def test_can_get_series_mode(self):
+        series = Series(11, 45, 23, 12, 10, 11, 23, 11)
+        self.assertEqual(series.mode(), 11)
+
+
+    def test_mode_returns_none_when_multi_modal(self):
+        series = Series(11, 45, 23, 12, 10, 11, 23)
+        self.assertIs(series.mode(), None)
