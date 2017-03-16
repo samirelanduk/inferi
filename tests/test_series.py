@@ -48,3 +48,11 @@ class SeriesPropertyTests(TestCase):
         series = Series(11, 45, 23, 12, 9)
         with self.assertRaises(TypeError):
             series.name(100)
+
+
+
+class SeriesCentralityTests(TestCase):
+
+    def test_can_get_series_mean(self):
+        series = Series(11, 45, 23, 12, 10)
+        self.assertEqual(series.mean(), 20.2)

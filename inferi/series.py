@@ -8,7 +8,7 @@ class Series(list):
     It is basically an extended list.
 
     :param \*values: The measurements, as positional arguments.
-    :param str name: The name of this measurement."""
+    :param str name: The name of this set of measurement."""
 
     def __init__(self, *values, name=None, **kwargs):
         list.__init__(self, [*values], **kwargs)
@@ -48,3 +48,7 @@ class Series(list):
                  "Series name must be str, not '%s'" % str(name)
                 )
             self._name = name
+
+
+    def mean(self):
+        return sum(self) / len(self)
