@@ -1,6 +1,7 @@
 """Contains the basic Series class and its methods."""
 
 from collections import Counter
+from .exceptions import EmptySeriesError
 
 class Series(list):
     """A Series represents a set of measurements made on a collection of
@@ -10,9 +11,12 @@ class Series(list):
     It is basically an extended list.
 
     :param \*values: The measurements, as positional arguments.
-    :param str name: The name of this set of measurement."""
+    :param str name: The name of this set of measurement.
+    :raises EmptySeriesError: If you try to make a series with no values."""
 
     def __init__(self, *values, name=None, **kwargs):
+        if not values:
+            raise EmptySeriesError("Cannot make a Series with no values")
         list.__init__(self, [*values], **kwargs)
 
         if not isinstance(name, str) and name is not None:

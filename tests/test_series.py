@@ -1,5 +1,6 @@
 from unittest import TestCase
 from inferi.series import Series
+from inferi.exceptions import EmptySeriesError
 
 class SeriesCreationTests(TestCase):
 
@@ -48,6 +49,11 @@ class SeriesPropertyTests(TestCase):
         series = Series(11, 45, 23, 12, 9)
         with self.assertRaises(TypeError):
             series.name(100)
+
+
+    def test_cannot_have_empty_series(self):
+        with self.assertRaises(EmptySeriesError):
+            Series()
 
 
 
