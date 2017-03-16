@@ -56,3 +56,13 @@ class SeriesCentralityTests(TestCase):
     def test_can_get_series_mean(self):
         series = Series(11, 45, 23, 12, 10)
         self.assertEqual(series.mean(), 20.2)
+
+
+    def test_can_get_odd_series_median(self):
+        series = Series(11, 45, 23, 12, 10)
+        self.assertEqual(series.median(), 12)
+
+
+    def test_can_get_even_series_median(self):
+        series = Series(11, 45, 23, 12, 10, 15)
+        self.assertEqual(series.median(), 13.5)

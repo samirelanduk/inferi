@@ -52,3 +52,12 @@ class Series(list):
 
     def mean(self):
         return sum(self) / len(self)
+
+
+    def median(self):
+        sorted_values = sorted(self)
+        if self.length() % 2:
+            return sorted_values[int((self.length() / 2) - 0.5)]
+        else:
+            midway = int(self.length() / 2)
+            return (sorted_values[midway - 1] + sorted_values[midway]) / 2
