@@ -1,7 +1,7 @@
-"""Contains the basic Variable class and its methods."""
+"""Contains the basic Series class and its methods."""
 
-class Variable(list):
-    """A Variable represents a set of measurements made on a collection of
+class Series(list):
+    """A Series represents a set of measurements made on a collection of
     entities, such as the heights of a group of football players, or the
     favourite colours of a class of school children.
 
@@ -14,7 +14,7 @@ class Variable(list):
         list.__init__(self, [*values], **kwargs)
 
         if not isinstance(name, str) and name is not None:
-            raise TypeError("Variable name must be str, not '%s'" % str(name))
+            raise TypeError("Series name must be str, not '%s'" % str(name))
         self._name = name
 
 
@@ -22,11 +22,11 @@ class Variable(list):
         if self._name:
             return "<'%s': %s>" % (self._name, list.__repr__(self))
         else:
-            return "<Variable: %s>" % list.__repr__(self)
+            return "<Series: %s>" % list.__repr__(self)
 
 
     def length(self):
-        """Returns the number of measurements in this variable.
+        """Returns the number of measurements in this series.
 
         :rtype: ``int``"""
 
@@ -34,17 +34,17 @@ class Variable(list):
 
 
     def name(self, name=None):
-        """Returns the Variable's name. If an argument is given, the name will
+        """Returns the Series's name. If an argument is given, the name will
         be set to that value.
 
         :param str name: The new name of this measurement to set.
         :rtype: ``str``"""
-        
+
         if name is None:
             return self._name
         else:
             if not isinstance(name, str):
                 raise TypeError(
-                 "Variable name must be str, not '%s'" % str(name)
+                 "Series name must be str, not '%s'" % str(name)
                 )
             self._name = name
