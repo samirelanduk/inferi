@@ -107,5 +107,17 @@ class Series(list):
         and smallest values.
 
         :rtype: ``float``"""
-        
+
         return max(self) - min(self)
+
+
+    def variance(self):
+        """Returns the variance of the series - the mean squared deviation from
+        the mean for the values in the series.
+
+        :rtype: ``float``"""
+        
+        mean = self.mean()
+        square_deviation = [(x - mean) ** 2 for x in self]
+        square_deviation = sum(square_deviation)
+        return square_deviation / (self.length() - 1)

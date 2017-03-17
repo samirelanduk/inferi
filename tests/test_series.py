@@ -107,3 +107,8 @@ class SeriesDispersionTests(TestCase):
     def test_can_get_series_range(self):
         series = Series(11, 45, 23, 12, 10, -15)
         self.assertEqual(series.range(), 60)
+
+
+    def test_can_get_variance(self):
+        series = Series(5, 7, 1, 2, 4)
+        self.assertEqual(series.variance(), 5.7)
