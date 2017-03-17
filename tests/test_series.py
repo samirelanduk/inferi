@@ -99,3 +99,11 @@ class SeriesCentralityTests(TestCase):
     def test_mode_returns_none_when_multi_modal(self):
         series = Series(11, 45, 23, 12, 10, 11, 23)
         self.assertIs(series.mode(), None)
+
+
+
+class SeriesDispersionTests(TestCase):
+
+    def test_can_get_series_range(self):
+        series = Series(11, 45, 23, 12, 10, -15)
+        self.assertEqual(series.range(), 60)

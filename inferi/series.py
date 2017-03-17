@@ -100,3 +100,12 @@ class Series(list):
         modes = [value for value in values if values[value] == highest_frequency]
         if len(modes) == 1:
             return modes[0]
+
+
+    def range(self):
+        """Returns the range of the series - the distance between the largest
+        and smallest values.
+
+        :rtype: ``float``"""
+        
+        return max(self) - min(self)
