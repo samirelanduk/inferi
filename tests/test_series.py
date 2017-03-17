@@ -112,3 +112,8 @@ class SeriesDispersionTests(TestCase):
     def test_can_get_variance(self):
         series = Series(5, 7, 1, 2, 4)
         self.assertEqual(series.variance(), 5.7)
+
+
+    def test_can_get_standard_deviation_of_series(self):
+        series = Series(5, 7, 1, 2, 4)
+        self.assertAlmostEqual(series.standard_deviation(), 2.39, delta=0.005)

@@ -1,6 +1,7 @@
 """Contains the basic Series class and its methods."""
 
 from collections import Counter
+from math import sqrt
 from .exceptions import EmptySeriesError
 
 class Series(list):
@@ -116,8 +117,17 @@ class Series(list):
         the mean for the values in the series.
 
         :rtype: ``float``"""
-        
+
         mean = self.mean()
         square_deviation = [(x - mean) ** 2 for x in self]
         square_deviation = sum(square_deviation)
         return square_deviation / (self.length() - 1)
+
+
+    def standard_deviation(self):
+        """Returns the standard deviation of the series - the mean deviation
+        from the mean for the values in the series.
+
+        :rtype: ``float``"""
+
+        return sqrt(self.variance())
