@@ -4,7 +4,7 @@ Changelog
 Release 0.1.0
 ~~~~~~~~~~~~~
 
-`19 March 2017`
+`21 March 2017`
 
 * Added basic Series class.
 
