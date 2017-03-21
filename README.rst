@@ -76,8 +76,8 @@ Series have the basic measures of centrality - mean, median and range.
     >>> heights.mode()
     178
 
-See the full documentation for details on :py:meth:`~.Series.mean`,
-:py:meth:`~.Series.median`, and :py:meth:`~.Series.mode`. Note that if the
+See the full documentation for details on ``Series.mean``,
+``Series.mode``. Note that if the
 series has more than one mode, ``None`` will be returned.
 
 Measures of dispersion
@@ -98,8 +98,8 @@ how far individual measurements tend to be from the mean:
     >>> heights.standard_deviation()
     10.064790112068906
 
-Again, see the full documentation of :py:meth:`~.Series.range`,
-:py:meth:`~.Series.variance`, and :py:meth:`~.Series.standard_deviation` for
+Again, see the full documentation of ``Series.range``,
+``Series.standard_deviation`` for
 more details.
 
 
