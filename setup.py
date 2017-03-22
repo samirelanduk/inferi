@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
  name="inferi",
- version="0.1.0",
+ version="0.2.0",
  description="A statistics library.",
  url="https://inferi.samireland.com",
  author="Sam Ireland",
