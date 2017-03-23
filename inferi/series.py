@@ -49,7 +49,7 @@ class Series(list):
         affect the calculation of certain metrics, such as standard deviation.
 
         :param bool sample: if given, the sample will be updated to this."""
-        
+
         if sample is None:
             return self._sample
         else:
@@ -134,17 +134,24 @@ class Series(list):
         """Returns the variance of the series - the mean squared deviation from
         the mean for the values in the series.
 
+        Note that the value returned will depend on whether the series is a
+        sample (the default) or a population.
+
         :rtype: ``float``"""
 
         mean = self.mean()
         square_deviation = [(x - mean) ** 2 for x in self]
         square_deviation = sum(square_deviation)
-        return square_deviation / (self.length() - 1)
+        denominator = self.length() - 1 if self.sample() else self.length()
+        return square_deviation / denominator
 
 
     def standard_deviation(self):
         """Returns the standard deviation of the series - the mean deviation
         from the mean for the values in the series.
+
+        Note that the value returned will depend on whether the series is a
+        sample (the default) or a population.
 
         :rtype: ``float``"""
 
