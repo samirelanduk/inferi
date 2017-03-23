@@ -23,6 +23,29 @@ If you like, you can give the series a name as an appropriate label:
     >>> heights.name()
     'heights'
 
+Samples and Populations
+#######################
+
+While a series generally represents a set of measurements, the entities that
+those measurements are made on (the 'experimental units') can either be an
+entire population, or a subset of that population.
+
+For example, if you measure the heights of all the children in a class, the
+resulting series would be a population. If you ask a hundred people how many
+people they have they have in their address book, that series is only a sample
+because there are more than 100 people in the population you wish to learn
+something about.
+
+In inferi, this distinction is made with the :py:meth:`~.Series.sample`
+property. The default is to assume the series is a sample:
+
+    >>> heights = inferi.Series(178, 156, 181, 175, 178)
+    >>> heights.sample()
+    True
+    >>> contact_counts = inferi.Series(34, 12, 19, 76, 44, sample=False)
+    >>> heights.sample()
+    False
+
 
 Measures of centrality
 ######################
