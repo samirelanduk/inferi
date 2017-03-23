@@ -6,6 +6,8 @@ class SeriesCreationTests(TestCase):
 
     def test_can_create_series(self):
         series = Series(11, 45, 23, 12, 9)
+        self.assertEqual(series._name, None)
+        self.assertEqual(series._sample, True)
         self.assertIsInstance(series, list)
 
 
@@ -17,6 +19,16 @@ class SeriesCreationTests(TestCase):
     def test_name_must_be_str(self):
         with self.assertRaises(TypeError):
             Series(11, 45, 23, 12, 9, name=100)
+
+
+    def test_can_create_population_series(self):
+        series = Series(11, 45, 23, 12, 9, sample=False)
+        self.assertEqual(series._sample, False)
+
+
+    def test_cannot_have_empty_series(self):
+        with self.assertRaises(EmptySeriesError):
+            Series()
 
 
     def test_series_repr(self):
@@ -51,9 +63,21 @@ class SeriesPropertyTests(TestCase):
             series.name(100)
 
 
-    def test_cannot_have_empty_series(self):
-        with self.assertRaises(EmptySeriesError):
-            Series()
+    def test_series_sample(self):
+        series = Series(11, 45, 23, 12, 9, sample=False)
+        self.assertIs(series.sample(), series._sample)
+
+
+    def test_can_update_series_sample(self):
+        series = Series(11, 45, 23, 12, 9, sample=False)
+        series.sample(True)
+        self.assertEqual(series.sample(), True)
+
+
+    def test_series_sample_must_be_bool(self):
+        series = Series(11, 45, 23, 12, 9)
+        with self.assertRaises(TypeError):
+            series.sample("100")
 
 
 

@@ -15,7 +15,7 @@ class Series(list):
     :param str name: The name of this set of measurement.
     :raises EmptySeriesError: If you try to make a series with no values."""
 
-    def __init__(self, *values, name=None, **kwargs):
+    def __init__(self, *values, name=None, sample=True, **kwargs):
         if not values:
             raise EmptySeriesError("Cannot make a Series with no values")
         list.__init__(self, [*values], **kwargs)
@@ -23,6 +23,9 @@ class Series(list):
         if not isinstance(name, str) and name is not None:
             raise TypeError("Series name must be str, not '%s'" % str(name))
         self._name = name
+        if not isinstance(sample, bool):
+            raise TypeError("Series sample must be bool, not '%s'" % str(sample))
+        self._sample = sample
 
 
     def __repr__(self):
@@ -38,6 +41,21 @@ class Series(list):
         :rtype: ``int``"""
 
         return len(self)
+
+
+    def sample(self, sample=None):
+        """Indicates whether the series represents a sample (in which case this
+        method will be ``True``) or an entire population (``False``). This can
+        affect the calculation of certain metrics, such as standard deviation.
+
+        :param bool sample: if given, the sample will be updated to this."""
+        
+        if sample is None:
+            return self._sample
+        else:
+            if not isinstance(sample, bool):
+                raise TypeError("Series sample must be bool, not '%s'" % str(sample))
+            self._sample = sample
 
 
     def remove(self, *args, **kwargs):
