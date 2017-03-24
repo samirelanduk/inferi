@@ -165,7 +165,7 @@ class Series(list):
 
         :param Series other_series: The other series. It must be the same\
         length as this one."""
-        
+
         if not isinstance(other_series, Series):
             raise TypeError(
              "Covariance must be between two Series, not Series and '%s'" % str(
@@ -183,3 +183,17 @@ class Series(list):
         ) for index, value in enumerate(self)])
         mean_square_deviation = square_deviations / (self.length() - 1)
         return mean_square_deviation
+
+
+    def correlation_with(self, other_series):
+        """Returns the correlation of one series with another. This differs
+        from :py:meth:`covariance_with` in that it is normalised to be
+        between -1 and 1, so the maginitude of the result is important, rather
+        than just the sign as is the case with covariance.
+
+        :param Series other_series: The other series. It must be the same\
+        length as this one."""
+        
+        covariance = self.covariance_with(other_series)
+        sd_product= self.standard_deviation() * other_series.standard_deviation()
+        return covariance / sd_product

@@ -175,3 +175,24 @@ class SeriesComparisonTests(TestCase):
         series2 = Series(8, 12, 10)
         with self.assertRaises(ValueError):
             series1.covariance_with(series2)
+
+
+    def test_can_get_correlation_between_series(self):
+        series1 = Series(2.1, 2.5, 4.0, 3.6)
+        series2 = Series(8, 12, 14, 10)
+        self.assertAlmostEqual(series1.correlation_with(series2), 0.66, delta=0.005)
+        self.assertAlmostEqual(series2.correlation_with(series1), 0.66, delta=0.005)
+
+
+    def test_can_only_get_correlation_with_other_series(self):
+        series1 = Series(2.1, 2.5, 4.0, 3.6)
+        series2 = [8, 12, 14, 10]
+        with self.assertRaises(TypeError):
+            series1.correlation_with(series2)
+
+
+    def test_correlation_requires_other_series_to_be_same_length(self):
+        series1 = Series(2.1, 2.5, 4.0, 3.6)
+        series2 = Series(8, 12, 10)
+        with self.assertRaises(ValueError):
+            series1.correlation_with(series2)
