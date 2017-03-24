@@ -156,3 +156,30 @@ class Series(list):
         :rtype: ``float``"""
 
         return sqrt(self.variance())
+
+
+    def covariance_with(self, other_series):
+        """Returns the covariance between this series and another series. This
+        is a measure of how the variance of the two series reflect each other,
+        and is a measure of correlation.
+
+        :param Series other_series: The other series. It must be the same\
+        length as this one."""
+        
+        if not isinstance(other_series, Series):
+            raise TypeError(
+             "Covariance must be between two Series, not Series and '%s'" % str(
+              other_series
+             )
+            )
+        if self.length() != other_series.length():
+            raise ValueError("'%s' and '%s' are not the same length" % (
+             str(self), str(other_series))
+            )
+        this_mean = self.mean()
+        other_mean = other_series.mean()
+        square_deviations = sum([(value - this_mean) * (
+         other_series[index] - other_mean
+        ) for index, value in enumerate(self)])
+        mean_square_deviation = square_deviations / (self.length() - 1)
+        return mean_square_deviation

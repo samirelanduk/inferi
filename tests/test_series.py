@@ -151,3 +151,27 @@ class SeriesDispersionTests(TestCase):
     def test_can_get_population_standard_deviation(self):
         series = Series(5, 7, 1, 2, 4, sample=False)
         self.assertAlmostEqual(series.standard_deviation(), 2.135, delta=0.005)
+
+
+
+class SeriesComparisonTests(TestCase):
+
+    def test_can_get_covariance_between_series(self):
+        series1 = Series(2.1, 2.5, 4.0, 3.6)
+        series2 = Series(8, 12, 14, 10)
+        self.assertAlmostEqual(series1.covariance_with(series2), 1.53, delta=0.005)
+        self.assertAlmostEqual(series2.covariance_with(series1), 1.53, delta=0.005)
+
+
+    def test_can_only_get_covariance_with_other_series(self):
+        series1 = Series(2.1, 2.5, 4.0, 3.6)
+        series2 = [8, 12, 14, 10]
+        with self.assertRaises(TypeError):
+            series1.covariance_with(series2)
+
+
+    def test_covariance_requires_other_series_to_be_same_length(self):
+        series1 = Series(2.1, 2.5, 4.0, 3.6)
+        series2 = Series(8, 12, 10)
+        with self.assertRaises(ValueError):
+            series1.covariance_with(series2)
