@@ -47,7 +47,7 @@ property. The default is to assume the series is a sample:
     False
 
 
-Measures of centrality
+Measures of Centrality
 ######################
 
 Series have the basic measures of centrality - mean, median and range.
@@ -64,7 +64,7 @@ See the full documentation for details on :py:meth:`~.Series.mean`,
 :py:meth:`~.Series.median`, and :py:meth:`~.Series.mode`. Note that if the
 series has more than one mode, ``None`` will be returned.
 
-Measures of dispersion
+Measures of Dispersion
 ######################
 
 Series can also calculate various measures of dispersion, the simplest being
@@ -85,3 +85,32 @@ how far individual measurements tend to be from the mean:
 Again, see the full documentation of :py:meth:`~.Series.range`,
 :py:meth:`~.Series.variance`, and :py:meth:`~.Series.standard_deviation` for
 more details.
+
+Comparing Series
+################
+
+It is often useful to compare how two series are related - whether there is a
+correlation between them or if they are independent.
+
+A simple way of doing this is to find the covariance between them, using the
+:py:meth:`~.Series.covariance_with` method:
+
+    >>> series1 = inferi.Series(2.1, 2.5, 4.0, 3.6)
+    >>> series2 = inferi.Series(8, 12, 14, 10)
+    >>> series1.covariance_with(series2)
+    0.8033333333333333
+
+The sign of this value tells you the relationship - if it is positive they are
+positively correlated, negative and they are negatively correlated, and the
+closer to zero it is, the more independent the series are.
+
+However the actual value of the covariance doesn't tell you much because it
+depends on the magnitude of the values in the series. The correlation metric
+however, is normalised to be between -1 and 1, so it is easier to quantify how
+related the two series are. :py:meth:`~.Series.correlation_with` is used to
+calculate this:
+
+    >>> series1 = inferi.Series(2.1, 2.5, 4.0, 3.6)
+    >>> series2 = inferi.Series(8, 12, 14, 10)
+    >>> series1.correlation_with(series2)
+    0.662573882203029
