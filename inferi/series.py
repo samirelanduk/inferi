@@ -54,7 +54,9 @@ class Series(list):
             return self._sample
         else:
             if not isinstance(sample, bool):
-                raise TypeError("Series sample must be bool, not '%s'" % str(sample))
+                raise TypeError(
+                 "Series sample must be bool, not '%s'" % str(sample)
+                )
             self._sample = sample
 
 
@@ -193,7 +195,7 @@ class Series(list):
 
         :param Series other_series: The other series. It must be the same\
         length as this one."""
-        
+
         covariance = self.covariance_with(other_series)
         sd_product= self.standard_deviation() * other_series.standard_deviation()
         return covariance / sd_product

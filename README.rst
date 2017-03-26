@@ -62,8 +62,31 @@ If you like, you can give the series a name as an appropriate label:
     >>> heights.name()
     'heights'
 
+Samples and Populations
+#######################
 
-Measures of centrality
+While a series generally represents a set of measurements, the entities that
+those measurements are made on (the 'experimental units') can either be an
+entire population, or a subset of that population.
+
+For example, if you measure the heights of all the children in a class, the
+resulting series would be a population. If you ask a hundred people how many
+people they have they have in their address book, that series is only a sample
+because there are more than 100 people in the population you wish to learn
+something about.
+
+In inferi, this distinction is made with the ``Series.sample``
+property. The default is to assume the series is a sample:
+
+    >>> heights = inferi.Series(178, 156, 181, 175, 178)
+    >>> heights.sample()
+    True
+    >>> contact_counts = inferi.Series(34, 12, 19, 76, 44, sample=False)
+    >>> heights.sample()
+    False
+
+
+Measures of Centrality
 ######################
 
 Series have the basic measures of centrality - mean, median and range.
@@ -80,7 +103,7 @@ See the full documentation for details on ``Series.mean``,
 ``Series.mode``. Note that if the
 series has more than one mode, ``None`` will be returned.
 
-Measures of dispersion
+Measures of Dispersion
 ######################
 
 Series can also calculate various measures of dispersion, the simplest being
@@ -102,9 +125,47 @@ Again, see the full documentation of ``Series.range``,
 ``Series.standard_deviation`` for
 more details.
 
+Comparing Series
+################
+
+It is often useful to compare how two series are related - whether there is a
+correlation between them or if they are independent.
+
+A simple way of doing this is to find the covariance between them, using the
+``Series.covariance_with`` method:
+
+    >>> series1 = inferi.Series(2.1, 2.5, 4.0, 3.6)
+    >>> series2 = inferi.Series(8, 12, 14, 10)
+    >>> series1.covariance_with(series2)
+    0.8033333333333333
+
+The sign of this value tells you the relationship - if it is positive they are
+positively correlated, negative and they are negatively correlated, and the
+closer to zero it is, the more independent the series are.
+
+However the actual value of the covariance doesn't tell you much because it
+depends on the magnitude of the values in the series. The correlation metric
+however, is normalised to be between -1 and 1, so it is easier to quantify how
+related the two series are. ``Series.correlation_with`` is used to
+calculate this:
+
+    >>> series1 = inferi.Series(2.1, 2.5, 4.0, 3.6)
+    >>> series2 = inferi.Series(8, 12, 14, 10)
+    >>> series1.correlation_with(series2)
+    0.662573882203029
+
 
 Changelog
 ---------
+
+Release 0.2.0
+~~~~~~~~~~~~~
+
+`26 March 2017`
+
+* Added option to make a Series a population rather than a sample.
+
+* Added covariance and correlation measures.
 
 Release 0.1.0
 ~~~~~~~~~~~~~
