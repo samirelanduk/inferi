@@ -11,7 +11,9 @@ class Series(list):
 
     It is basically an extended list.
 
-    :param \*values: The measurements, as positional arguments.
+    :param \*values: The measurements, as positional arguments. If a single\
+    iterable is given, that will be unpacked and its values will be used
+    instead.
     :param str name: The name of this set of measurement.
     :raises EmptySeriesError: If you try to make a series with no values."""
 

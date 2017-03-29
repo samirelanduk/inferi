@@ -17,6 +17,14 @@ represents a set of measurements, such as heights, or favourite colours.
     >>> heights.length()
     5
 
+The same thing can be achieved by passing a single iterable:
+
+    >>> heights = inferi.Series([178, 156, 181, 175, 178])
+    >>> heights
+    '<Series: (178, 156, 181, 175, 178)>'
+    >>> heights.length()
+    5
+
 If you like, you can give the series a name as an appropriate label:
 
     >>> heights = inferi.Series(178, 156, 181, 175, 178, name="heights")
