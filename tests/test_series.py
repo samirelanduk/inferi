@@ -11,6 +11,24 @@ class SeriesCreationTests(TestCase):
         self.assertIsInstance(series, list)
 
 
+    def test_can_make_series_from_list(self):
+        series = Series([11, 45, 23, 12, 9])
+        self.assertEqual(series[0], 11)
+        self.assertEqual(series[1], 45)
+        self.assertEqual(series[2], 23)
+        self.assertEqual(series[3], 12)
+        self.assertEqual(series[4], 9)
+
+
+    def test_can_make_series_from_tuple(self):
+        series = Series((11, 45, 23, 12, 9))
+        self.assertEqual(series[0], 11)
+        self.assertEqual(series[1], 45)
+        self.assertEqual(series[2], 23)
+        self.assertEqual(series[3], 12)
+        self.assertEqual(series[4], 9)
+
+
     def test_can_create_series_with_name(self):
         series = Series(11, 45, 23, 12, 9, name="heights")
         self.assertEqual(series._name, "heights")

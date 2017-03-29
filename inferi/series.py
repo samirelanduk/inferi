@@ -18,7 +18,10 @@ class Series(list):
     def __init__(self, *values, name=None, sample=True, **kwargs):
         if not values:
             raise EmptySeriesError("Cannot make a Series with no values")
-        list.__init__(self, [*values], **kwargs)
+        if len(values) == 1 and "__iter__" in dir(values[0]):
+            list.__init__(self, [*values[0]], **kwargs)
+        else:
+            list.__init__(self, [*values], **kwargs)
 
         if not isinstance(name, str) and name is not None:
             raise TypeError("Series name must be str, not '%s'" % str(name))
