@@ -12,7 +12,7 @@ class Series(list):
     It is basically an extended list.
 
     :param \*values: The measurements, as positional arguments. If a single\
-    iterable is given, that will be unpacked and its values will be used
+    iterable is given, that will be unpacked and its values will be used\
     instead.
     :param str name: The name of this set of measurement.
     :raises EmptySeriesError: If you try to make a series with no values."""
@@ -163,6 +163,20 @@ class Series(list):
         :rtype: ``float``"""
 
         return sqrt(self.variance())
+
+
+    def z_score(self, value):
+        """A z-score is a measure of how unusual a value would be in a series.
+        Specifically it tells you how many standard deviations a value is below
+        or above the mean, and has the formula:
+
+        .. math::
+            z_i = \\frac{x_i - \\bar{x}}{s}
+
+        :param value: The value whose z-score you wish to determine. It does\
+        not need to be a value that is already in the series."""
+
+        return (value - self.mean()) / self.standard_deviation()
 
 
     def covariance_with(self, other_series):

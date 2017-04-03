@@ -171,6 +171,11 @@ class SeriesDispersionTests(TestCase):
         self.assertAlmostEqual(series.standard_deviation(), 2.135, delta=0.005)
 
 
+    def test_can_get_z_scores_of_values_in_series(self):
+        series = Series(7, 8, 8, 7.5, 9)
+        self.assertAlmostEqual(series.z_score(7.5), -0.54, delta=0.005)
+
+
 
 class SeriesComparisonTests(TestCase):
 
