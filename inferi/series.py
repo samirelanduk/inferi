@@ -142,7 +142,17 @@ class Series(list):
         the mean for the values in the series.
 
         Note that the value returned will depend on whether the series is a
-        sample (the default) or a population.
+        sample (the default) or a population. The formula for a sample is:
+
+        .. math::
+            s^2 = \\frac{\\sum(x-\\bar{x})^2}{n - 1}
+
+        For populations, the denominator is slightly different:
+
+        .. math::
+            \\sigma^2 = \\frac{\\sum(x-\\bar{x})^2}{N}
+
+
 
         :rtype: ``float``"""
 
@@ -158,7 +168,8 @@ class Series(list):
         from the mean for the values in the series.
 
         Note that the value returned will depend on whether the series is a
-        sample (the default) or a population.
+        sample (the default) or a population, as the standard deviation is
+        the square root of the variance.
 
         :rtype: ``float``"""
 
