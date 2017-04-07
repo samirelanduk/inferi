@@ -94,6 +94,18 @@ Again, see the full documentation of :py:meth:`~.Series.range`,
 :py:meth:`~.Series.variance`, and :py:meth:`~.Series.standard_deviation` for
 more details.
 
+The standard error of the mean is another useful measure of dispersion, and is
+useful when the measurements represent a repeated measurement of the same
+quantity. It is the standard deviation divided by the square root of the
+number of measurements, so it decreases as more measurements are taken. This
+represents the increasing certainty that comes from making more measurements.
+
+    >>> heights.standard_error_mean()
+    4.50111097397076
+
+See :py:meth:`~.Series.standard_error_mean` for more details.
+
+
 Comparing Series
 ################
 
