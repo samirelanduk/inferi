@@ -176,6 +176,11 @@ class SeriesDispersionTests(TestCase):
         self.assertAlmostEqual(series.z_score(7.5), -0.54, delta=0.005)
 
 
+    def test_can_get_standard_error_of_mean(self):
+        series = Series(10, 20, 30, 40, 50)
+        self.assertAlmostEqual(series.standard_error_mean(), 7.0711, delta=0.005)
+
+
 
 class SeriesComparisonTests(TestCase):
 

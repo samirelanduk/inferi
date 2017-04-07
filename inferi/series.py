@@ -176,6 +176,16 @@ class Series(list):
         return sqrt(self.variance())
 
 
+    def standard_error_mean(self):
+        """Returns the standard error of the mean of the measurements in the
+        series. This is the standard deviation divided by the square root of the
+        number of measurements.
+
+        :rtype: ``float``"""
+        
+        return self.standard_deviation() / sqrt(self.length())
+
+
     def z_score(self, value):
         """A z-score is a measure of how unusual a value would be in a series.
         Specifically it tells you how many standard deviations a value is below
