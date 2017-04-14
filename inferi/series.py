@@ -152,8 +152,6 @@ class Series(list):
         .. math::
             \\sigma^2 = \\frac{\\sum(x-\\bar{x})^2}{N}
 
-
-
         :rtype: ``float``"""
 
         mean = self.mean()
@@ -182,7 +180,7 @@ class Series(list):
         number of measurements.
 
         :rtype: ``float``"""
-        
+
         return self.standard_deviation() / sqrt(self.length())
 
 
