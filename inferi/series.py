@@ -1,6 +1,6 @@
 """Contains the basic Series class and its methods."""
 
-from collections import Counter
+from collections import Counter, OrderedDict
 from math import sqrt
 from .exceptions import EmptySeriesError
 
@@ -135,6 +135,16 @@ class Series(list):
         :rtype: ``float``"""
 
         return max(self) - min(self)
+
+
+    def frequency(self):
+        """Returns the frequency of each element in the series as a Counter
+        object.
+
+        :rtype: ``Counter``"""
+        
+        counter = Counter(self)
+        return counter
 
 
     def variance(self):

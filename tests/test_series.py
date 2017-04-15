@@ -1,3 +1,4 @@
+from collections import Counter
 from unittest import TestCase
 from unittest.mock import patch
 from inferi.series import Series
@@ -166,6 +167,17 @@ class SeriesRangeTests(TestCase):
     def test_can_get_series_range(self):
         series = Series(11, 45, 23, 12, 10, -15)
         self.assertEqual(series.range(), 60)
+
+
+
+class SeriesFrequencyTests(TestCase):
+
+    def test_can_get_series_frequency(self):
+        series = Series(9, 1, 2, 2, 1, 5, 4, 4, 6)
+        self.assertEqual(
+         series.frequency(),
+         Counter((9, 1, 2, 2, 1, 5, 4, 4, 6))
+        )
 
 
 
