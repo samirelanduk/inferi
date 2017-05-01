@@ -1,4 +1,2 @@
-version = "0.3.0"
-author = "Sam Ireland"
-
-from .series import Series
+__author__ = "Sam Ireland"
+__version__ = "0.3.0"
