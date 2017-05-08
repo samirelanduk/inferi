@@ -15,3 +15,7 @@ class Dataset:
 
     def __len__(self):
         return len(self._data)
+
+
+    def __contains__(self, member):
+        return member in self._data.values()

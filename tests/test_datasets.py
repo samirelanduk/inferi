@@ -27,3 +27,13 @@ class DatasetLenTests(TestCase):
     def test_dataset_len(self):
         dataset = Dataset(23, 5, 5, 18, 17, 20)
         self.assertEqual(len(dataset), 6)
+
+
+
+class DatasetContainerTests(TestCase):
+
+    def test_dataset_container(self):
+        dataset = Dataset(23, 5, 5, 18, 17, 20)
+        self.assertIn(23, dataset)
+        self.assertIn(5, dataset)
+        self.assertNotIn(1, dataset)
