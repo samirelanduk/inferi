@@ -7,3 +7,7 @@ class Dataset:
 
     def __init__(self, *rows):
         self._data = {index: value for index, value in enumerate(rows)}
+
+
+    def __repr__(self):
+        return "<Dataset {}>".format(tuple(self._data.values()))
