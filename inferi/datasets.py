@@ -11,3 +11,7 @@ class Dataset:
 
     def __repr__(self):
         return "<Dataset {}>".format(tuple(self._data.values()))
+
+
+    def __len__(self):
+        return len(self._data)

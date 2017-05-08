@@ -19,3 +19,11 @@ class DatasetReprTests(TestCase):
     def test_dataset_repr(self):
         dataset = Dataset(23, 5, 5, 18, 17, 20)
         self.assertEqual(str(dataset), "<Dataset (23, 5, 5, 18, 17, 20)>")
+
+
+
+class DatasetLenTests(TestCase):
+
+    def test_dataset_len(self):
+        dataset = Dataset(23, 5, 5, 18, 17, 20)
+        self.assertEqual(len(dataset), 6)
