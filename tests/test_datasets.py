@@ -47,3 +47,23 @@ class DatasetIterableTests(TestCase):
         for value in dataset:
             members.append(value)
         self.assertEqual(members, [23, 5, 5, 18, 17, 20])
+
+
+
+class DatasetIndexingTests(TestCase):
+
+    def test_can_get_values_by_index(self):
+        dataset = Dataset(23, 5, 5, 18, 17, 20)
+        for index, value in enumerate([23, 5, 5, 18, 17, 20]):
+            self.assertEqual(dataset[index], value)
+
+
+
+class DatasetValueSettingTests(TestCase):
+
+    def test_can_set_values(self):
+        dataset = Dataset(23, 5, 5, 18, 17, 20)
+        dataset[0] = 22
+        self.assertEqual(dataset._data, {0: 22, 1: 5, 2: 5, 3: 18, 4: 17, 5: 20})
+        dataset[7] = 1
+        self.assertEqual(dataset._data, {0: 22, 1: 5, 2: 5, 3: 18, 4: 17, 5: 20, 7: 1})

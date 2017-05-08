@@ -26,3 +26,11 @@ class Dataset:
 
     def __iter__(self):
         return iter(self._data.values())
+
+
+    def __getitem__(self, index):
+        return self._data[index]
+
+
+    def __setitem__(self, index, value):
+        self._data[index] = value
