@@ -67,3 +67,11 @@ class DatasetValueSettingTests(TestCase):
         self.assertEqual(dataset._data, {0: 22, 1: 5, 2: 5, 3: 18, 4: 17, 5: 20})
         dataset[7] = 1
         self.assertEqual(dataset._data, {0: 22, 1: 5, 2: 5, 3: 18, 4: 17, 5: 20, 7: 1})
+
+
+
+class DatasetLengthTests(TestCase):
+
+    def test_length_is_len(self):
+        dataset = Dataset(23, 5, 5, 18, 17, 20)
+        self.assertEqual(dataset.length(), len(dataset))

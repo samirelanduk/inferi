@@ -34,3 +34,12 @@ class Dataset:
 
     def __setitem__(self, index, value):
         self._data[index] = value
+
+
+    def length(self):
+        """Returns the length of the dataset - the number of rows of data it
+        has.
+
+        :rtype: ``int``"""
+        
+        return len(self)
