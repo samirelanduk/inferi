@@ -37,3 +37,13 @@ class DatasetContainerTests(TestCase):
         self.assertIn(23, dataset)
         self.assertIn(5, dataset)
         self.assertNotIn(1, dataset)
+
+
+
+class DatasetIterableTests(TestCase):
+
+    def test_can_iterate_through_dataset(self):
+        dataset, members = Dataset(23, 5, 5, 18, 17, 20), []
+        for value in dataset:
+            members.append(value)
+        self.assertEqual(members, [23, 5, 5, 18, 17, 20])

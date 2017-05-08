@@ -3,6 +3,9 @@
 class Dataset:
     """Represents a table of data.
 
+    Datasets are containers of their values, and are also iterable, allowing you
+    to step through them line by line.
+
     :param \*rows: The rows of data that make up the Dataset."""
 
     def __init__(self, *rows):
@@ -19,3 +22,7 @@ class Dataset:
 
     def __contains__(self, member):
         return member in self._data.values()
+
+
+    def __iter__(self):
+        return iter(self._data.values())
