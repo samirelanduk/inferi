@@ -13,4 +13,13 @@ class SampleCreationTests(TestCase):
     @patch("inferi.datasets.Dataset.__init__")
     def test_sample_is_dataset(self, mock_init):
         sample = Sample(23, 5, 5, 18, 17, 20)
+        self.assertIsInstance(sample, Dataset)
         mock_init.assert_called
+
+
+
+class SampleReprTests(TestCase):
+
+    def test_sample_repr(self):
+        sample = Sample(23, 5, 5, 18, 17, 20)
+        self.assertEqual(str(sample), "<Sample (23, 5, 5, 18, 17, 20)>")
