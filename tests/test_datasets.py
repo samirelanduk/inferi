@@ -19,3 +19,8 @@ class DatasetCreationTests(TestCase):
         self.assertEqual(dataset._x, [0, 1, 2, 3, 4, 5])
         self.assertEqual(dataset._names, ["y", "y2"])
         self.assertEqual(dataset._xname, "x")
+
+
+    def test_cannot_create_dataset_with_unequal_row_lengths(self):
+        with self.assertRaises(ValueError):
+            Dataset([3, 45], [5, 43], [2, 21], [4, 55], [1, 34, 4], [3, 34])
