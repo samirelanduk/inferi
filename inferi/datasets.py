@@ -2,7 +2,7 @@
 
 class Dataset:
 
-    def __init__(self, *rows):
+    def __init__(self, *rows, x=None):
         """Represents a table of data."""
 
         try:
@@ -16,7 +16,11 @@ class Dataset:
                 )
         except TypeError:
             self._rows = [[row] for row in rows]
-        self._x = list(range(len(rows)))
+        self._x = x or list(range(len(rows)))
+        if len(self._x) != len(self._rows):
+            raise ValueError("x values ({}) must be same length as rows ({})".format(
+             len(self._x), len(self._rows)
+            ))
         self._names = [
          "y{}".format(n + 1 if n else "") for n in range(len(self._rows[0]))
         ]
