@@ -42,3 +42,26 @@ class DatasetCreationTests(TestCase):
     def test_x_length_must_be_row_length(self):
         with self.assertRaises(ValueError):
             Dataset(3, 5, 2, 4, x=["Joe", "Sam", "Guy"])
+
+
+    def test_can_supply_name(self):
+        dataset = Dataset(3, 5, 2, 4, name="heights")
+        self.assertEqual(dataset._rows, [[3], [5], [2], [4]])
+        self.assertEqual(dataset._x, [0, 1, 2, 3])
+        self.assertEqual(dataset._names, ["heights"])
+        self.assertEqual(dataset._xname, "x")
+
+
+    def test_can_supply_name_to_multiple_columns(self):
+        dataset = Dataset([3, 45], [5, 43], [2, 21], [4, 55], name="heights")
+        self.assertEqual(
+         dataset._rows, [[3, 45], [5, 43], [2, 21], [4, 55]]
+        )
+        self.assertEqual(dataset._x, [0, 1, 2, 3])
+        self.assertEqual(dataset._names, ["heights", "heights2"])
+        self.assertEqual(dataset._xname, "x")
+
+
+    def test_name_must_be_str(self):
+        with self.assertRaises(TypeError):
+            Dataset(3, 5, 2, 4, name=100)
