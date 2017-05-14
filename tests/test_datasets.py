@@ -65,3 +65,33 @@ class DatasetCreationTests(TestCase):
     def test_name_must_be_str(self):
         with self.assertRaises(TypeError):
             Dataset(3, 5, 2, 4, name=100)
+
+
+    def test_can_supply_names(self):
+        dataset = Dataset([3, 45], [5, 43], [2, 21], names=["heights", "weights"])
+        self.assertEqual(
+         dataset._rows, [[3, 45], [5, 43], [2, 21]]
+        )
+        self.assertEqual(dataset._x, [0, 1, 2])
+        self.assertEqual(dataset._names, ["heights", "weights"])
+        self.assertEqual(dataset._xname, "x")
+
+
+    def test_names_must_be_str(self):
+        with self.assertRaises(TypeError):
+            Dataset([3, 45], [5, 43], [2, 21], names=["heights", 100, "weights"])
+
+
+    def test_names_must_be_same_width_as_dataset(self):
+        with self.assertRaises(ValueError):
+            Dataset([3, 45], [5, 43], [2, 21], names=["heights", "100", "weights"])
+
+
+    def test_names_take_precedence_over_name(self):
+        dataset = Dataset([3, 45], [5, 43], [2, 21], name="zzz", names=["heights", "weights"])
+        self.assertEqual(
+         dataset._rows, [[3, 45], [5, 43], [2, 21]]
+        )
+        self.assertEqual(dataset._x, [0, 1, 2])
+        self.assertEqual(dataset._names, ["heights", "weights"])
+        self.assertEqual(dataset._xname, "x")
