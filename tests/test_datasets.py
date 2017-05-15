@@ -95,3 +95,16 @@ class DatasetCreationTests(TestCase):
         self.assertEqual(dataset._x, [0, 1, 2])
         self.assertEqual(dataset._names, ["heights", "weights"])
         self.assertEqual(dataset._xname, "x")
+
+
+    def test_can_supply_x_name(self):
+        dataset = Dataset(3, 5, 2, 4, 1, 3, x_name="inputs")
+        self.assertEqual(dataset._rows, [[3], [5], [2], [4], [1], [3]])
+        self.assertEqual(dataset._x, [0, 1, 2, 3, 4, 5])
+        self.assertEqual(dataset._names, ["y"])
+        self.assertEqual(dataset._xname, "inputs")
+
+
+    def test_x_name_must_be_str(self):
+        with self.assertRaises(TypeError):
+            Dataset(3, 5, 2, 4, 1, 3, x_name=100)
