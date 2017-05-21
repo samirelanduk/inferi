@@ -62,3 +62,11 @@ class DataReprTests(TestCase):
     def test_repr_with_name(self):
         data = Data(23, 5, 5, name="IQ")
         self.assertEqual(str(data), "<Data 'IQ' (23, 5, 5)>")
+
+
+
+class DataLenTests(TestCase):
+
+    def test_data_len(self):
+        data = Data(23, 5, 5)
+        self.assertEqual(len(data), 3)

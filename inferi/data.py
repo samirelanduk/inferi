@@ -27,3 +27,7 @@ class Data:
         return "<Data '{}' {}>".format(
          self._name, tuple([val[1] for val in self._values])
         )
+
+
+    def __len__(self):
+        return len(self._values)
