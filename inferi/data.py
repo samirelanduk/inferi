@@ -19,3 +19,11 @@ class Data:
         if not isinstance(xname, str):
             raise TypeError("xname '{}' is not a str".format(xname))
         self._xname = xname
+
+
+    def __repr__(self):
+        if self._name == "y":
+            return "<Data {}>".format(tuple([val[1] for val in self._values]))
+        return "<Data '{}' {}>".format(
+         self._name, tuple([val[1] for val in self._values])
+        )

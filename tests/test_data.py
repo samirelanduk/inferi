@@ -49,3 +49,16 @@ class DataCreationTests(TestCase):
     def test_xname_must_be_str(self):
         with self.assertRaises(TypeError):
             Data(23, 5, 5, xname=100)
+
+
+
+class DataReprTests(TestCase):
+
+    def test_repr_no_name(self):
+        data = Data(23, 5, 5)
+        self.assertEqual(str(data), "<Data (23, 5, 5)>")
+
+
+    def test_repr_with_name(self):
+        data = Data(23, 5, 5, name="IQ")
+        self.assertEqual(str(data), "<Data 'IQ' (23, 5, 5)>")
