@@ -5,7 +5,7 @@ class Data:
 
     :param \*values: The values that make up the data."""
 
-    def __init__(self, *values, name="y"):
+    def __init__(self, *values, name="y", xname="x"):
         try:
             if str in [type(v) for v in values]: raise TypeError
             self._values = [[index, value] for index, value in values]
@@ -16,3 +16,6 @@ class Data:
         if not isinstance(name, str):
             raise TypeError("name '{}' is not a str".format(name))
         self._name = name
+        if not isinstance(xname, str):
+            raise TypeError("xname '{}' is not a str".format(xname))
+        self._xname = xname

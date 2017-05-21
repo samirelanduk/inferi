@@ -7,6 +7,7 @@ class DataCreationTests(TestCase):
         data = Data(23, 5, 5)
         self.assertEqual(data._values, [[0, 23], [1, 5], [2, 5]])
         self.assertEqual(data._name, "y")
+        self.assertEqual(data._xname, "x")
 
 
     def test_data_creation_with_x_values(self):
@@ -30,8 +31,21 @@ class DataCreationTests(TestCase):
         data = Data(23, 5, 5, name="heights")
         self.assertEqual(data._values, [[0, 23], [1, 5], [2, 5]])
         self.assertEqual(data._name, "heights")
+        self.assertEqual(data._xname, "x")
 
 
     def test_name_must_be_str(self):
         with self.assertRaises(TypeError):
             Data(23, 5, 5, name=100)
+
+
+    def test_can_provide_xname(self):
+        data = Data(23, 5, 5, xname="members")
+        self.assertEqual(data._values, [[0, 23], [1, 5], [2, 5]])
+        self.assertEqual(data._name, "y")
+        self.assertEqual(data._xname, "members")
+
+
+    def test_xname_must_be_str(self):
+        with self.assertRaises(TypeError):
+            Data(23, 5, 5, xname=100)
