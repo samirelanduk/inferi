@@ -70,3 +70,12 @@ class DataLenTests(TestCase):
     def test_data_len(self):
         data = Data(23, 5, 5)
         self.assertEqual(len(data), 3)
+
+
+
+class DataContainerTests(TestCase):
+
+    def test_data_container(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5))
+        self.assertIn(23, data)
+        self.assertNotIn("C", data)

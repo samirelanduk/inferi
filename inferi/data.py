@@ -31,3 +31,9 @@ class Data:
 
     def __len__(self):
         return len(self._values)
+
+
+    def __contains__(self, member):
+        for x, y in self._values:
+            if y == member: return True
+        return False
