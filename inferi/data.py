@@ -37,3 +37,7 @@ class Data:
         for x, y in self._values:
             if y == member: return True
         return False
+
+
+    def __iter__(self):
+        return iter([val[1] for val in self._values])

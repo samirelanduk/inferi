@@ -79,3 +79,12 @@ class DataContainerTests(TestCase):
         data = Data(("K", 23), ("C", 5), ("A", 5))
         self.assertIn(23, data)
         self.assertNotIn("C", data)
+
+
+
+class DataIterableTests(TestCase):
+
+    def test_data_is_iterable(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5))
+        for value, correct_value in zip(data, (23, 5, 5)):
+            self.assertEqual(value, correct_value)
