@@ -88,3 +88,26 @@ class DataIterableTests(TestCase):
         data = Data(("K", 23), ("C", 5), ("A", 5))
         for value, correct_value in zip(data, (23, 5, 5)):
             self.assertEqual(value, correct_value)
+
+
+
+class DataGetTests(TestCase):
+
+    def test_default_x_get(self):
+        data = Data(23, 5, 15)
+        self.assertEqual(data[0], 23)
+        self.assertEqual(data[1], 5)
+        self.assertEqual(data[2], 15)
+
+
+    def test_custom_x_get(self):
+        data = Data(("K", 23), ("C", 5), ("A", 15))
+        self.assertEqual(data["K"], 23)
+        self.assertEqual(data["C"], 5)
+        self.assertEqual(data["A"], 15)
+
+
+    def test_index_error(self):
+        data = Data(23, 5, 15)
+        with self.assertRaises(IndexError):
+            data[4]

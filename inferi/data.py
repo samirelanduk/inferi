@@ -41,3 +41,9 @@ class Data:
 
     def __iter__(self):
         return iter([val[1] for val in self._values])
+
+
+    def __getitem__(self, key):
+        for x, y in self._values:
+            if x == key: return y
+        raise IndexError("{} has no x value {}".format(self, key))
