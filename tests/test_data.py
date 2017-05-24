@@ -1,5 +1,6 @@
 from unittest import TestCase
 from inferi.data import Data
+from inferi.exceptions import DuplicateXError
 
 class DataCreationTests(TestCase):
 
@@ -25,6 +26,11 @@ class DataCreationTests(TestCase):
     def test_strings_dont_count_as_iterables(self):
         data = Data("Sam", "Jonas", "Sally")
         self.assertEqual(data._values, [[0, "Sam"], [1, "Jonas"], [2, "Sally"]])
+
+
+    def test_x_values_must_be_unique(self):
+        with self.assertRaises(DuplicateXError):
+            Data(("K", 23), ("C", 5), ("C", 15))
 
 
     def test_can_provide_name(self):

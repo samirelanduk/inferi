@@ -1,5 +1,7 @@
 """Contains the base Data class."""
 
+from .exceptions import DuplicateXError
+
 class Data:
     """Represents a list of measurements.
 
@@ -9,6 +11,10 @@ class Data:
         try:
             if str in [type(v) for v in values]: raise TypeError
             self._values = [[index, value] for index, value in values]
+            if len(set([v[0] for v in values])) != len([v[0] for v in values]):
+                raise DuplicateXError(
+                 "{} contains duplicate x values".format(values)
+                )
         except ValueError:
             raise ValueError("Iterable values can only be of length 2")
         except TypeError:
