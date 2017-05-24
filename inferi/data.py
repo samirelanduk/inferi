@@ -61,3 +61,10 @@ class Data:
                 self._values[index][1] = y
                 return
         self._values.append([key, y])
+
+
+    def __delitem__(self, key):
+        for index, value in enumerate(self._values):
+            if value[0] == key:
+                self._values.pop(index)
+                return

@@ -132,3 +132,18 @@ class DataSetTests(TestCase):
         data = Data(("K", 23), ("C", 5), ("A", 5))
         data["A"] = 17
         self.assertEqual(data._values, [["K", 23], ["C", 5], ["A", 17]])
+
+
+
+class DataDeletionTests(TestCase):
+
+    def test_can_delete_data(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5))
+        del data["C"]
+        self.assertEqual(data._values, [["K", 23], ["A", 5]])
+
+
+    def test_deleting_nonexistent_member_is_fine(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5))
+        del data["X"]
+        self.assertEqual(data._values, [["K", 23], ["C", 5], ["A", 5]])
