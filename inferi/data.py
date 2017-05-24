@@ -47,3 +47,11 @@ class Data:
         for x, y in self._values:
             if x == key: return y
         raise IndexError("{} has no x value {}".format(self, key))
+
+
+    def __setitem__(self, key, y):
+        for index, value in enumerate(self._values):
+            if value[0] == key:
+                self._values[index][1] = y
+                return
+        self._values.append([key, y])

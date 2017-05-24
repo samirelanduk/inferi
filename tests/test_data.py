@@ -111,3 +111,18 @@ class DataGetTests(TestCase):
         data = Data(23, 5, 15)
         with self.assertRaises(IndexError):
             data[4]
+
+
+
+class DataSetTests(TestCase):
+
+    def test_can_create_new_value(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5))
+        data["H"] = 17
+        self.assertEqual(data._values, [["K", 23], ["C", 5], ["A", 5], ["H", 17]])
+
+
+    def test_can_update_value(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5))
+        data["A"] = 17
+        self.assertEqual(data._values, [["K", 23], ["C", 5], ["A", 17]])
