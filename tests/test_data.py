@@ -160,3 +160,23 @@ class DataValuesTests(TestCase):
     def test_can_get_xy_values(self):
         data = Data(("K", 23), ("C", 5), ("A", 5))
         self.assertEqual(data.values(x=True), (("K", 23), ("C", 5), ("A", 5)))
+
+
+
+class DataNameTests(TestCase):
+
+    def test_can_get_data_name(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5), name="a name")
+        self.assertIs(data._name, data.name())
+
+
+    def test_can_update_name(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5), name="a name")
+        data.name("new name")
+        self.assertEqual(data._name, "new name")
+
+
+    def test_new_name_must_be_str(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5), name="a name")
+        with self.assertRaises(TypeError):
+            data.name(100)

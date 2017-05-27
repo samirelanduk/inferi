@@ -95,8 +95,23 @@ class Data:
         :param bool x: If True, the x values will also be included with the y\
         values.
         :rtype: ``tuple``"""
-        
+
         if x:
             return tuple([(x, y) for x, y in self._values])
         else:
             return tuple([y for x, y in self._values])
+
+
+    def name(self, name=None):
+        """Returns the name of the y-values in the Data. If a value is given,
+        the name will be updated to this (provided it is a string).
+
+        :param str name: If given, this will be made the new name.
+        :raises TypeError: if the name given is not a string."""
+        
+        if name is None:
+            return self._name
+        else:
+            if not isinstance(name, str):
+                raise TypeError("name '{}' is not a str".format(name))
+            self._name = name
