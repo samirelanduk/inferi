@@ -108,10 +108,25 @@ class Data:
 
         :param str name: If given, this will be made the new name.
         :raises TypeError: if the name given is not a string."""
-        
+
         if name is None:
             return self._name
         else:
             if not isinstance(name, str):
                 raise TypeError("name '{}' is not a str".format(name))
             self._name = name
+
+
+    def xname(self, xname=None):
+        """Returns the name of the x-values in the Data. If a value is given,
+        the xname will be updated to this (provided it is a string).
+
+        :param str xname: If given, this will be made the new xname.
+        :raises TypeError: if the xname given is not a string."""
+
+        if xname is None:
+            return self._xname
+        else:
+            if not isinstance(xname, str):
+                raise TypeError("xname '{}' is not a str".format(xname))
+            self._xname = xname
