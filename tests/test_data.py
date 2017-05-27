@@ -147,3 +147,16 @@ class DataDeletionTests(TestCase):
         data = Data(("K", 23), ("C", 5), ("A", 5))
         del data["X"]
         self.assertEqual(data._values, [["K", 23], ["C", 5], ["A", 5]])
+
+
+
+class DataValuesTests(TestCase):
+
+    def test_can_get_y_values(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5))
+        self.assertEqual(data.values(), (23, 5, 5))
+
+
+    def test_can_get_xy_values(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5))
+        self.assertEqual(data.values(x=True), (("K", 23), ("C", 5), ("A", 5)))

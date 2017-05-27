@@ -85,3 +85,18 @@ class Data:
             if value[0] == key:
                 self._values.pop(index)
                 return
+
+
+    def values(self, x=False):
+        """Returns the values in the Data. By default only the y (output) values
+        are returned. To return the values as (x, y) pairs, set the ``x``
+        argument to ``True``.
+
+        :param bool x: If True, the x values will also be included with the y\
+        values.
+        :rtype: ``tuple``"""
+        
+        if x:
+            return tuple([(x, y) for x, y in self._values])
+        else:
+            return tuple([y for x, y in self._values])
