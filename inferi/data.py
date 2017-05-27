@@ -130,3 +130,11 @@ class Data:
             if not isinstance(xname, str):
                 raise TypeError("xname '{}' is not a str".format(xname))
             self._xname = xname
+
+
+    def length(self):
+        """The length of the Data - the number of (x, y) pairs it has.
+
+        :rtype: ``int``"""
+        
+        return len(self)

@@ -1,4 +1,5 @@
 from unittest import TestCase
+from unittest.mock import Mock, patch
 from inferi.data import Data
 from inferi.exceptions import DuplicateXError
 
@@ -200,3 +201,13 @@ class DataXNameTests(TestCase):
         data = Data(("K", 23), ("C", 5), ("A", 5), xname="a name")
         with self.assertRaises(TypeError):
             data.xname(100)
+
+
+
+class DataLengthTests(TestCase):
+
+    @patch("inferi.data.Data.__len__")
+    def test_length_is_len(self, mock_len):
+        mock_len.return_value = 79
+        data = Data(("K", 23), ("C", 5), ("A", 5))
+        self.assertEqual(data.length(), 79)
