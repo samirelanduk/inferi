@@ -164,6 +164,33 @@ class DataValuesTests(TestCase):
 
 
 
+class DataValueAdditionTests(TestCase):
+
+    @patch("inferi.data.Data.xvalues")
+    def test_can_add_value(self, mock_x):
+        mock_x.return_value = (0, 1, 2)
+        data = Data(23, 5, 5)
+        data.add(17)
+        self.assertEqual(data._values, [[0, 23], [1, 5], [2, 5], [3, 17]])
+
+
+    @patch("inferi.data.Data.xvalues")
+    def test_can_add_value_with_random_x_values(self, mock_x):
+        mock_x.return_value = (100, 23, 65)
+        data = Data((100, 23), (23, 5), (65, 5))
+        data.add(17)
+        self.assertEqual(data._values, [[100, 23], [23, 5], [65, 5], [101, 17]])
+
+
+    @patch("inferi.data.Data.xvalues")
+    def test_can_add_value_with_non_int_x_values(self, mock_x):
+        mock_x.return_value = (0.1, "F", 0)
+        data = Data((0.1, 23), ("F", 5), (0, 5))
+        data.add(17)
+        self.assertEqual(data._values, [[0.1, 23], ["F", 5], [0, 5], [1, 17]])
+
+
+
 class DataNameTests(TestCase):
 
     def test_can_get_data_name(self):
