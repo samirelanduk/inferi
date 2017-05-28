@@ -211,3 +211,11 @@ class DataLengthTests(TestCase):
         mock_len.return_value = 79
         data = Data(("K", 23), ("C", 5), ("A", 5))
         self.assertEqual(data.length(), 79)
+
+
+
+class DataXValuesTests(TestCase):
+
+    def test_can_get_x_values(self):
+        data = Data(("K", 23), ("C", 5), ("A", 5))
+        self.assertEqual(data.xvalues(), ("K", "C", "A"))

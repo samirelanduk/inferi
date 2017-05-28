@@ -102,6 +102,14 @@ class Data:
             return tuple([y for x, y in self._values])
 
 
+    def xvalues(self):
+        """Returns the x values in the Data.
+
+        :rtype: ``tuple``"""
+        
+        return tuple([x for x, y in self._values])
+
+
     def name(self, name=None):
         """Returns the name of the y-values in the Data. If a value is given,
         the name will be updated to this (provided it is a string).
@@ -136,5 +144,5 @@ class Data:
         """The length of the Data - the number of (x, y) pairs it has.
 
         :rtype: ``int``"""
-        
+
         return len(self)
