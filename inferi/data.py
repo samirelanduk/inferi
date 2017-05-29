@@ -46,9 +46,11 @@ class Data:
 
     def __repr__(self):
         if self._name == "y":
-            return "<Data {}>".format(tuple([val[1] for val in self._values]))
-        return "<Data '{}' {}>".format(
-         self._name, tuple([val[1] for val in self._values])
+            return "<{} {}>".format(
+             self.__class__.__name__, tuple([val[1] for val in self._values])
+            )
+        return "<{} '{}' {}>".format(
+         self.__class__.__name__, self._name, tuple([v[1] for v in self._values])
         )
 
 
