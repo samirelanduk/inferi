@@ -41,5 +41,17 @@ class Sample(Data):
     def mean(self):
         """Returns the mean of the y values - their sum divided by the number of
         values."""
-        
+
         return self.sum() / self.length()
+
+
+    def median(self):
+        """Returns the median y value - the value that occurs midway through
+        when the y values are sorted. If there is an even number, the midpoint
+        between the two median values will be returned."""
+        
+        values = sorted(self.values())
+        if len(values) % 2:
+            return values[int((len(values) - 1) / 2)]
+        midway = int(self.length() / 2)
+        return (values[midway - 1] + values[midway]) / 2

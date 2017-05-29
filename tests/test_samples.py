@@ -44,3 +44,20 @@ class SampleMeanTests(TestCase):
         mock_sum.return_value = 48
         sample = Sample(100, 345, 32)
         self.assertEqual(sample.mean(), 12)
+
+
+
+class SampleMedianTests(TestCase):
+
+    @patch("inferi.samples.Sample.values")
+    def test_can_get_odd_median(self, mock_values):
+        mock_values.return_value = (100, 345, 32)
+        sample = Sample(100, 345, 32)
+        self.assertEqual(sample.median(), 100)
+
+
+    @patch("inferi.samples.Sample.values")
+    def test_can_get_even_median(self, mock_values):
+        mock_values.return_value = (20, 30, 40, 50)
+        sample = Sample(20, 30, 40, 50)
+        self.assertEqual(sample.median(), 35)
