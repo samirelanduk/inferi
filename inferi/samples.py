@@ -31,4 +31,8 @@ class Sample(Data):
     :param str name: The name of the y-values.
     :param str xname: The name of the x-values."""
 
-    pass
+    def sum(self):
+        """Returns the sum of the y values in the Sample. This will usually be
+        a number but depends on the object types in the Sample."""
+        
+        return sum(self)

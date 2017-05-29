@@ -24,3 +24,11 @@ class SampleReprTests(TestCase):
     def test_repr_with_name(self):
         sample = Sample(100, 345, 32, name="numbers")
         self.assertEqual(str(sample), "<Sample 'numbers' (100, 345, 32)>")
+
+
+
+class SampleSumTests(TestCase):
+
+    def test_sample_sum(self):
+        sample = Sample(100, 345, 32)
+        self.assertEqual(sample.sum(), 477)
