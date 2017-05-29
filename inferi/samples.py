@@ -34,5 +34,12 @@ class Sample(Data):
     def sum(self):
         """Returns the sum of the y values in the Sample. This will usually be
         a number but depends on the object types in the Sample."""
-        
+
         return sum(self)
+
+
+    def mean(self):
+        """Returns the mean of the y values - their sum divided by the number of
+        values."""
+        
+        return self.sum() / self.length()

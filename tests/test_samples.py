@@ -32,3 +32,15 @@ class SampleSumTests(TestCase):
     def test_sample_sum(self):
         sample = Sample(100, 345, 32)
         self.assertEqual(sample.sum(), 477)
+
+
+
+class SampleMeanTests(TestCase):
+
+    @patch("inferi.samples.Sample.sum")
+    @patch("inferi.samples.Sample.length")
+    def test_sample_mean(self, mock_length, mock_sum):
+        mock_length.return_value = 4
+        mock_sum.return_value = 48
+        sample = Sample(100, 345, 32)
+        self.assertEqual(sample.mean(), 12)
