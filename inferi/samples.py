@@ -61,8 +61,15 @@ class Sample(Data):
     def mode(self):
         """Returns the mode y value - the value that occurs the most often. If
         more than one value meets this criteria, ``None`` is returned."""
-        
+
         values = Counter(self.values())
         highest_frequency = max(values.values())
         if len([v for v in values if values[v] == highest_frequency]) == 1:
             return values.most_common()[0][0]
+
+
+    def range(self):
+        """Returns the range of the y values - the difference between the
+        largest and smallest values."""
+        
+        return max(self.values()) - min(self.values())
