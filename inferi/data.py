@@ -174,3 +174,15 @@ class Data:
         """Returns the smallest y value."""
 
         return min(self.values())
+
+
+    def xmax(self):
+        """Returns the largest x value."""
+
+        return max(self.xvalues())
+
+
+    def xmin(self):
+        """Returns the smallest x value."""
+
+        return min(self.xvalues())

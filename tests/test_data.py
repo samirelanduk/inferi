@@ -266,3 +266,23 @@ class DataMinTests(TestCase):
         mock_values.return_value = (23, 5, 5)
         data = Data(("K", 23), ("C", 5), ("A", 5))
         self.assertEqual(data.min(), 5)
+
+
+
+class DataXmaxTests(TestCase):
+
+    @patch("inferi.data.Data.xvalues")
+    def test_can_get_xmax(self, mock_values):
+        mock_values.return_value = (43, 65, 4)
+        data = Data((43, 23), (65, 5), (4, 5))
+        self.assertEqual(data.xmax(), 65)
+
+
+
+class DataXminTests(TestCase):
+
+    @patch("inferi.data.Data.values")
+    def test_can_get_min(self, mock_values):
+        mock_values.return_value = (43, 65, 4)
+        data = Data((43, 23), (65, 5), (4, 5))
+        self.assertEqual(data.xmin(), 4)
