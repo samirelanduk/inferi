@@ -73,3 +73,20 @@ class Sample(Data):
         largest and smallest values."""
 
         return self.max() - self.min()
+
+
+    def variance(self, population=False):
+        """Returns the variance of the y values - the mean square deviation of
+        the values from the mean. The y values really have to be numerical for
+        this to be meaningful.
+
+        You can elect to get the population variance if you wish, which uses `N`
+        rather than `N - 1` as the denominator.
+
+        :param bool population: If ``True``, the population variance will be\
+        returned (default is ``False``).
+        :rtype: ``float``"""
+         
+        return sum([
+         (value - self.mean()) ** 2 for value in self.values()
+        ]) / (self.length() - (not population))
