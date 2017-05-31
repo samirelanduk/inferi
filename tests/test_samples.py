@@ -83,8 +83,9 @@ class ModeTests(TestCase):
 
 class RangeTests(TestCase):
 
-    @patch("inferi.samples.Sample.values")
-    def test_can_get_range(self, mock_values):
-        mock_values.return_value = (1, 4, 7, 3, 1, 6, 4, 4)
+    @patch("inferi.samples.Sample.max")
+    @patch("inferi.samples.Sample.min")
+    def test_can_get_range(self, mock_min, mock_max):
+        mock_max.return_value, mock_min.return_value = 7, 1
         sample = Sample(1, 4, 7, 3, 1, 6, 4, 4)
         self.assertEqual(sample.range(), 6)

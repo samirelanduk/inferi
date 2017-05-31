@@ -162,3 +162,15 @@ class Data:
         :rtype: ``int``"""
 
         return len(self)
+
+
+    def max(self):
+        """Returns the largest y value."""
+
+        return max(self.values())
+
+
+    def min(self):
+        """Returns the smallest y value."""
+
+        return min(self.values())

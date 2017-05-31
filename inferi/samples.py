@@ -71,5 +71,5 @@ class Sample(Data):
     def range(self):
         """Returns the range of the y values - the difference between the
         largest and smallest values."""
-        
-        return max(self.values()) - min(self.values())
+
+        return self.max() - self.min()
