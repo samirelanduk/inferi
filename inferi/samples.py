@@ -1,5 +1,6 @@
 """This module contains the Sample class."""
 
+from collections import Counter
 from .data import Data
 
 class Sample(Data):
@@ -49,9 +50,19 @@ class Sample(Data):
         """Returns the median y value - the value that occurs midway through
         when the y values are sorted. If there is an even number, the midpoint
         between the two median values will be returned."""
-        
+
         values = sorted(self.values())
         if len(values) % 2:
             return values[int((len(values) - 1) / 2)]
         midway = int(self.length() / 2)
         return (values[midway - 1] + values[midway]) / 2
+
+
+    def mode(self):
+        """Returns the mode y value - the value that occurs the most often. If
+        more than one value meets this criteria, ``None`` is returned."""
+        
+        values = Counter(self.values())
+        highest_frequency = max(values.values())
+        if len([v for v in values if values[v] == highest_frequency]) == 1:
+            return values.most_common()[0][0]

@@ -61,3 +61,20 @@ class SampleMedianTests(TestCase):
         mock_values.return_value = (20, 30, 40, 50)
         sample = Sample(20, 30, 40, 50)
         self.assertEqual(sample.median(), 35)
+
+
+
+class ModeTests(TestCase):
+
+    @patch("inferi.samples.Sample.values")
+    def test_can_get_mode(self, mock_values):
+        mock_values.return_value = (1, 4, 7, 3, 1, 6, 4, 4)
+        sample = Sample(1, 4, 7, 3, 1, 6, 4, 4)
+        self.assertEqual(sample.mode(), 4)
+
+
+    @patch("inferi.samples.Sample.values")
+    def test_no_mode_when_multi_mode(self, mock_values):
+        mock_values.return_value = (1, 4, 7, 3, 1, 6, 4)
+        sample = Sample(1, 4, 7, 3, 1, 6, 4)
+        self.assertEqual(sample.mode(), None)
