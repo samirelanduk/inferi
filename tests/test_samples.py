@@ -114,3 +114,22 @@ class VarianceTests(TestCase):
         mock_len.return_value = 5
         sample = Sample(600, 470, 170, 430, 300)
         self.assertEqual(sample.variance(population=True), 21704)
+
+
+
+class StandardDeviationTests(TestCase):
+
+    @patch("inferi.samples.Sample.variance")
+    def test_can_get_standard_deviation(self, mock_variance):
+        mock_variance.return_value = 25
+        sample = Sample(600, 470, 170, 430, 300)
+        self.assertEqual(sample.st_dev(), 5)
+        mock_variance.assert_called_with(population=False)
+
+
+    @patch("inferi.samples.Sample.variance")
+    def test_can_get_population_standard_deviation(self, mock_variance):
+        mock_variance.return_value = 25
+        sample = Sample(600, 470, 170, 430, 300)
+        self.assertEqual(sample.st_dev(population=True), 5)
+        mock_variance.assert_called_with(population=True)

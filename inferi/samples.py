@@ -1,6 +1,7 @@
 """This module contains the Sample class."""
 
 from collections import Counter
+from math import sqrt
 from .data import Data
 
 class Sample(Data):
@@ -86,7 +87,22 @@ class Sample(Data):
         :param bool population: If ``True``, the population variance will be\
         returned (default is ``False``).
         :rtype: ``float``"""
-         
+
         return sum([
          (value - self.mean()) ** 2 for value in self.values()
         ]) / (self.length() - (not population))
+
+
+    def st_dev(self, population=False):
+        """Returns the standard deviation of the y values, the square root of
+        the :py:meth:`.variance` and a measure of deviation from the mean.
+        As with that metric, you need numerical data for this to be sensible.
+
+        You can elect to get the population deviation if you wish, which uses
+        `N` rather than `N - 1` as the denominator.
+
+        :param bool population: If ``True``, the population deviation will be\
+        returned (default is ``False``).
+        :rtype: ``float``"""
+
+        return sqrt(self.variance(population=population))
