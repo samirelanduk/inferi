@@ -96,7 +96,7 @@ class Variable:
 
         :param int index: The index to remove at (default is ``-1``).
         :raises EmptyVariableError: if you try to pop the only value."""
-        
+
         if len(self._values) == 1:
             raise EmptyVariableError("Cannot pop last value from Variable")
         return self._values.pop(index)
@@ -210,3 +210,29 @@ class Variable:
         :rtype: ``float``"""
 
         return sqrt(self.variance(population=population))
+
+
+    def covariance_with(self, variable):
+        """Returns the covariance between this Variable and another Variable.
+        This is a measure of how the variance of the two series reflect each
+        other, and is a measure of correlation.
+
+        :param Variable variable: The other Variable. It must be the same\
+        length as this one.
+        :raises TypeError: if something other than a Variable is given.
+        :raises ValueError: if Variables of different length are given."""
+
+        if not isinstance(variable, Variable):
+            raise TypeError("{} is not a Variable".format(str(variable)))
+        if self.length() != variable.length():
+            raise ValueError(
+             "length {} is not length {} - covariance not possible".format(
+              self.length(), variable.length()
+             )
+            )
+        this_mean = self.mean()
+        other_mean = variable.mean()
+        square_deviations = sum([(value - this_mean) * (other - other_mean)
+         for value, other in zip(self.values(), variable.values())])
+        mean_square_deviation = square_deviations / (self.length() - 1)
+        return mean_square_deviation

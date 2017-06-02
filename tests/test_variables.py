@@ -331,3 +331,37 @@ class StandardDeviationTests(TestCase):
         var = Variable(600, 470, 170, 430, 300)
         self.assertEqual(var.st_dev(population=True), 5)
         mock_variance.assert_called_with(population=True)
+
+
+
+class CovarianceTests(TestCase):
+
+    @patch("inferi.variables.Variable.length")
+    @patch("inferi.variables.Variable.values")
+    @patch("inferi.variables.Variable.mean")
+    def test_can_get_covariance(self, mock_mean, mock_values, mock_len):
+        mock_mean.return_value = 3.05
+        mock_values.return_value = (2.1, 2.5, 4.0, 3.6)
+        mock_len.return_value = 4
+        var1 = Variable(2.1, 2.5, 4.0, 3.6)
+        var2 = Mock(Variable)
+        var2.mean.return_value = 11
+        var2.values.return_value = (8, 12, 14, 10)
+        var2.length.return_value = 4
+        self.assertAlmostEqual(var1.covariance_with(var2), 1.53, delta=0.005)
+
+
+    def test_covariance_requires_variables(self):
+        var1 = Variable(2.1, 2.5, 4.0, 3.6)
+        with self.assertRaises(TypeError):
+            var1.covariance_with("variable")
+
+
+    @patch("inferi.variables.Variable.length")
+    def test_covariance_requires_equal_length_variables(self, mock_length):
+        mock_length.return_value = 4
+        var1 = Variable(2.1, 2.5, 4.0, 3.6)
+        var2 = Mock(Variable)
+        var2.length.return_value = 10
+        with self.assertRaises(ValueError):
+            var1.covariance_with(var2)
