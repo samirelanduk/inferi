@@ -82,12 +82,24 @@ class Variable:
         """Removes a value from the Variable.
 
         :param value: The value to remove.
-        :raises EmptyVariableError: if you try to remove the last value."""
-        
+        :raises EmptyVariableError: if you try to remove the only value."""
+
         if len(self._values) == 1:
             raise EmptyVariableError("Cannot remove last value from Variable")
         if value in self._values:
             self._values.remove(value)
+
+
+    def pop(self, index=-1):
+        """Removes and returns the value at a given index - by default the last
+        object in the Variable.
+
+        :param int index: The index to remove at (default is ``-1``).
+        :raises EmptyVariableError: if you try to pop the only value."""
+        
+        if len(self._values) == 1:
+            raise EmptyVariableError("Cannot pop last value from Variable")
+        return self._values.pop(index)
 
 
     def name(self, name=None):

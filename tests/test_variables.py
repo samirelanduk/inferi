@@ -138,6 +138,41 @@ class VariableRemovalTests(TestCase):
 
 
 
+class VariablePoppingTests(TestCase):
+
+    def test_can_pop_last_value(self):
+        var = Variable(23, 5, 15)
+        value = var.pop()
+        self.assertEqual(var._values, [23, 5])
+        self.assertEqual(value, 15)
+
+
+    def test_can_pop_any_index(self):
+        var = Variable(23, 5, 15)
+        value = var.pop(1)
+        self.assertEqual(var._values, [23, 15])
+        self.assertEqual(value, 5)
+
+
+    def test_cannot_pop_last_value(self):
+        var = Variable(23)
+        with self.assertRaises(EmptyVariableError):
+            var.pop()
+
+
+    def test_cannot_pop_wrong_index(self):
+        var = Variable(23, 5, 15)
+        with self.assertRaises(IndexError):
+            var.pop(4)
+
+
+    def test_index_must_be_int(self):
+        var = Variable(23, 5, 15)
+        with self.assertRaises(TypeError):
+            var.pop(0.5)
+
+
+
 class VariableNameTests(TestCase):
 
     def test_can_get_variable_name(self):
