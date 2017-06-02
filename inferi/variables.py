@@ -163,11 +163,19 @@ class Variable:
         return (values[midway - 1] + values[midway]) / 2
 
 
+    def frequencies(self):
+        """Returns the frequencies of the values in the Variable.
+
+        :rtype: ``Counter``"""
+        
+        return Counter(self.values())
+
+
     def mode(self):
         """Returns the mode value - the value that occurs the most often. If
         more than one value meets this criteria, ``None`` is returned."""
 
-        values = Counter(self.values())
+        values = self.frequencies()
         highest_frequency = max(values.values())
         if len([v for v in values if values[v] == highest_frequency]) == 1:
             return values.most_common()[0][0]

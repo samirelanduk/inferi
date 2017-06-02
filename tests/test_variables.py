@@ -1,3 +1,4 @@
+from collections import Counter
 from unittest import TestCase
 from unittest.mock import Mock, patch
 from inferi.variables import Variable
@@ -262,12 +263,24 @@ class VariableMedianTests(TestCase):
 
 
 
-class ModeTests(TestCase):
+class FrequencyTests(TestCase):
 
     @patch("inferi.variables.Variable.values")
-    def test_can_get_mode(self, mock_values):
+    def test_can_get_frequencies(self, mock_values):
         mock_values.return_value = (1, 4, 7, 3, 1, 6, 4, 4)
         var = Variable(1, 4, 7, 3, 1, 6, 4, 4)
+        self.assertEqual(
+         var.frequencies(), Counter({1: 2, 4: 3, 3: 1, 7: 1, 6: 1})
+        )
+
+
+
+class VariableModeTests(TestCase):
+
+    @patch("inferi.variables.Variable.frequencies")
+    def test_can_get_mode(self, mock_frequencies):
+        mock_frequencies.return_value = Counter({1: 2, 4: 3, 3: 1, 7: 1, 6: 1})
+        var = Variable(1, 1, 1)
         self.assertEqual(var.mode(), 4)
 
 
@@ -279,7 +292,7 @@ class ModeTests(TestCase):
 
 
 
-class RangeTests(TestCase):
+class VariableRangeTests(TestCase):
 
     @patch("inferi.variables.Variable.max")
     @patch("inferi.variables.Variable.min")
@@ -290,7 +303,7 @@ class RangeTests(TestCase):
 
 
 
-class VarianceTests(TestCase):
+class VariableVarianceTests(TestCase):
 
     @patch("inferi.variables.Variable.values")
     @patch("inferi.variables.Variable.mean")
@@ -315,7 +328,7 @@ class VarianceTests(TestCase):
 
 
 
-class StandardDeviationTests(TestCase):
+class VariableStandardDeviationTests(TestCase):
 
     @patch("inferi.variables.Variable.variance")
     def test_can_get_standard_deviation(self, mock_variance):
@@ -334,7 +347,7 @@ class StandardDeviationTests(TestCase):
 
 
 
-class CovarianceTests(TestCase):
+class VariableCovarianceTests(TestCase):
 
     @patch("inferi.variables.Variable.length")
     @patch("inferi.variables.Variable.values")
@@ -368,7 +381,7 @@ class CovarianceTests(TestCase):
 
 
 
-class CorrelationTests(TestCase):
+class VariableCorrelationTests(TestCase):
 
     @patch("inferi.variables.Variable.st_dev")
     @patch("inferi.variables.Variable.covariance_with")
