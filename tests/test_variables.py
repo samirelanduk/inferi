@@ -117,6 +117,27 @@ class VariableValueAdditionTests(TestCase):
 
 
 
+class VariableRemovalTests(TestCase):
+
+    def test_can_remove_value(self):
+        var = Variable(23, 5, 15)
+        var.remove(5)
+        self.assertEqual(var._values, [23, 15])
+
+
+    def test_removing_none_existent_values_is_fine(self):
+        var = Variable(23, 5, 15)
+        var.remove(6)
+        self.assertEqual(var._values, [23, 5, 15])
+
+
+    def test_cannot_remove_last_value(self):
+        var = Variable(23)
+        with self.assertRaises(EmptyVariableError):
+            var.remove(23)
+
+
+
 class VariableNameTests(TestCase):
 
     def test_can_get_variable_name(self):

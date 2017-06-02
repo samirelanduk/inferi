@@ -78,6 +78,18 @@ class Variable:
         self._values.append(value)
 
 
+    def remove(self, value):
+        """Removes a value from the Variable.
+
+        :param value: The value to remove.
+        :raises EmptyVariableError: if you try to remove the last value."""
+        
+        if len(self._values) == 1:
+            raise EmptyVariableError("Cannot remove last value from Variable")
+        if value in self._values:
+            self._values.remove(value)
+
+
     def name(self, name=None):
         """Returns the name of the Variable. If a value is given,
         the name will be updated to this (provided it is a string).
