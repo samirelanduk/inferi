@@ -1,6 +1,5 @@
 """Contains custom exceptions."""
 
-class DuplicateXError(Exception):
-    """The exception raised if a data structure is created with duplicate
-    x values."""
+class EmptyVariableError(Exception):
+    """The exception raised if a Variable is given no values."""
     pass
