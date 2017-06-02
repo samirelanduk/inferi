@@ -347,6 +347,29 @@ class VariableStandardDeviationTests(TestCase):
 
 
 
+class VariableZscoreTests(TestCase):
+
+    @patch("inferi.variables.Variable.mean")
+    @patch("inferi.variables.Variable.st_dev")
+    def test_can_get_zscore(self, mock_sd, mock_mean):
+        var = Variable(600, 470, 170, 430, 300)
+        mock_sd.return_value = 300
+        mock_mean.return_value = 650
+        self.assertEqual(var.zscore(200), -1.5)
+        mock_sd.assert_called_with(population=False)
+
+
+    @patch("inferi.variables.Variable.mean")
+    @patch("inferi.variables.Variable.st_dev")
+    def test_can_get_population_zscore(self, mock_sd, mock_mean):
+        var = Variable(600, 470, 170, 430, 300)
+        mock_sd.return_value = 200
+        mock_mean.return_value = 650
+        self.assertEqual(var.zscore(200, population=True), -2.25)
+        mock_sd.assert_called_with(population=True)
+
+
+
 class VariableCovarianceTests(TestCase):
 
     @patch("inferi.variables.Variable.length")

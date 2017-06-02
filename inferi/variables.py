@@ -167,7 +167,7 @@ class Variable:
         """Returns the frequencies of the values in the Variable.
 
         :rtype: ``Counter``"""
-        
+
         return Counter(self.values())
 
 
@@ -218,6 +218,17 @@ class Variable:
         :rtype: ``float``"""
 
         return sqrt(self.variance(population=population))
+
+
+    def zscore(self, value, population=False):
+        """The z-score of a value is how many standard deviations it is from
+        the mean.
+
+        :param value: The value who's z-score you want to know.
+        :param bool population: If ``True``, the population deviation will be\
+        used (default is ``False``)."""
+        
+        return (value - self.mean()) / self.st_dev(population=population)
 
 
     def covariance_with(self, variable):
