@@ -236,3 +236,20 @@ class Variable:
          for value, other in zip(self.values(), variable.values())])
         mean_square_deviation = square_deviations / (self.length() - 1)
         return mean_square_deviation
+
+
+    def correlation_with(self, variable):
+        """Returns the correlation of one Variable with another. This differs
+        from :py:meth:`covariance_with` in that it is normalised to be
+        between -1 and 1, so the maginitude of the result is important, rather
+        than just the sign as is the case with covariance.
+
+        All the same requirements apply - the object given must be a Variable,
+        and they must be the same length.
+
+        :param Variable variable: The other Variable. It must be the same\
+        length as this one."""
+
+        covariance = self.covariance_with(variable)
+        sd_product = self.st_dev() * variable.st_dev()
+        return covariance / sd_product

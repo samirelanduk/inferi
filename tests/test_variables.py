@@ -365,3 +365,18 @@ class CovarianceTests(TestCase):
         var2.length.return_value = 10
         with self.assertRaises(ValueError):
             var1.covariance_with(var2)
+
+
+
+class CorrelationTests(TestCase):
+
+    @patch("inferi.variables.Variable.st_dev")
+    @patch("inferi.variables.Variable.covariance_with")
+    def test_can_get_correlation(self, mock_cov, mock_sd):
+        mock_cov.return_value = 42
+        mock_sd.return_value = 2
+        var1 = Variable(2.1, 2.5, 4.0, 3.6)
+        var2 = Mock(Variable)
+        var2.st_dev.return_value = 3
+        self.assertEqual(var1.correlation_with(var2), 7)
+        mock_cov.assert_called_with(var2)
