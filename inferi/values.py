@@ -36,3 +36,15 @@ class Value:
 
     def __radd__(self, other):
         return self + other
+
+
+    def __sub__(self, other):
+        value = self._value - (other._value if isinstance(other, Value) else other)
+        error = self._error + (other._error if isinstance(other, Value) else 0)
+        return Value(value, error)
+
+
+    def __rsub__(self, other):
+        value = (other._value if isinstance(other, Value) else other) - self._value
+        error = self._error + (other._error if isinstance(other, Value) else 0)
+        return Value(value, error)
