@@ -7,3 +7,12 @@ class ValueCreationTests(TestCase):
         val = Value(23)
         self.assertEqual(val._value, 23)
         self.assertEqual(val._error, 0)
+
+
+    def test_value_requires_numbers(self):
+        Value(23)
+        Value(23.5)
+        with self.assertRaises(TypeError):
+            Value("100")
+        with self.assertRaises(TypeError):
+            Value(True)
