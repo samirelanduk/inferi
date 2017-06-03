@@ -31,3 +31,16 @@ class ValueCreationTests(TestCase):
             Value(23, "100")
         with self.assertRaises(TypeError):
             Value(23, True)
+
+
+
+class ValueReprTests(TestCase):
+
+    def test_repr_with_no_error(self):
+        val = Value(23)
+        self.assertEqual(str(val), '23')
+
+
+    def test_repr_with_error(self):
+        val = Value(23, 0.5)
+        self.assertEqual(str(val), '23 ± 0.5')

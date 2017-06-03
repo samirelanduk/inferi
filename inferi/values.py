@@ -18,3 +18,9 @@ class Value:
             return TypeError("error {} is not an int or a float".format(error))
         self._value = value
         self._error = error
+
+
+    def __repr__(self):
+        if self._error:
+            return "{} ± {}".format(self._value, self._error)
+        return str(self._value)
