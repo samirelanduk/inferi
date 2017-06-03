@@ -26,3 +26,13 @@ class Value:
         if self._error:
             return "{} ± {}".format(self._value, self._error)
         return str(self._value)
+
+
+    def __add__(self, other):
+        value = self._value + (other._value if isinstance(other, Value) else other)
+        error = self._error + (other._error if isinstance(other, Value) else 0)
+        return Value(value, error)
+
+
+    def __radd__(self, other):
+        return self + other
