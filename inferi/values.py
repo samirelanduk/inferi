@@ -16,6 +16,8 @@ class Value:
             return TypeError("value {} is not an int or a float".format(value))
         if not isinstance(error, (int, float)) or isinstance(error, bool):
             return TypeError("error {} is not an int or a float".format(error))
+        if error < 0:
+            raise ValueError("error {} is negative".format(error))
         self._value = value
         self._error = error
 

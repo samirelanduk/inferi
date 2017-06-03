@@ -33,6 +33,11 @@ class ValueCreationTests(TestCase):
             Value(23, True)
 
 
+    def test_error_must_be_positive(self):
+        with self.assertRaises(ValueError):
+            Value(23, -0.01)
+
+
 
 class ValueReprTests(TestCase):
 
