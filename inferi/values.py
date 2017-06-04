@@ -48,3 +48,20 @@ class Value:
         value = (other._value if isinstance(other, Value) else other) - self._value
         error = self._error + (other._error if isinstance(other, Value) else 0)
         return Value(value, error)
+
+
+    def value(self):
+        """Returns the value's... value. That is, the measurement itself,
+        without its associated error.
+
+        :rtype: ``int`` or ``float``"""
+
+        return self._value
+
+
+    def error(self):
+        """Returns the value's associated error.
+
+        :rtype: ``int`` or ``float``"""
+        
+        return self._error
