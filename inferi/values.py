@@ -50,6 +50,18 @@ class Value:
         return Value(value, error)
 
 
+    def __mul__(self, other):
+        value = self._value * (other._value if isinstance(other, Value) else other)
+        error = self.relative_error() + (
+         other.relative_error() if isinstance(other, Value) else 0
+        )
+        return Value(value, error * value)
+
+
+    def __rmul__(self, other):
+        return self * other
+
+
     def value(self):
         """Returns the value's... value. That is, the measurement itself,
         without its associated error.

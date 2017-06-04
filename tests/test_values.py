@@ -1,5 +1,6 @@
 from inferi.values import Value
 from unittest import TestCase
+from unittest.mock import Mock, patch
 
 class ValueCreationTests(TestCase):
 
@@ -109,6 +110,42 @@ class ValueSubtractionTests(TestCase):
         self.assertIsInstance(val3, Value)
         self.assertEqual(val3._value, -4)
         self.assertEqual(val3._error, 0.4)
+
+
+
+class ValueMultiplicationTests(TestCase):
+
+    @patch("inferi.values.Value.relative_error")
+    def test_can_multiply_values(self, mock_err):
+        mock_err.side_effect = (0.02, 0.03)
+        val1 = Value(23, 0.5)
+        val2 = Value(19, 0.4)
+        val3 = val1 * val2
+        self.assertIsInstance(val3, Value)
+        self.assertEqual(val3._value, 437)
+        self.assertEqual(val3._error, 21.85)
+
+
+    @patch("inferi.values.Value.relative_error")
+    def test_can_multiply_value_with_number(self, mock_err):
+        mock_err.return_value = 0.02
+        val1 = Value(23, 0.5)
+        val2 = 19.0
+        val3 = val1 * val2
+        self.assertIsInstance(val3, Value)
+        self.assertEqual(val3._value, 437)
+        self.assertEqual(val3._error, 8.74)
+
+
+    @patch("inferi.values.Value.relative_error")
+    def test_can_multiply_number_with_value(self, mock_err):
+        mock_err.return_value = 0.03
+        val1 = 23
+        val2 = Value(19, 0.4)
+        val3 = val1 * val2
+        self.assertIsInstance(val3, Value)
+        self.assertEqual(val3._value, 437)
+        self.assertEqual(val3._error, 13.11)
 
 
 
