@@ -149,6 +149,42 @@ class ValueMultiplicationTests(TestCase):
 
 
 
+class ValueDivisionTests(TestCase):
+
+    @patch("inferi.values.Value.relative_error")
+    def test_can_divide_values(self, mock_err):
+        mock_err.side_effect = (0.02, 0.03)
+        val1 = Value(100, 0.5)
+        val2 = Value(5, 0.4)
+        val3 = val1 / val2
+        self.assertIsInstance(val3, Value)
+        self.assertEqual(val3._value, 20)
+        self.assertEqual(val3._error, 1)
+
+
+    @patch("inferi.values.Value.relative_error")
+    def test_can_divide_value_by_number(self, mock_err):
+        mock_err.return_value = 0.02
+        val1 = Value(100, 0.5)
+        val2 = 5.0
+        val3 = val1 / val2
+        self.assertIsInstance(val3, Value)
+        self.assertEqual(val3._value, 20)
+        self.assertEqual(val3._error, 0.4)
+
+
+    @patch("inferi.values.Value.relative_error")
+    def test_can_divide_number_by_value(self, mock_err):
+        mock_err.return_value = 0.03
+        val1 = 100
+        val2 = Value(5, 0.4)
+        val3 = val1 / val2
+        self.assertIsInstance(val3, Value)
+        self.assertEqual(val3._value, 20)
+        self.assertEqual(val3._error, 0.6)
+
+
+
 class ValueValueTests(TestCase):
 
     def test_can_get_value(self):
