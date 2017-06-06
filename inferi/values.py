@@ -6,6 +6,19 @@ class Value:
 
     For example a value of 23 ± 0.2 would be ``Value(23, 0.2)``
 
+    Values mostly support the same operators that numbers do - you can add them,
+    divide them, raise them to powers, compare them etc. There are a few
+    important differences however. Firstly, the error values of the resultant
+    operations will be derived from the standard guidelines for combining
+    uncertainties. That is, adding two values will sum their errors, as will
+    subtracting. Multiplying and dividing values will sum the relative errors.
+    Secondly, comparing two values with ``==``, ``<`` etc. will compare the
+    values only - the error values will not be taken into account. I thought it
+    would be too confusing otherwise. However, all values have a
+    :py:methh:`.consistent_with` method which `will` look at the error values.
+    If two values are consistent, then one should not be considered larger than
+    the other, regardless of what ``>`` says.
+
     :param value: The value.
     :param error: The uncertainty associated with the value. By default this is\
     zero.
