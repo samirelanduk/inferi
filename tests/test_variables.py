@@ -1,8 +1,25 @@
 from collections import Counter
 from unittest import TestCase
 from unittest.mock import Mock, patch
-from inferi.variables import Variable
+from inferi.variables import Variable, to_value
+from inferi.values import Value
 from inferi.exceptions import EmptyVariableError
+
+class ValueCreationTests(TestCase):
+
+    def test_can_convert_number_to_value(self):
+        val = to_value(100.4)
+        self.assertIsInstance(val, Value)
+        self.assertEqual(val._value, 100.4)
+        self.assertEqual(val._error, 0)
+
+
+    def test_can_ignore_non_numbers(self):
+        s = "100.4"
+        val = to_value("100.4")
+        self.assertIs(val, s)
+
+
 
 class VariableCreationTests(TestCase):
 

@@ -2,6 +2,7 @@
 
 from collections import Counter
 from math import sqrt
+from .values import Value
 from .exceptions import EmptyVariableError
 
 class Variable:
@@ -227,7 +228,7 @@ class Variable:
         :param value: The value who's z-score you want to know.
         :param bool population: If ``True``, the population deviation will be\
         used (default is ``False``)."""
-        
+
         return (value - self.mean()) / self.st_dev(population=population)
 
 
@@ -272,3 +273,19 @@ class Variable:
         covariance = self.covariance_with(variable)
         sd_product = self.st_dev() * variable.st_dev()
         return covariance / sd_product
+
+
+
+
+def to_value(value):
+    """Tries to convert some value to an actual :py:class:`.Value` object, and
+    if it can't because it is the wrong type, it just sends the object back
+    unaltered.
+
+    :param value: The value to convert.
+    :returns: Either the converted :py:class:`.value` or the original object."""
+
+    try:
+        return Value(value)
+    except TypeError:
+        return value
