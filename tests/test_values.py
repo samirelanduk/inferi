@@ -226,6 +226,56 @@ class ValueEqualityTests(TestCase):
 
 
 
+class ValueGreaterTests(TestCase):
+
+    def test_value_greater_than_value(self):
+        val1 = Value(19, 0.4)
+        val2 = Value(23, 0.5)
+        self.assertTrue(val2 > val1)
+        self.assertTrue(val1 < val2)
+
+
+    def test_value_greater_than_number(self):
+        val1 = 19
+        val2 = Value(23, 0.5)
+        self.assertTrue(val2 > val1)
+        self.assertTrue(val1 < val2)
+
+
+    def test_number_greater_than_value(self):
+        val1 = Value(19, 0.4)
+        val2 = 23
+        self.assertTrue(val2 > val1)
+        self.assertTrue(val1 < val2)
+
+
+
+class ValueGreaterEqualTests(TestCase):
+
+    def test_value_greater_equal_than_value(self):
+        val1 = Value(19, 0.4)
+        val2 = Value(19, 0.5)
+        val3 = Value(17, 0.5)
+        self.assertTrue(val2 >= val1)
+        self.assertTrue(val1 <= val2)
+        self.assertTrue(val2 >= val3)
+
+
+    def test_value_greater_equal_than_number(self):
+        val1 = 19
+        val2 = Value(19, 0.5)
+        self.assertTrue(val2 >= val1)
+        self.assertTrue(val1 <= val2)
+
+
+    def test_number_greater_equal_than_value(self):
+        val1 = Value(19, 0.4)
+        val2 = 19
+        self.assertTrue(val2 >= val1)
+        self.assertTrue(val1 <= val2)
+
+
+
 class ValueValueTests(TestCase):
 
     def test_can_get_value(self):
