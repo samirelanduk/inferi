@@ -59,6 +59,14 @@ class VariableCreationTests(TestCase):
             Variable(23, 5, 5, name=100)
 
 
+    @patch("inferi.variables.to_value")
+    def test_values_converted(self, mock_to_value):
+        var = Variable(23, 5, "5")
+        mock_to_value.assert_any_call(23)
+        mock_to_value.assert_any_call(5)
+        mock_to_value.assert_any_call("5")
+
+
 
 class VariableReprTests(TestCase):
 

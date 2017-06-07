@@ -32,6 +32,7 @@ class Variable:
                 self._values = list(values)
         else:
             self._values = list(values)
+        self._values = [to_value(val) for val in self._values]
         if not isinstance(name, str):
             raise TypeError("name '{}' is not a str".format(name))
         self._name = name
