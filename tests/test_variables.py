@@ -441,3 +441,45 @@ class VariableCorrelationTests(TestCase):
         var2.st_dev.return_value = 3
         self.assertEqual(var1.correlation_with(var2), 7)
         mock_cov.assert_called_with(var2)
+
+
+
+class VariableAveragingTests(TestCase):
+
+    def setUp(self):
+        self.var1, self.var2, self.var3 = (
+         Mock(Variable), Mock(Variable), Mock(Variable)
+        )
+        self.var1.length.return_value = 4
+        self.var2.length.return_value = 4
+        self.var3.length.return_value = 4
+        self.var1.values.return_value = (4, 23, 19, 100)
+        self.var2.values.return_value = (5, 1, 19.5, 200)
+        self.var3.values.return_value = (12, 6, 18.5, 300)
+        self.variables = [self.var1, self.var2, self.var3]
+        for n, var in enumerate(self.variables, start=1):
+            var.values.return_value = [Value(v, n) for v in var.values()]
+
+
+    def test_averaging_needs_variables(self):
+        with self.assertRaises(TypeError):
+            Variable.average("variable1", "variable2")
+
+
+    def test_average_needs_at_least_one_variable(self):
+        with self.assertRaises(TypeError):
+            Variable.average()
+
+
+    def test_all_variables_must_be_same_length(self):
+        self.var2.length.return_value = 3
+        with self.assertRaises(ValueError):
+            Variable.average(self.var1, self.var2, self.var3)
+
+
+    def test_can_get_average(self):
+        average = Variable.average(self.var1, self.var2, self.var3)
+        self.assertIsInstance(average, Variable)
+        self.assertEqual(average._values, [7, 10, 19, 200])
+        for value in average:
+            self.assertEqual(value.error(), 2)

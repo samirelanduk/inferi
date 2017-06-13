@@ -276,6 +276,28 @@ class Variable:
         return covariance / sd_product
 
 
+    @staticmethod
+    def average(*variables):
+        """This is a static method which averages one or more Variables. The
+        Variables must be of equal length.
+
+        :param \*variables: One or more Variables.
+        :raises TypeError: if non-Variables are given.
+        :raises TypeError: if zero Variables are given.
+        :raises ValueError: if the Variables are not of equal length.
+        :rtype: ``Variable``"""
+
+        for variable in variables:
+            if not isinstance(variable, Variable):
+                raise TypeError("{} is not a Variable".format(variable))
+        if len(variables) < 1:
+            raise TypeError("Need at least one Variable to average.")
+        if len(set([var.length() for var in variables])) != 1:
+            raise ValueError("Cannot average Variables of different lengths")
+        variables = [var.values() for var in variables]
+        return Variable([sum(values) / len(values) for values in zip(*variables)])
+
+
 
 
 def to_value(value):
