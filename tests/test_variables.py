@@ -1,41 +1,33 @@
 from collections import Counter
+from fuzz import Value
 from unittest import TestCase
 from unittest.mock import Mock, patch
-from inferi.variables import Variable, to_value
-from inferi.values import Value
+from inferi.variables import Variable
 from inferi.exceptions import EmptyVariableError
-
-class ValueCreationTests(TestCase):
-
-    def test_can_convert_number_to_value(self):
-        val = to_value(100.4)
-        self.assertIsInstance(val, Value)
-        self.assertEqual(val._value, 100.4)
-        self.assertEqual(val._error, 0)
-
-
-    def test_can_ignore_non_numbers(self):
-        s = "100.4"
-        val = to_value("100.4")
-        self.assertIs(val, s)
-
-
 
 class VariableCreationTests(TestCase):
 
     def test_variable_creation_with_values(self):
         var = Variable(23, 5, 5)
-        self.assertEqual(var._values, [23, 5, 5])
+        self.assertEqual(var._values, [Value(23), Value(5), Value(5)])
         self.assertEqual(var._name, "")
+
+
+    @patch("fuzz.values.Value.create")
+    def test_value_creation_is_by_alternate_constructor(self, mock_create):
+        Variable(23, 5, 6)
+        mock_create.assert_any_call(23, 0)
+        mock_create.assert_any_call(5, 0)
+        mock_create.assert_any_call(6, 0)
 
 
     def test_can_create_variable_from_iterable(self):
         var = Variable([23, 5, 5])
-        self.assertEqual(var._values, [23, 5, 5])
+        self.assertEqual(var._values, [Value(23), Value(5), Value(5)])
         var = Variable((23, 5, 5))
-        self.assertEqual(var._values, [23, 5, 5])
+        self.assertEqual(var._values, [Value(23), Value(5), Value(5)])
         var = Variable(range(100, 103))
-        self.assertEqual(var._values, [100, 101, 102])
+        self.assertEqual(var._values, [Value(100), Value(101), Value(102)])
 
 
     def test_strings_dont_count_as_iterables(self):
@@ -59,12 +51,26 @@ class VariableCreationTests(TestCase):
             Variable(23, 5, 5, name=100)
 
 
-    @patch("inferi.variables.to_value")
-    def test_values_converted(self, mock_to_value):
-        var = Variable(23, 5, "5")
-        mock_to_value.assert_any_call(23)
-        mock_to_value.assert_any_call(5)
-        mock_to_value.assert_any_call("5")
+    def test_can_create_variable_with_error(self):
+        var = Variable(23, 5, 5, error=[2, 1, 0.4])
+        self.assertEqual(var[0].value(), 23)
+        self.assertEqual(var[0].error(), 2)
+        self.assertEqual(var[1].value(), 5)
+        self.assertEqual(var[1].error(), 1)
+        self.assertEqual(var[2].value(), 5)
+        self.assertEqual(var[2].error(), 0.4)
+
+
+    def test_error_must_be_iterable(self):
+        Variable(23, 5, 5, error=[2, 1, 0.4])
+        Variable(23, 5, 5, error=(2, 1, 0.4))
+        with self.assertRaises(TypeError):
+            Variable(23, 5, 5, error=100)
+
+
+    def test_error_must_be_same_length_as_values(self):
+        with self.assertRaises(ValueError):
+            Variable(23, 5, 5, error=[100])
 
 
 
@@ -481,5 +487,16 @@ class VariableAveragingTests(TestCase):
         average = Variable.average(self.var1, self.var2, self.var3)
         self.assertIsInstance(average, Variable)
         self.assertEqual(average._values, [7, 10, 19, 200])
-        for value in average:
-            self.assertEqual(value.error(), 2)
+
+
+    @patch("inferi.variables.Variable.st_dev")
+    def test_can_get_sd_average(self, mock_sd):
+        mock_sd.side_effect = (1, 2, 3, 4)
+        average = Variable.average(self.var1, self.var2, self.var3, sd_err=True)
+        self.assertIsInstance(average, Variable)
+        self.assertEqual(average._values, [7, 10, 19, 200])
+        mock_sd.assert_any_call(population=True)
+        self.assertEqual(avergae._values[0].error(), 1)
+        self.assertEqual(avergae._values[0].error(), 2)
+        self.assertEqual(avergae._values[0].error(), 3)
+        self.assertEqual(avergae._values[0].error(), 4)

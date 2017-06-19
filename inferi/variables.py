@@ -1,8 +1,8 @@
 """Contains the base Variable class."""
 
 from collections import Counter
+from fuzz import Value
 from math import sqrt
-from .values import Value
 from .exceptions import EmptyVariableError
 
 class Variable:
@@ -18,10 +18,14 @@ class Variable:
     and which isn't a string, the values of that iterable will become the values\
     of the Variable.
     :param str name: The name of the Variable.
+    :param error: An iterable of error values to go with the values (optional).
     :raises EmptyVariableError: if no values are given.
-    :raises TypeError: if the name given isn't a string."""
+    :raises TypeError: if the name given isn't a string.
+    :raises TypeError: if error is not iterable.
+    :raises ValueError: if the number of error values does not match number\
+    of values."""
 
-    def __init__(self, *values, name=""):
+    def __init__(self, *values, name="", error=None):
         if len(values) == 0:
             raise EmptyVariableError("Cannot create Variable with no values")
         if len(values) == 1:
@@ -32,7 +36,13 @@ class Variable:
                 self._values = list(values)
         else:
             self._values = list(values)
-        self._values = [to_value(val) for val in self._values]
+        try:
+            error is not None and iter(error)
+        except: raise TypeError("Error {} is not iterable".format(error))
+        if error is not None and len(error) != len(values):
+            raise ValueError("Number of error values does not match values")
+        error = [0] * len(self._values) if not error else error
+        self._values = [Value.create(val, err) for val, err in zip(self._values, error)]
         if not isinstance(name, str):
             raise TypeError("name '{}' is not a str".format(name))
         self._name = name
@@ -277,7 +287,7 @@ class Variable:
 
 
     @staticmethod
-    def average(*variables):
+    def average(*variables, sd_err=False):
         """This is a static method which averages one or more Variables. The
         Variables must be of equal length.
 
@@ -295,20 +305,9 @@ class Variable:
         if len(set([var.length() for var in variables])) != 1:
             raise ValueError("Cannot average Variables of different lengths")
         variables = [var.values() for var in variables]
+        if sd_err:
+            return Variable(
+             [sum(values) / len(values) for values in zip(*variables)],
+             error=[Variable(*vals).st_dev(population=True) for vals in zip(*variables)]
+            )
         return Variable([sum(values) / len(values) for values in zip(*variables)])
-
-
-
-
-def to_value(value):
-    """Tries to convert some value to an actual :py:class:`.Value` object, and
-    if it can't because it is the wrong type, it just sends the object back
-    unaltered.
-
-    :param value: The value to convert.
-    :returns: Either the converted :py:class:`.value` or the original object."""
-
-    try:
-        return Value(value)
-    except TypeError:
-        return value
