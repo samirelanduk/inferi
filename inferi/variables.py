@@ -39,7 +39,7 @@ class Variable:
         try:
             error is not None and iter(error)
         except: raise TypeError("Error {} is not iterable".format(error))
-        if error is not None and len(error) != len(values):
+        if error is not None and len(error) != len(self._values):
             raise ValueError("Number of error values does not match values")
         error = [0] * len(self._values) if not error else error
         self._values = [Value.create(val, err) for val, err in zip(self._values, error)]
@@ -304,10 +304,9 @@ class Variable:
             raise TypeError("Need at least one Variable to average.")
         if len(set([var.length() for var in variables])) != 1:
             raise ValueError("Cannot average Variables of different lengths")
-        variables = [var.values() for var in variables]
+        values = [(sum(values) / len(values)) for values in zip(*variables)]
         if sd_err:
-            return Variable(
-             [sum(values) / len(values) for values in zip(*variables)],
-             error=[Variable(*vals).st_dev(population=True) for vals in zip(*variables)]
-            )
-        return Variable([sum(values) / len(values) for values in zip(*variables)])
+            values = [value.value() for value in values]
+            errors = [Variable(*vals).st_dev(population=True) for vals in zip(*variables)]
+            return Variable(values, error=errors)
+        return Variable(values)
