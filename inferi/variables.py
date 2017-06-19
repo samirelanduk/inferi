@@ -87,6 +87,15 @@ class Variable:
         return self + other
 
 
+    def __sub__(self, other):
+        if isinstance(other, Variable):
+            if len(self) != len(other):
+                raise ValueError("Cannot subtract Variables of different length")
+            return Variable(val - other for val, other in zip(self, other))
+        else:
+            return Variable(val - other for val in self)
+
+
     def values(self):
         """Returns the values in the Variable.
 

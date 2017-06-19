@@ -524,3 +524,29 @@ class VariableAdditionTests(TestCase):
         self.var2.pop()
         with self.assertRaises(ValueError):
             self.var1 + self.var2
+
+
+
+class VariableSubtractionTests(TestCase):
+
+    def setUp(self):
+        self.var1 = Variable(4, 23, 19, 100)
+        self.var2 = Variable(5, 1, 19.5, 200)
+
+
+    def test_can_subtract_variables(self):
+        var = self.var1 - self.var2
+        self.assertIsInstance(var, Variable)
+        self.assertEqual(var.values(), (-1, 22, -0.5, -100))
+
+
+    def test_can_subtract_number_from_variable(self):
+        var = self.var1 - 10
+        self.assertIsInstance(var, Variable)
+        self.assertEqual(var.values(), (-6, 13, 9, 90))
+
+
+    def test_variables_must_be_same_length_to_subtract(self):
+        self.var2.pop()
+        with self.assertRaises(ValueError):
+            self.var1 - self.var2
