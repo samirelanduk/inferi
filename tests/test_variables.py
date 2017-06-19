@@ -492,3 +492,35 @@ class VariableAveragingTests(TestCase):
         self.assertEqual(average._values[1].error(), 2)
         self.assertEqual(average._values[2].error(), 3)
         self.assertEqual(average._values[3].error(), 4)
+
+
+
+class VariableAdditionTests(TestCase):
+
+    def setUp(self):
+        self.var1 = Variable(4, 23, 19, 100)
+        self.var2 = Variable(5, 1, 19.5, 200)
+
+
+    def test_can_add_variables(self):
+        var = self.var1 + self.var2
+        self.assertIsInstance(var, Variable)
+        self.assertEqual(var.values(), (9, 24, 38.5, 300))
+
+
+    def test_can_add_number_to_variable(self):
+        var = self.var1 + 10
+        self.assertIsInstance(var, Variable)
+        self.assertEqual(var.values(), (14, 33, 29, 110))
+
+
+    def test_can_add_variable_to_number(self):
+        var = 10 + self.var1
+        self.assertIsInstance(var, Variable)
+        self.assertEqual(var.values(), (14, 33, 29, 110))
+
+
+    def test_variables_must_be_same_length_to_add(self):
+        self.var2.pop()
+        with self.assertRaises(ValueError):
+            self.var1 + self.var2

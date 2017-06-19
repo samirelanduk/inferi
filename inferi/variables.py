@@ -74,6 +74,19 @@ class Variable:
         self._values[key] = value
 
 
+    def __add__(self, other):
+        if isinstance(other, Variable):
+            if len(self) != len(other):
+                raise ValueError("Cannot add Variables of different length")
+            return Variable(val + other for val, other in zip(self, other))
+        else:
+            return Variable(val + other for val in self)
+
+
+    def __radd__(self, other):
+        return self + other
+
+
     def values(self):
         """Returns the values in the Variable.
 
