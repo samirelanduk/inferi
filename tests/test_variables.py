@@ -1,7 +1,7 @@
 from collections import Counter
-from fuzz import Value
 from unittest import TestCase
 from unittest.mock import Mock, patch
+from fuzz import Value
 from inferi.variables import Variable
 from inferi.exceptions import EmptyVariableError
 
@@ -9,25 +9,18 @@ class VariableCreationTests(TestCase):
 
     def test_variable_creation_with_values(self):
         var = Variable(23, 5, 5)
-        self.assertEqual(var._values, [Value(23), Value(5), Value(5)])
+        self.assertEqual(var._values, [23, 5, 5])
+        self.assertEqual(var._error, [0, 0, 0])
         self.assertEqual(var._name, "")
-
-
-    @patch("fuzz.values.Value.create")
-    def test_value_creation_is_by_alternate_constructor(self, mock_create):
-        Variable(23, 5, 6)
-        mock_create.assert_any_call(23, 0)
-        mock_create.assert_any_call(5, 0)
-        mock_create.assert_any_call(6, 0)
 
 
     def test_can_create_variable_from_iterable(self):
         var = Variable([23, 5, 5])
-        self.assertEqual(var._values, [Value(23), Value(5), Value(5)])
+        self.assertEqual(var._values, [23, 5, 5])
         var = Variable((23, 5, 5))
-        self.assertEqual(var._values, [Value(23), Value(5), Value(5)])
+        self.assertEqual(var._values, [23, 5, 5])
         var = Variable(range(100, 103))
-        self.assertEqual(var._values, [Value(100), Value(101), Value(102)])
+        self.assertEqual(var._values, [100, 101, 102])
 
 
     def test_strings_dont_count_as_iterables(self):
@@ -53,12 +46,8 @@ class VariableCreationTests(TestCase):
 
     def test_can_create_variable_with_error(self):
         var = Variable(23, 5, 5, error=[2, 1, 0.4])
-        self.assertEqual(var[0].value(), 23)
-        self.assertEqual(var[0].error(), 2)
-        self.assertEqual(var[1].value(), 5)
-        self.assertEqual(var[1].error(), 1)
-        self.assertEqual(var[2].value(), 5)
-        self.assertEqual(var[2].error(), 0.4)
+        self.assertEqual(var._values, [23, 5, 5])
+        self.assertEqual(var._error, [2, 1, 0.4])
 
 
     def test_error_must_be_iterable(self):
@@ -71,6 +60,16 @@ class VariableCreationTests(TestCase):
     def test_error_must_be_same_length_as_values(self):
         with self.assertRaises(ValueError):
             Variable(23, 5, 5, error=[100])
+
+
+    def test_errors_must_be_numeric(self):
+        with self.assertRaises(TypeError):
+            Variable(23, 5, 5, error=[2, "1", 0.4])
+
+
+    def test_errors_must_be_positive(self):
+        with self.assertRaises(ValueError):
+            Variable(23, 5, 5, error=[2, -5, 0.4])
 
 
 
@@ -122,6 +121,20 @@ class VariableGetTests(TestCase):
         self.assertEqual(var[2], 15)
 
 
+    def test_get_method(self):
+        var = Variable(23, 5, 15)
+        self.assertEqual(var.get(0), 23)
+        self.assertEqual(var.get(1), 5)
+        self.assertEqual(var.get(2), 15)
+
+
+    def test_get_with_error(self):
+        var = Variable(23, 5, 15, error=[0.2, 0.4, 0.1])
+        self.assertEqual(var.get(0, error=True), Value(23, 0.2))
+        self.assertEqual(var.get(1, error=True), Value(5, 0.4))
+        self.assertEqual(var.get(2, error=True), Value(15, 0.1))
+
+
 
 class VariableSetTests(TestCase):
 
@@ -129,6 +142,47 @@ class VariableSetTests(TestCase):
         var = Variable(23, 5, 15)
         var[1] = 17
         self.assertEqual(var._values, [23, 17, 15])
+
+
+    def test_set_method(self):
+        var = Variable(23, 5, 15)
+        var.set(1, 17)
+        self.assertEqual(var._values, [23, 17, 15])
+
+
+    def test_set_method_with_error(self):
+        var = Variable(23, 5, 15)
+        var.set(1, 17, error=0.9)
+        self.assertEqual(var._values, [23, 17, 15])
+        self.assertEqual(var._error, [0, 0.9, 0])
+
+
+    def test_can_set_value(self):
+        val = Value(17, 0.9)
+        var = Variable(23, 5, 15)
+        var.set(1, val)
+        self.assertEqual(var._values, [23, 17, 15])
+        self.assertEqual(var._error, [0, 0.9, 0])
+
+
+    def test_error_argument_wins(self):
+        val = Value(17, 0.2)
+        var = Variable(23, 5, 15)
+        var.set(1, val, error=0.9)
+        self.assertEqual(var._values, [23, 17, 15])
+        self.assertEqual(var._error, [0, 0.9, 0])
+
+
+    def test_error_must_be_number(self):
+        var = Variable(23, 5, 15)
+        with self.assertRaises(TypeError):
+            var.set(1, 17, error="0.9")
+
+
+    def test_error_must_be_positive(self):
+        var = Variable(23, 5, 15)
+        with self.assertRaises(ValueError):
+            var.set(1, 17, error=-0.5)
 
 
 
@@ -139,6 +193,25 @@ class VariableValuesTests(TestCase):
         self.assertEqual(var.values(), tuple(var._values))
 
 
+    def test_can_get_values_as_fuzz_values(self):
+        var = Variable(23, 5, 15, error=[1, 2, 3])
+        values = var.values(error=True)
+        self.assertEqual(values[0].value(), 23)
+        self.assertEqual(values[1].value(), 5)
+        self.assertEqual(values[2].value(), 15)
+        self.assertEqual(values[0].error(), 1)
+        self.assertEqual(values[1].error(), 2)
+        self.assertEqual(values[2].error(), 3)
+
+
+
+class VariableErrorTests(TestCase):
+
+    def test_can_get_error(self):
+        var = Variable(23, 5, 15, error=[1, 0.8, 2])
+        self.assertEqual(var.error(), tuple(var._error))
+
+
 
 class VariableValueAdditionTests(TestCase):
 
@@ -146,21 +219,57 @@ class VariableValueAdditionTests(TestCase):
         var = Variable(23, 5, 5)
         var.add(17)
         self.assertEqual(var._values, [23, 5, 5, 17])
+        self.assertEqual(var._error, [0, 0, 0, 0])
+
+
+    def test_can_add_value_with_error(self):
+        var = Variable(23, 5, 5)
+        var.add(17, error=0.5)
+        self.assertEqual(var._values, [23, 5, 5, 17])
+        self.assertEqual(var._error, [0, 0, 0, 0.5])
+
+
+    def test_can_add_fuzz_value_with_error(self):
+        var = Variable(23, 5, 5)
+        var.add(Value(17, 0.5))
+        self.assertEqual(var._values, [23, 5, 5, 17])
+        self.assertEqual(var._error, [0, 0, 0, 0.5])
+
+
+    def test_error_argument_wins(self):
+        var = Variable(23, 5, 5)
+        var.add(Value(17, 0.2), error=0.5)
+        self.assertEqual(var._values, [23, 5, 5, 17])
+        self.assertEqual(var._error, [0, 0, 0, 0.5])
+
+
+    def test_error_must_be_number(self):
+        var = Variable(23, 5, 15)
+        with self.assertRaises(TypeError):
+            var.add(17, error="0.9")
+
+
+    def test_error_must_be_positive(self):
+        var = Variable(23, 5, 15)
+        with self.assertRaises(ValueError):
+            var.add(17, error=-0.5)
 
 
 
 class VariableRemovalTests(TestCase):
 
     def test_can_remove_value(self):
-        var = Variable(23, 5, 15)
+        var = Variable(23, 5, 15, error=[1, 2, 3])
         var.remove(5)
         self.assertEqual(var._values, [23, 15])
+        self.assertEqual(var._error, [1, 3])
 
 
     def test_removing_none_existent_values_is_fine(self):
-        var = Variable(23, 5, 15)
+        var = Variable(23, 5, 15, error=[1, 2, 3])
         var.remove(6)
         self.assertEqual(var._values, [23, 5, 15])
+        self.assertEqual(var._error, [1, 2, 3])
 
 
     def test_cannot_remove_last_value(self):
@@ -173,33 +282,44 @@ class VariableRemovalTests(TestCase):
 class VariablePoppingTests(TestCase):
 
     def test_can_pop_last_value(self):
-        var = Variable(23, 5, 15)
+        var = Variable(23, 5, 15, error=[1, 2, 3])
         value = var.pop()
         self.assertEqual(var._values, [23, 5])
+        self.assertEqual(var._error, [1, 2])
         self.assertEqual(value, 15)
 
 
     def test_can_pop_any_index(self):
-        var = Variable(23, 5, 15)
+        var = Variable(23, 5, 15, error=[1, 2, 3])
         value = var.pop(1)
         self.assertEqual(var._values, [23, 15])
+        self.assertEqual(var._error, [1, 3])
         self.assertEqual(value, 5)
 
 
+    def test_can_get_error_with_pop(self):
+        var = Variable(23, 5, 15, error=[1, 2, 3])
+        value = var.pop(1, error=True)
+        self.assertEqual(var._values, [23, 15])
+        self.assertEqual(var._error, [1, 3])
+        self.assertEqual(value.value(), 5)
+        self.assertEqual(value.error(), 2)
+
+
     def test_cannot_pop_last_value(self):
-        var = Variable(23)
+        var = Variable(23, error=[1])
         with self.assertRaises(EmptyVariableError):
             var.pop()
 
 
     def test_cannot_pop_wrong_index(self):
-        var = Variable(23, 5, 15)
+        var = Variable(23, 5, 15, error=[1, 2, 3])
         with self.assertRaises(IndexError):
             var.pop(4)
 
 
     def test_index_must_be_int(self):
-        var = Variable(23, 5, 15)
+        var = Variable(23, 5, 15, error=[1, 2, 3])
         with self.assertRaises(TypeError):
             var.pop(0.5)
 
@@ -242,6 +362,15 @@ class VariableMaxTests(TestCase):
         mock_values.return_value = (23, 5, 5)
         var = Variable(23, 5, 5)
         self.assertEqual(var.max(), 23)
+        mock_values.assert_called_with(error=False)
+
+
+    @patch("inferi.variables.Variable.values")
+    def test_can_get_max_with_error(self, mock_values):
+        mock_values.return_value = (23, 5, 5)
+        var = Variable(23, 5, 5)
+        self.assertEqual(var.max(error=True), 23)
+        mock_values.assert_called_with(error=True)
 
 
 
@@ -251,7 +380,16 @@ class VariableMinTests(TestCase):
     def test_can_get_min(self, mock_values):
         mock_values.return_value = (23, 5, 5)
         var = Variable(23, 5, 5)
-        self.assertEqual(var.min(), 5)
+        self.assertEqual(var.max(), 23)
+        mock_values.assert_called_with(error=False)
+
+
+    @patch("inferi.variables.Variable.values")
+    def test_can_get_min_with_error(self, mock_values):
+        mock_values.return_value = (23, 5, 4)
+        var = Variable(23, 5, 4)
+        self.assertEqual(var.min(error=True), 4)
+        mock_values.assert_called_with(error=True)
 
 
 
@@ -262,6 +400,15 @@ class VariableSumTests(TestCase):
         mock_values.return_value = (100, 345, 32)
         sample = Variable(100, 345, 32)
         self.assertEqual(sample.sum(), 477)
+        mock_values.assert_called_with(error=False)
+
+
+    @patch("inferi.variables.Variable.values")
+    def test_variable_sum_with_error(self, mock_values):
+        mock_values.return_value = (100, 345, 32)
+        sample = Variable(100, 345, 32)
+        self.assertEqual(sample.sum(error=True), 477)
+        mock_values.assert_called_with(error=True)
 
 
 
@@ -274,6 +421,17 @@ class VariableMeanTests(TestCase):
         mock_sum.return_value = 48
         var = Variable(100, 345, 32)
         self.assertEqual(var.mean(), 12)
+        mock_sum.assert_called_with(error=False)
+
+
+    @patch("inferi.variables.Variable.sum")
+    @patch("inferi.variables.Variable.length")
+    def test_variable_mean_with_error(self, mock_length, mock_sum):
+        mock_length.return_value = 4
+        mock_sum.return_value = 48
+        var = Variable(100, 345, 32)
+        self.assertEqual(var.mean(error=True), 12)
+        mock_sum.assert_called_with(error=True)
 
 
 
@@ -284,6 +442,7 @@ class VariableMedianTests(TestCase):
         mock_values.return_value = (100, 345, 32)
         var = Variable(100, 345, 32)
         self.assertEqual(var.median(), 100)
+        mock_values.assert_called_with()
 
 
     @patch("inferi.variables.Variable.values")
@@ -291,6 +450,7 @@ class VariableMedianTests(TestCase):
         mock_values.return_value = (20, 30, 40, 50)
         var = Variable(20, 30, 40, 50)
         self.assertEqual(var.median(), 35)
+        mock_values.assert_called_with()
 
 
 
@@ -303,6 +463,7 @@ class FrequencyTests(TestCase):
         self.assertEqual(
          var.frequencies(), Counter({1: 2, 4: 3, 3: 1, 7: 1, 6: 1})
         )
+        mock_values.assert_called_with()
 
 
 
@@ -331,6 +492,18 @@ class VariableRangeTests(TestCase):
         mock_max.return_value, mock_min.return_value = 7, 1
         var = Variable(1, 4, 7, 3, 1, 6, 4, 4)
         self.assertEqual(var.range(), 6)
+        mock_min.assert_called_with(error=False)
+        mock_max.assert_called_with(error=False)
+
+
+    @patch("inferi.variables.Variable.max")
+    @patch("inferi.variables.Variable.min")
+    def test_can_get_range_with_error(self, mock_min, mock_max):
+        mock_max.return_value, mock_min.return_value = 7, 1
+        var = Variable(1, 4, 7, 3, 1, 6, 4, 4)
+        self.assertEqual(var.range(error=True), 6)
+        mock_min.assert_called_with(error=True)
+        mock_max.assert_called_with(error=True)
 
 
 
@@ -450,12 +623,77 @@ class VariableCorrelationTests(TestCase):
 
 
 
+class VariableAdditionTests(TestCase):
+
+    def setUp(self):
+        self.var1 = Variable(4, 23, error=[1, 4])
+        self.var2 = Variable(5, 1, error=[0.5, 0.2])
+
+
+    def test_can_add_variables(self):
+        var = self.var1 + self.var2
+        self.assertIsInstance(var, Variable)
+        self.assertEqual(var._values, [9, 24])
+        self.assertAlmostEqual(var._error[0], 1.118, delta=0.005)
+        self.assertAlmostEqual(var._error[1], 4.005, delta=0.005)
+
+
+    def test_can_add_number_to_variable(self):
+        var = self.var1 + 10
+        self.assertIsInstance(var, Variable)
+        self.assertEqual(var._values, [14, 33])
+        self.assertEqual(var._error, [1, 4])
+
+
+    def test_can_add_variable_to_number(self):
+        var = 10 + self.var1
+        self.assertIsInstance(var, Variable)
+        self.assertEqual(var._values, [14, 33])
+        self.assertEqual(var._error, [1, 4])
+
+
+    def test_variables_must_be_same_length_to_add(self):
+        self.var2._values.pop()
+        with self.assertRaises(ValueError):
+            self.var1 + self.var2
+
+
+
+class VariableSubtractionTests(TestCase):
+
+    def setUp(self):
+        self.var1 = Variable(4, 23, error=[1, 4])
+        self.var2 = Variable(5, 1, error=[0.5, 0.2])
+
+
+    def test_can_subtract_variables(self):
+        var = self.var1 - self.var2
+        self.assertIsInstance(var, Variable)
+        self.assertEqual(var._values, [-1, 22])
+        self.assertAlmostEqual(var._error[0], 1.118, delta=0.005)
+        self.assertAlmostEqual(var._error[1], 4.005, delta=0.005)
+
+
+    def test_can_subtract_number_from_variable(self):
+        var = self.var1 - 10
+        self.assertIsInstance(var, Variable)
+        self.assertEqual(var._values, [-6, 13])
+        self.assertEqual(var._error, [1, 4])
+
+
+    def test_variables_must_be_same_length_to_subtract(self):
+        self.var2._values.pop()
+        with self.assertRaises(ValueError):
+            self.var1 - self.var2
+
+
+
 class VariableAveragingTests(TestCase):
 
     def setUp(self):
-        self.var1 = Variable(4, 23, 19, 100)
-        self.var2 = Variable(5, 1, 19.5, 200)
-        self.var3 = Variable(12, 6, 18.5, 300)
+        self.var1 = Variable(4, 23, error=[0.2, 2])
+        self.var2 = Variable(5, 1, error=[0.8, 0.1])
+        self.var3 = Variable(12, 6, error=[1.2, 0.9])
         self.variables = [self.var1, self.var2, self.var3]
 
 
@@ -478,75 +716,23 @@ class VariableAveragingTests(TestCase):
     def test_can_get_average(self):
         average = Variable.average(self.var1, self.var2, self.var3)
         self.assertIsInstance(average, Variable)
-        self.assertEqual(average._values, [7, 10, 19, 200])
+        self.assertEqual(average._values, [7, 10])
+        self.assertAlmostEqual(average._error[0], 0.485, delta=0.005)
+        self.assertAlmostEqual(average._error[1], 0.732, delta=0.005)
 
 
     @patch("inferi.variables.Variable.st_dev")
-    def test_can_get_sd_average(self, mock_sd):
-        mock_sd.side_effect = (1, 2, 3, 4)
+    @patch("inferi.variables.Variable.values")
+    def test_can_get_sd_average(self, mock_values, mock_sd):
+        mock_sd.side_effect = (1, 2)
+        mock_values.side_effect = (
+         [Value(4, 0.2), Value(23, 2)],
+         [Value(5, 0.8), Value(1, 0.1)],
+         [Value(12, 1.2), Value(6, 0.9)]
+        )
         average = Variable.average(self.var1, self.var2, self.var3, sd_err=True)
+        mock_values.assert_any_call(error=True)
         self.assertIsInstance(average, Variable)
-        self.assertEqual(average._values, [7, 10, 19, 200])
+        self.assertEqual(average._values, [7, 10])
+        self.assertEqual(average._error, [1, 2])
         mock_sd.assert_any_call(population=True)
-        self.assertEqual(average._values[0].error(), 1)
-        self.assertEqual(average._values[1].error(), 2)
-        self.assertEqual(average._values[2].error(), 3)
-        self.assertEqual(average._values[3].error(), 4)
-
-
-
-class VariableAdditionTests(TestCase):
-
-    def setUp(self):
-        self.var1 = Variable(4, 23, 19, 100)
-        self.var2 = Variable(5, 1, 19.5, 200)
-
-
-    def test_can_add_variables(self):
-        var = self.var1 + self.var2
-        self.assertIsInstance(var, Variable)
-        self.assertEqual(var.values(), (9, 24, 38.5, 300))
-
-
-    def test_can_add_number_to_variable(self):
-        var = self.var1 + 10
-        self.assertIsInstance(var, Variable)
-        self.assertEqual(var.values(), (14, 33, 29, 110))
-
-
-    def test_can_add_variable_to_number(self):
-        var = 10 + self.var1
-        self.assertIsInstance(var, Variable)
-        self.assertEqual(var.values(), (14, 33, 29, 110))
-
-
-    def test_variables_must_be_same_length_to_add(self):
-        self.var2.pop()
-        with self.assertRaises(ValueError):
-            self.var1 + self.var2
-
-
-
-class VariableSubtractionTests(TestCase):
-
-    def setUp(self):
-        self.var1 = Variable(4, 23, 19, 100)
-        self.var2 = Variable(5, 1, 19.5, 200)
-
-
-    def test_can_subtract_variables(self):
-        var = self.var1 - self.var2
-        self.assertIsInstance(var, Variable)
-        self.assertEqual(var.values(), (-1, 22, -0.5, -100))
-
-
-    def test_can_subtract_number_from_variable(self):
-        var = self.var1 - 10
-        self.assertIsInstance(var, Variable)
-        self.assertEqual(var.values(), (-6, 13, 9, 90))
-
-
-    def test_variables_must_be_same_length_to_subtract(self):
-        self.var2.pop()
-        with self.assertRaises(ValueError):
-            self.var1 - self.var2

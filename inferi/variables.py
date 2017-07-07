@@ -23,7 +23,9 @@ class Variable:
     :raises TypeError: if the name given isn't a string.
     :raises TypeError: if error is not iterable.
     :raises ValueError: if the number of error values does not match number\
-    of values."""
+    of values.
+    :raises TypeError: if non-numeric error values are given.
+    :raises ValueError: if negative error values are given."""
 
     def __init__(self, *values, name="", error=None):
         if len(values) == 0:
@@ -41,8 +43,12 @@ class Variable:
         except: raise TypeError("Error {} is not iterable".format(error))
         if error is not None and len(error) != len(self._values):
             raise ValueError("Number of error values does not match values")
-        error = [0] * len(self._values) if not error else error
-        self._values = [Value.create(val, err) for val, err in zip(self._values, error)]
+        for err in error or []:
+            if not isinstance(err, (int, float)) or isinstance(err, bool):
+                raise TypeError("Error {} is not numeric".format(err))
+            if err < 0:
+                raise ValueError("Error {} is negative".format(err))
+        self._error = [0] * len(self._values) if not error else error
         if not isinstance(name, str):
             raise TypeError("name '{}' is not a str".format(name))
         self._name = name
@@ -75,12 +81,15 @@ class Variable:
 
 
     def __add__(self, other):
+        values = [Value(v, e) for v, e in zip(self._values, self._error)]
         if isinstance(other, Variable):
             if len(self) != len(other):
                 raise ValueError("Cannot add Variables of different length")
-            return Variable(val + other for val, other in zip(self, other))
+            other = [Value(v, e) for v, e in zip(other._values, other._error)]
         else:
-            return Variable(val + other for val in self)
+            other = [Value(other) for _ in values]
+        sum_ = [v + o for v, o in zip(values, other)]
+        return Variable([v.value() for v in sum_], error=[v.error() for v in sum_])
 
 
     def __radd__(self, other):
@@ -88,28 +97,96 @@ class Variable:
 
 
     def __sub__(self, other):
+        values = [Value(v, e) for v, e in zip(self._values, self._error)]
         if isinstance(other, Variable):
             if len(self) != len(other):
-                raise ValueError("Cannot subtract Variables of different length")
-            return Variable(val - other for val, other in zip(self, other))
+                raise ValueError("Cannot add Variables of different length")
+            other = [Value(v, e) for v, e in zip(other._values, other._error)]
         else:
-            return Variable(val - other for val in self)
+            other = [Value(other) for _ in values]
+        sum_ = [v - o for v, o in zip(values, other)]
+        return Variable([v.value() for v in sum_], error=[v.error() for v in sum_])
 
 
-    def values(self):
+    def get(self, index, error=False):
+        """Returns the value at a given index. You can choose to have a
+        fuzz ``Value`` object returned with associated error if you so wish.
+
+        :param int index: The index of the value you want.
+        :param bool error: If ``True`` a ``Value`` will be returned with the\
+        relevant uncertainty.
+        :returns: the requested value."""
+
+        if error:
+            return Value(self._values[index], self._error[index])
+        return self._values[index]
+
+
+    def set(self, index, value, error=None):
+        """Updates a value in the Variable and, optionally, its error as well.
+
+        :param int index: The index to update.
+        :param value: The new value. If this is a fuzz ``Value`` object, the\
+        numeric value will be extracted and its uncertainty used as the error\
+        value.
+        :param Number error: The error to be associated with the new value\
+        (default is 0).
+        :raises TypeError: if the error given is not numeric.
+        :raises ValueError: if the error given is negative."""
+
+        if isinstance(value, Value):
+            self._values[index] = value.value()
+            self._error[index] = value.error()
+        self._values[index] = value
+        if error is not None:
+            if not isinstance(error, (int, float)) or isinstance(error, bool):
+                raise TypeError("Error {} is not numeric".format(error))
+            if error < 0:
+                raise ValueError("Error {} is negative".format(error))
+            self._error[index] = error
+
+
+    def values(self, error=True):
         """Returns the values in the Variable.
 
+        :param bool error: if ``True``, the values will be returned as fuzz\
+        ``Value`` objects with associated error.
         :rtype: ``tuple``"""
 
+        if error:
+            return tuple([Value(v, e) for v, e in zip(self._values, self._error)])
         return tuple(self._values)
 
 
-    def add(self, value):
-        """Adds a value to the Variable.
+    def error(self):
+        """Returns the error in the Variable.
 
-        :param value: The value to add."""
+        :rtype: ``tuple``"""
 
+        return tuple(self._error)
+
+
+    def add(self, value, error=None):
+        """Adds a value to the Variable. You can supply an error value too,
+        either with the ``error`` argument or by giving a fuzz ``Value`` as the
+        value. Otherwise the error will be 0.
+
+        :param value: The value to add.
+        :param Number error: The error value to add.
+        :raises TypeError: if the error given is not numeric.
+        :raises ValueError: if the error given is negative."""
+
+        if error is not None:
+            if not isinstance(error, (int, float)) or isinstance(error, bool):
+                raise TypeError("Error {} is not numeric".format(error))
+            if error < 0:
+                raise ValueError("Error {} is negative".format(error))
+        if isinstance(value, Value):
+            error = value.error() if error is None else error
+            value = value.value()
         self._values.append(value)
+        self._error.append(error if error is not None else 0)
+
 
 
     def remove(self, value):
@@ -121,18 +198,25 @@ class Variable:
         if len(self._values) == 1:
             raise EmptyVariableError("Cannot remove last value from Variable")
         if value in self._values:
+            self._error.pop(self._values.index(value))
             self._values.remove(value)
 
 
-    def pop(self, index=-1):
+    def pop(self, index=-1, error=False):
         """Removes and returns the value at a given index - by default the last
         object in the Variable.
 
         :param int index: The index to remove at (default is ``-1``).
-        :raises EmptyVariableError: if you try to pop the only value."""
+        :param bool error: if ``True``, the value will be returned as a fuzz\
+        ``Value`` with associated error.
+        :raises EmptyVariableError: if you try to pop the only value.
+        :returns: the specified value."""
 
         if len(self._values) == 1:
             raise EmptyVariableError("Cannot pop last value from Variable")
+        if error:
+            return Value(self._values.pop(index), self._error.pop(index))
+        self._error.pop(index)
         return self._values.pop(index)
 
 
@@ -159,30 +243,42 @@ class Variable:
         return len(self)
 
 
-    def max(self):
-        """Returns the largest value."""
+    def max(self, error=False):
+        """Returns the largest value.
 
-        return max(self.values())
+        :param bool error: if ``True``, the value will be returned as a fuzz\
+        ``Value`` with associated error."""
 
-
-    def min(self):
-        """Returns the smallest value."""
-
-        return min(self.values())
+        return max(self.values(error=error))
 
 
-    def sum(self):
+    def min(self, error=False):
+        """Returns the smallest value.
+
+        :param bool error: if ``True``, the value will be returned as a fuzz\
+        ``Value`` with associated error."""
+
+        return min(self.values(error=error))
+
+
+    def sum(self, error=False):
         """Returns the sum of the values in the Variable. This will usually be
-        a number but depends on the object types in the Variable."""
+        a number but depends on the object types in the Variable.
 
-        return sum(self)
+        :param bool error: if ``True``, the value will be returned as a fuzz\
+        ``Value`` with associated error."""
+
+        return sum(self.values(error=error))
 
 
-    def mean(self):
+    def mean(self, error=False):
         """Returns the mean of the values - their sum divided by the number of
-        values."""
+        values.
 
-        return self.sum() / self.length()
+        :param bool error: if ``True``, the value will be returned as a fuzz\
+        ``Value`` with associated error."""
+
+        return self.sum(error=error) / self.length()
 
 
     def median(self):
@@ -215,11 +311,14 @@ class Variable:
             return values.most_common()[0][0]
 
 
-    def range(self):
+    def range(self, error=False):
         """Returns the range of the values - the difference between the
-        largest and smallest values."""
+        largest and smallest values.
 
-        return self.max() - self.min()
+        :param bool error: if ``True``, the value will be returned as a fuzz\
+        ``Value`` with associated error."""
+
+        return self.max(error=error) - self.min(error=error)
 
 
     def variance(self, population=False):
@@ -326,9 +425,29 @@ class Variable:
             raise TypeError("Need at least one Variable to average.")
         if len(set([var.length() for var in variables])) != 1:
             raise ValueError("Cannot average Variables of different lengths")
-        values = [(sum(values) / len(values)) for values in zip(*variables)]
+
+
+        variables = [var.values(error=True) for var in variables]
+        sum_ = [sum(values) for values in zip(*variables)]
+        average = [val / len(variables) for val in sum_]
+        values = [val.value() for val in average]
+        error = [val.error() for val in average]
         if sd_err:
+            error = [
+             Variable(*vals).st_dev(population=True) for vals in zip(*variables)
+            ]
+        return Variable(values, error=error)
+
+
+
+
+
+
+
+
+
+
+        '''if sd_err:
             values = [value.value() for value in values]
             errors = [Variable(*vals).st_dev(population=True) for vals in zip(*variables)]
-            return Variable(values, error=errors)
-        return Variable(values)
+            return Variable(values, error=errors)'''
