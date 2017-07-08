@@ -14,6 +14,19 @@ class VariableCreationTests(TestCase):
         self.assertEqual(var._name, "")
 
 
+    def test_variable_creation_with_fuzz_values(self):
+        var = Variable(Value(23, 1), Value(5, 0.2), Value(5, 0.3))
+        self.assertEqual(var._values, [23, 5, 5])
+        self.assertEqual(var._error, [1, 0.2, 0.3])
+        self.assertEqual(var._name, "")
+
+
+    def test_variable_creation_with_mixed_values(self):
+        var = Variable(Value(23, 1), 5, Value(5, 0.3))
+        self.assertEqual(var._values, [23, 5, 5])
+        self.assertEqual(var._error, [1, 0, 0.3])
+
+
     def test_can_create_variable_from_iterable(self):
         var = Variable([23, 5, 5])
         self.assertEqual(var._values, [23, 5, 5])
@@ -70,6 +83,13 @@ class VariableCreationTests(TestCase):
     def test_errors_must_be_positive(self):
         with self.assertRaises(ValueError):
             Variable(23, 5, 5, error=[2, -5, 0.4])
+
+
+    def test_errors_argument_overrides_fuzz_values(self):
+        var = Variable(Value(23, 1), Value(5, 0.2), Value(5, 0.3), error=[2, 1, 0.4])
+        self.assertEqual(var._values, [23, 5, 5])
+        self.assertEqual(var._error, [2, 1, 0.4])
+        self.assertEqual(var._name, "")
 
 
 

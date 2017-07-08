@@ -33,11 +33,20 @@ class Variable:
         if len(values) == 1:
             try:
                 if isinstance(values[0], str): raise TypeError
-                self._values = list(values[0])
+                values = list(values[0])
             except TypeError:
-                self._values = list(values)
+                values = list(values)
         else:
-            self._values = list(values)
+            values = list(values)
+        self._values = []
+        self._error = []
+        for value in values:
+            if isinstance(value, Value):
+                self._values.append(value.value())
+                if not error: self._error.append(value.error())
+            else:
+                self._values.append(value)
+                self._error.append(0)
         try:
             error is not None and iter(error)
         except: raise TypeError("Error {} is not iterable".format(error))
@@ -48,7 +57,7 @@ class Variable:
                 raise TypeError("Error {} is not numeric".format(err))
             if err < 0:
                 raise ValueError("Error {} is negative".format(err))
-        self._error = [0] * len(self._values) if not error else error
+        self._error = self._error if not error else error
         if not isinstance(name, str):
             raise TypeError("name '{}' is not a str".format(name))
         self._name = name
