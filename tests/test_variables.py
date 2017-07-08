@@ -211,6 +211,7 @@ class VariableValuesTests(TestCase):
     def test_can_get_values(self):
         var = Variable(23, 5, 15)
         self.assertEqual(var.values(), tuple(var._values))
+        self.assertIsInstance(var.values()[0], int)
 
 
     def test_can_get_values_as_fuzz_values(self):

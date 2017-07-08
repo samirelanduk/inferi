@@ -155,7 +155,7 @@ class Variable:
             self._error[index] = error
 
 
-    def values(self, error=True):
+    def values(self, error=False):
         """Returns the values in the Variable.
 
         :param bool error: if ``True``, the values will be returned as fuzz\
@@ -435,7 +435,6 @@ class Variable:
         if len(set([var.length() for var in variables])) != 1:
             raise ValueError("Cannot average Variables of different lengths")
 
-
         variables = [var.values(error=True) for var in variables]
         sum_ = [sum(values) for values in zip(*variables)]
         average = [val / len(variables) for val in sum_]
@@ -446,17 +445,3 @@ class Variable:
              Variable(*vals).st_dev(population=True) for vals in zip(*variables)
             ]
         return Variable(values, error=error)
-
-
-
-
-
-
-
-
-
-
-        '''if sd_err:
-            values = [value.value() for value in values]
-            errors = [Variable(*vals).st_dev(population=True) for vals in zip(*variables)]
-            return Variable(values, error=errors)'''
