@@ -1,3 +1,56 @@
+inferi
+=======
+
+inferi is a statistics and data science Python library.
+
+Example
+-------
+
+  >>> import inferi
+  >>> series = inferi.Series(11, 45, 23, 12, 10)
+  >>> series.mean()
+  20.2
+  >>> series.variance()
+  219.7
+
+
+
+
+Installing
+----------
+
+pip
+~~~
+
+inferi can be installed using pip:
+
+``$ pip3 install inferi``
+
+inferi is written for Python 3, and does not support Python 2.
+
+If you get permission errors, try using ``sudo``:
+
+``$ sudo pip3 install inferi``
+
+
+Development
+~~~~~~~~~~~
+
+The repository for inferi, containing the most recent iteration, can be
+found `here <http://github.com/samirelanduk/inferi/>`_. To clone the
+inferi repository directly from there, use:
+
+``$ git clone git://github.com/samirelanduk/inferi.git``
+
+
+Requirements
+~~~~~~~~~~~~
+
+inferi requires the Python library
+`fuzz <https://fuzz.samireland.com/>`_ - pip will install this
+automatically when it installs inferi.
+
+
 Overview
 --------
 
@@ -7,7 +60,7 @@ pure-Python, and has no compiled dependencies.
 Variables
 ~~~~~~~~~
 
-The fundamental unit of inferi data analysis is the :py:class:`.Variable`. It
+The fundamental unit of inferi data analysis is the ``Variable``. It
 represents a set of measurements, such as heights, or favourite colours. It is
 `not` the same as a Python variable - it represents variables in the statistics
 sense of the word.
@@ -39,7 +92,7 @@ Variable, like so:
 
 You must provide an equal number of error values as regular values.
 
-Values can be accessed by indexing or with :py:meth:`~.Variable.get`:
+Values can be accessed by indexing or with ``Variable.get``:
 
   >>> weights.values()
   (12, 19, 11)
@@ -75,8 +128,8 @@ Variables have the basic measures of centrality - mean, median and range.
     >>> heights.mode()
     178
 
-See the full documentation for details on :py:meth:`~.Variable.mean`,
-:py:meth:`~.Variable.median`, and :py:meth:`~.Variable.mode`. Note that if the
+See the full documentation for details on ``Variable.mean``,
+``Variable.mode``. Note that if the
 variable has more than one mode, ``None`` will be returned.
 
 
@@ -108,8 +161,8 @@ call the method:
   >>> heights.st_dev(population=True)
   9.00222194794152
 
-Again, see the full documentation of :py:meth:`~.Variable.range`,
-:py:meth:`~.Variable.variance`, and :py:meth:`~.Variable.st_dev` for
+Again, see the full documentation of ``Variable.range``,
+``Variable.st_dev`` for
 more details.
 
 
@@ -120,7 +173,7 @@ It is often useful to compare how two variables are related - whether there is a
 correlation between them or if they are independent.
 
 A simple way of doing this is to find the covariance between them, using the
-:py:meth:`~.Variable.covariance_with` method:
+``Variable.covariance_with`` method:
 
     >>> variable1 = inferi.Variable(2.1, 2.5, 4.0, 3.6)
     >>> variable2 = inferi.Variable(8, 12, 14, 10)
@@ -134,7 +187,7 @@ closer to zero it is, the more independent the variable are.
 However the actual value of the covariance doesn't tell you much because it
 depends on the magnitude of the values in the variable. The correlation metric
 however, is normalised to be between -1 and 1, so it is easier to quantify how
-related the two variable are. :py:meth:`~.Variable.correlation_with` is used to
+related the two variable are. ``Variable.correlation_with`` is used to
 calculate this:
 
     >>> variable1 = inferi.Variable(2.1, 2.5, 4.0, 3.6)
@@ -160,3 +213,41 @@ Variables can be added, subtracted, and averaged:
 Error values will be retained and combined appropriately across all operations.
 See the `fuzz <https://fuzz.samireland.com/>`_ documentation for details on how
 this is done.
+
+
+Changelog
+---------
+
+Release 0.3.0
+~~~~~~~~~~~~~
+
+`27 August 2017`
+
+* Renamed Series 'Variable'
+
+* Added error handling.
+
+* Added Variable averaging and adding/subtracting.
+
+* Added z-score.
+
+* Generally overhauled everything.
+
+
+Release 0.2.0
+~~~~~~~~~~~~~
+
+`26 March 2017`
+
+* Added option to make a Series a population rather than a sample.
+
+* Added covariance and correlation measures.
+
+Release 0.1.0
+~~~~~~~~~~~~~
+
+`21 March 2017`
+
+* Added basic Series class.
+
+* Added methods for measures of centrality and basic measures of dispersion.

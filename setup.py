@@ -23,5 +23,6 @@ setup(
   "Programming Language :: Python :: 3.6",
  ],
  keywords="statistics probability data-science",
- packages=["inferi"]
+ packages=["inferi"],
+ install_requires=["fuzz"]
 )
