@@ -72,3 +72,43 @@ class Tests(TestCase):
         self.assertEqual(var.get(0), 4)
         self.assertEqual(var.get(0, error=True).error(), 0.8)
         self.assertEqual(var.get(0, error=True).relative_error(), 0.2)
+
+
+    def test_datasets(self):
+        v1 = inferi.Variable("Stannis", "Joffrey", "Renly", "Robb", name="name")
+        v2 = inferi.Variable(
+         1.86, 1.56, 1.79, 1.81, error=[0.1, 0.2, 0.3, 0.4], name="height"
+        )
+        v3 = inferi.Variable(False, True, False, False, name="illegitimate")
+        v4 = inferi.Variable(36, 15, 32, 16, name="age")
+
+        dataset = inferi.Dataset(v1, v2, v3, v4)
+        self.assertEqual(dataset.variables(), (v1, v2, v3, v4))
+        self.assertIs(dataset[0], v1)
+        self.assertIs(dataset[-1], v4)
+
+        v5 = inferi.Variable(1, 2, 1, 4, name="siblings")
+        dataset.add_variable(v5)
+        v6 = inferi.Variable(
+         "Baratheon", "Lannister", "Baratheon", "Start", name="house"
+        )
+        dataset.insert(1, v6)
+        self.assertEqual(dataset.variables(), (v1, v6, v2, v3, v4, v5))
+        dataset.remove_dataset(v3)
+        v = dataset.pop()
+        self.assertIs(v, v5)
+        self.assertEqual(dataset.variables(), (v1, v6, v2, v4))
+
+        dataset.sort()
+        self.assertEqual(v1.values(), ("Joffrey", "Renly", "Robb", "Stannis"))
+        self.assertEqual(v6.values(), ("Lannister", "Baratheon", "Stark", "Baratheon"))
+        self.assertEqual(v2.values(), (1.56, 1.79, 1.81, 1.86))
+        self.assertEqual(v2.error(), (0.2, 0.3, 0.4, 0.1))
+        self.assertEqual(v4.values(), (15, 32, 16, 36))
+
+        dataset.sort(v4)
+        self.assertEqual(v1.values(), ("Joffrey", "Robb", "Renly", "Stannis"))
+        self.assertEqual(v6.values(), ("Lannister", "Stark", "Baratheon", "Baratheon"))
+        self.assertEqual(v2.values(), (1.56, 1.81, 1.79, 1.86))
+        self.assertEqual(v2.error(), (0.2, 0.4, 0.3, 0.1))
+        self.assertEqual(v4.values(), (15, 16, 32, 36))
