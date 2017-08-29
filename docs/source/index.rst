@@ -7,10 +7,10 @@ Example
 -------
 
   >>> import inferi
-  >>> series = inferi.Series(11, 45, 23, 12, 10)
-  >>> series.mean()
+  >>> variable = inferi.Variable(11, 45, 23, 12, 10)
+  >>> variable.mean()
   20.2
-  >>> series.variance()
+  >>> variable.variance()
   219.7
 
 
