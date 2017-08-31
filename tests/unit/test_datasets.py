@@ -36,3 +36,11 @@ class DatasetReprTests(DatasetTest):
     def test_dataset_repr(self):
         dataset = Dataset(*self.variables)
         self.assertEqual(str(dataset), "<Dataset (3 Variables)>")
+
+
+
+class DatasetVariablesTests(DatasetTest):
+
+    def test_can_get_variables(self):
+        dataset = Dataset(*self.variables)
+        self.assertEqual(dataset.variables(), tuple(self.variables))

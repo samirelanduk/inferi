@@ -22,3 +22,11 @@ class Dataset:
 
     def __repr__(self):
         return "<Dataset ({} Variables)>".format(len(self._variables))
+
+
+    def variables(self):
+        """Returns the :py:class:`.Variable` objects in the Dataset.
+
+        :rtype: ``tuple``"""
+
+        return tuple(self._variables)
