@@ -14,3 +14,7 @@ class Dataset:
             if not isinstance(variable, Variable):
                 raise TypeError("{} is not a Variable".format(variable))
         self._variables = list(variables)
+
+
+    def __repr__(self):
+        return "<Dataset ({} Variables)>".format(len(self._variables))
