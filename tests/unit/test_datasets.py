@@ -7,6 +7,8 @@ class DatasetTest(TestCase):
 
     def setUp(self):
         self.variables = [Mock(Variable), Mock(Variable), Mock(Variable)]
+        for var in self.variables:
+            var.length.return_value = 4
 
 
 
@@ -20,6 +22,12 @@ class DatasetCreationTests(DatasetTest):
     def test_dataset_needs_variables(self):
         with self.assertRaises(TypeError):
             Dataset(self.variables[0], "list")
+
+
+    def test_dataset_variables_must_be_equal_length(self):
+        self.variables[0].length.return_value = 3
+        with self.assertRaises(ValueError):
+            Dataset(*self.variables)
 
 
 

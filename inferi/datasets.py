@@ -13,6 +13,10 @@ class Dataset:
         for variable in variables:
             if not isinstance(variable, Variable):
                 raise TypeError("{} is not a Variable".format(variable))
+            if variable.length() != variables[0].length():
+                raise ValueError(
+                 "Can't make Dataset with different-length Variables"
+                )
         self._variables = list(variables)
 
 
