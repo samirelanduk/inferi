@@ -45,7 +45,7 @@ class Dataset:
 
         if not isinstance(variable, Variable):
             raise TypeError("{} is not a Variable".format(variable))
-        if variable.length() != self._variables[0].length():
+        if self._variables and variable.length() != self._variables[0].length():
             raise ValueError(
              "Can't have Dataset with different-length Variables"
             )
@@ -63,7 +63,7 @@ class Dataset:
 
         if not isinstance(variable, Variable):
             raise TypeError("{} is not a Variable".format(variable))
-        if variable.length() != self._variables[0].length():
+        if self._variables and variable.length() != self._variables[0].length():
             raise ValueError(
              "Can't have Dataset with different-length Variables"
             )

@@ -67,6 +67,12 @@ class DatasetVariableAdditionTests(DatasetTest):
         self.assertEqual(dataset._variables, self.variables)
 
 
+    def test_can_add_first_variable(self):
+        dataset = Dataset()
+        dataset.add_variable(self.variables[0])
+        self.assertEqual(dataset._variables, [self.variables[0]])
+
+
     def test_can_only_add_variables(self):
         dataset = Dataset(self.variables[0])
         with self.assertRaises(TypeError):
@@ -90,6 +96,12 @@ class DatasetVariableInsertionTests(DatasetTest):
          dataset._variables,
          [self.variables[0], self.variables[2], self.variables[1]]
         )
+
+
+    def test_can_insert_first_variable(self):
+        dataset = Dataset()
+        dataset.insert_variable(0, self.variables[0])
+        self.assertEqual(dataset._variables, [self.variables[0]])
 
 
     def test_can_only_insert_variables(self):
