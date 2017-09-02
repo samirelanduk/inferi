@@ -92,10 +92,10 @@ class Tests(TestCase):
         v6 = inferi.Variable(
          "Baratheon", "Lannister", "Baratheon", "Start", name="house"
         )
-        dataset.insert(1, v6)
+        dataset.insert_variable(1, v6)
         self.assertEqual(dataset.variables(), (v1, v6, v2, v3, v4, v5))
-        dataset.remove_dataset(v3)
-        v = dataset.pop()
+        dataset.remove_variable(v3)
+        v = dataset.pop_variable()
         self.assertIs(v, v5)
         self.assertEqual(dataset.variables(), (v1, v6, v2, v4))
 

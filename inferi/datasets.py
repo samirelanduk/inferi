@@ -42,11 +42,29 @@ class Dataset:
         :param Variable variable: The Variable to add.
         :raises TypeError: if a non-Variable is given.
         :raises ValueError: if the Variable's length doesn't match."""
-        
+
         if not isinstance(variable, Variable):
             raise TypeError("{} is not a Variable".format(variable))
         if variable.length() != self._variables[0].length():
             raise ValueError(
-             "Can't make Dataset with different-length Variables"
+             "Can't have Dataset with different-length Variables"
             )
         self._variables.append(variable)
+
+
+    def insert_variable(self, index, variable):
+        """Inserts a :py:class:`.Variable` column to the Dataset at the index
+        given..
+
+        :param int index: The location to insert at.
+        :param Variable variable: The Variable to add.
+        :raises TypeError: if a non-Variable is given.
+        :raises ValueError: if the Variable's length doesn't match."""
+
+        if not isinstance(variable, Variable):
+            raise TypeError("{} is not a Variable".format(variable))
+        if variable.length() != self._variables[0].length():
+            raise ValueError(
+             "Can't have Dataset with different-length Variables"
+            )
+        self._variables.insert(index, variable)
