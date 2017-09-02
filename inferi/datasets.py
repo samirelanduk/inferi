@@ -34,3 +34,19 @@ class Dataset:
         :rtype: ``tuple``"""
 
         return tuple(self._variables)
+
+
+    def add_variable(self, variable):
+        """Adds a :py:class:`.Variable` column to the Dataset.
+
+        :param Variable variable: The Variable to add.
+        :raises TypeError: if a non-Variable is given.
+        :raises ValueError: if the Variable's length doesn't match."""
+        
+        if not isinstance(variable, Variable):
+            raise TypeError("{} is not a Variable".format(variable))
+        if variable.length() != self._variables[0].length():
+            raise ValueError(
+             "Can't make Dataset with different-length Variables"
+            )
+        self._variables.append(variable)

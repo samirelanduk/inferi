@@ -54,3 +54,27 @@ class DatasetVariablesTests(DatasetTest):
     def test_can_get_variables(self):
         dataset = Dataset(*self.variables)
         self.assertEqual(dataset.variables(), tuple(self.variables))
+
+
+
+class DatasetVariableAdditionTests(DatasetTest):
+
+    def test_can_add_variable(self):
+        dataset = Dataset(self.variables[0])
+        dataset.add_variable(self.variables[1])
+        self.assertEqual(dataset._variables, self.variables[:2])
+        dataset.add_variable(self.variables[2])
+        self.assertEqual(dataset._variables, self.variables)
+
+
+    def test_can_only_add_variables(self):
+        dataset = Dataset(self.variables[0])
+        with self.assertRaises(TypeError):
+            dataset.add_variable("var")
+
+
+    def test_can_only_add_variables_of_correct_length(self):
+        dataset = Dataset(self.variables[0])
+        self.variables[1].length.return_value = 3
+        with self.assertRaises(ValueError):
+            dataset.add_variable(self.variables[1])
