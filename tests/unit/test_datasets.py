@@ -39,6 +39,16 @@ class DatasetReprTests(DatasetTest):
 
 
 
+class DatasetIndexingTests(DatasetTest):
+
+    def test_dataset_index(self):
+        dataset = Dataset(*self.variables)
+        self.assertIs(dataset[0], self.variables[0])
+        self.assertIs(dataset[1], self.variables[1])
+        self.assertIs(dataset[2], self.variables[2])
+
+
+
 class DatasetVariablesTests(DatasetTest):
 
     def test_can_get_variables(self):

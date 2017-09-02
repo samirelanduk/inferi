@@ -24,6 +24,10 @@ class Dataset:
         return "<Dataset ({} Variables)>".format(len(self._variables))
 
 
+    def __getitem__(self, index):
+        return self._variables[index]
+
+
     def variables(self):
         """Returns the :py:class:`.Variable` objects in the Dataset.
 
