@@ -153,3 +153,50 @@ class DatasetPoppingTests(DatasetTest):
         dataset = Dataset(*self.variables)
         with self.assertRaises(TypeError):
             dataset.pop_variable(0.5)
+
+
+
+class DatasetSortingTests(DatasetTest):
+
+    def setUp(self):
+        DatasetTest.setUp(self)
+        self.variables[0]._values = [2, 6, 4, 1]
+        self.variables[1]._values = [0.7, 0.2, 0.9, -1]
+        self.variables[2]._values = [100, 900, 90, 200]
+        self.variables[0]._error = [0.1, 0.15, 0.12, 0.18]
+        self.variables[1]._error = [0.01, 0.015, 0.012, 0.018]
+        self.variables[2]._error = [10, 15, 12, 18]
+
+
+    def test_can_sort_dataset(self):
+        dataset = Dataset(*self.variables)
+        dataset.sort()
+        self.assertEqual(self.variables[0]._values, [1, 2, 4, 6])
+        self.assertEqual(self.variables[1]._values, [-1, 0.7, 0.9, 0.2])
+        self.assertEqual(self.variables[2]._values, [200, 100, 90, 900])
+        self.assertEqual(self.variables[0]._error, [0.18, 0.1, 0.12, 0.15])
+        self.assertEqual(self.variables[1]._error, [0.018, 0.01, 0.012, 0.015])
+        self.assertEqual(self.variables[2]._error, [18, 10, 12, 15])
+
+
+    def test_can_sort_dataset_by_column(self):
+        dataset = Dataset(*self.variables)
+        dataset.sort(self.variables[2])
+        self.assertEqual(self.variables[0]._values, [4, 2, 1, 6])
+        self.assertEqual(self.variables[1]._values, [0.9, 0.7, -1, 0.2])
+        self.assertEqual(self.variables[2]._values, [90, 100, 200, 900])
+        self.assertEqual(self.variables[0]._error, [0.12, 0.1, 0.18, 0.15])
+        self.assertEqual(self.variables[1]._error, [0.012, 0.01, 0.018, 0.015])
+        self.assertEqual(self.variables[2]._error, [12, 10, 18, 15])
+
+
+    def test_column_must_be_variable(self):
+        dataset = Dataset(*self.variables)
+        with self.assertRaises(TypeError):
+            dataset.sort(0.5)
+
+
+    def test_column_must_be_present(self):
+        dataset = Dataset(*self.variables)
+        with self.assertRaises(ValueError):
+            dataset.sort(Mock(Variable))

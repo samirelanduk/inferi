@@ -90,7 +90,7 @@ class Tests(TestCase):
         v5 = inferi.Variable(1, 2, 1, 4, name="siblings")
         dataset.add_variable(v5)
         v6 = inferi.Variable(
-         "Baratheon", "Lannister", "Baratheon", "Start", name="house"
+         "Baratheon", "Lannister", "Baratheon", "Stark", name="house"
         )
         dataset.insert_variable(1, v6)
         self.assertEqual(dataset.variables(), (v1, v6, v2, v3, v4, v5))

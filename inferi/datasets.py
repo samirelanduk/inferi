@@ -86,3 +86,25 @@ class Dataset:
         :returns: the specified Variable."""
 
         return self._variables.pop(index)
+
+
+    def sort(self, column=None):
+        """Sorts all the Variables in the Dataset by a single column, by
+        default the first one.
+
+        :param Variable column: the Variable to sort by.
+        :raises TypeError: if a non-Variable is given.
+        :raises ValueErrorL if the Variable given isn't in the Dataset."""
+        
+        var = self._variables[0]
+        if column:
+            if not isinstance(column, Variable):
+                raise TypeError("Can't sort by non-Variable {}".format(column))
+            if column not in self._variables:
+                raise ValueError("{} isn't a Variable in {}".format(column, self))
+            var = column
+        indeces = list(range(len(var._values)))
+        indeces.sort(key=var._values.__getitem__)
+        for variable in self._variables:
+            variable._values = list(map(variable._values.__getitem__, indeces))
+            variable._error = list(map(variable._error.__getitem__, indeces))
