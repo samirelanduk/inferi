@@ -115,3 +115,12 @@ class DatasetVariableInsertionTests(DatasetTest):
         self.variables[1].length.return_value = 3
         with self.assertRaises(ValueError):
             dataset.insert_variable(0, self.variables[1])
+
+
+
+class DatasetRemovalTests(DatasetTest):
+
+    def test_can_remove_variable(self):
+        dataset = Dataset(*self.variables[0:2])
+        dataset.remove_variable(self.variables[0])
+        self.assertEqual(dataset._variables, [self.variables[1]])

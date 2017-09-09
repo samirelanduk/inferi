@@ -68,3 +68,11 @@ class Dataset:
              "Can't have Dataset with different-length Variables"
             )
         self._variables.insert(index, variable)
+
+
+    def remove_variable(self, variable):
+        """Removes a :py:class:`.Variable` column from the Dataset.
+
+        :param Variable variable: the Variable to remove."""
+
+        self._variables.remove(variable)
