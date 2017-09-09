@@ -124,3 +124,32 @@ class DatasetRemovalTests(DatasetTest):
         dataset = Dataset(*self.variables[0:2])
         dataset.remove_variable(self.variables[0])
         self.assertEqual(dataset._variables, [self.variables[1]])
+
+
+
+class DatasetPoppingTests(DatasetTest):
+
+    def test_can_pop_last_variable(self):
+        dataset = Dataset(*self.variables)
+        variable = dataset.pop_variable()
+        self.assertEqual(dataset._variables, self.variables[:2])
+        self.assertEqual(variable, self.variables[-1])
+
+
+    def test_can_pop_any_index(self):
+        dataset = Dataset(*self.variables)
+        variable = dataset.pop_variable(0)
+        self.assertEqual(dataset._variables, self.variables[1:])
+        self.assertEqual(variable, self.variables[0])
+
+
+    def test_cannot_pop_wrong_index(self):
+        dataset = Dataset(*self.variables)
+        with self.assertRaises(IndexError):
+            dataset.pop_variable(4)
+
+
+    def test_index_must_be_int(self):
+        dataset = Dataset(*self.variables)
+        with self.assertRaises(TypeError):
+            dataset.pop_variable(0.5)

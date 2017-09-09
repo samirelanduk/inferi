@@ -76,3 +76,13 @@ class Dataset:
         :param Variable variable: the Variable to remove."""
 
         self._variables.remove(variable)
+
+
+    def pop_variable(self, index=-1):
+        """Removes and returns the variable at a given index - by default the
+        last one.
+
+        :param int index: The index to remove at (default is ``-1``).
+        :returns: the specified Variable."""
+
+        return self._variables.pop(index)
