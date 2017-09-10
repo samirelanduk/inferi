@@ -84,8 +84,6 @@ class Tests(TestCase):
 
         dataset = inferi.Dataset(v1, v2, v3, v4)
         self.assertEqual(dataset.variables(), (v1, v2, v3, v4))
-        self.assertIs(dataset[0], v1)
-        self.assertIs(dataset[-1], v4)
 
         v5 = inferi.Variable(1, 2, 1, 4, name="siblings")
         dataset.add_variable(v5)

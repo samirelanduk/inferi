@@ -24,10 +24,6 @@ class Dataset:
         return "<Dataset ({} Variables)>".format(len(self._variables))
 
 
-    def __getitem__(self, index):
-        return self._variables[index]
-
-
     def variables(self):
         """Returns the :py:class:`.Variable` objects in the Dataset.
 
@@ -95,7 +91,7 @@ class Dataset:
         :param Variable column: the Variable to sort by.
         :raises TypeError: if a non-Variable is given.
         :raises ValueErrorL if the Variable given isn't in the Dataset."""
-        
+
         var = self._variables[0]
         if column:
             if not isinstance(column, Variable):
