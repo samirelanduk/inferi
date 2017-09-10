@@ -47,6 +47,16 @@ class DatasetVariablesTests(DatasetTest):
 
 
 
+class DatasetRowsTests(DatasetTest):
+
+    def test_can_get_dataset_rows(self):
+        for index, var in enumerate(self.variables):
+            var.values.return_value = (index * 10 + 5, index * 10 + 7)
+        dataset = Dataset(*self.variables)
+        self.assertEqual(dataset.rows(), ((5, 15, 25), (7, 17, 27)))
+
+
+
 class DatasetVariableAdditionTests(DatasetTest):
 
     def test_can_add_variable(self):
@@ -108,7 +118,7 @@ class DatasetVariableInsertionTests(DatasetTest):
 
 
 
-class DatasetRemovalTests(DatasetTest):
+class DatasetVariableRemovalTests(DatasetTest):
 
     def test_can_remove_variable(self):
         dataset = Dataset(*self.variables[0:2])
@@ -117,7 +127,7 @@ class DatasetRemovalTests(DatasetTest):
 
 
 
-class DatasetPoppingTests(DatasetTest):
+class DatasetVariablePoppingTests(DatasetTest):
 
     def test_can_pop_last_variable(self):
         dataset = Dataset(*self.variables)
@@ -143,6 +153,25 @@ class DatasetPoppingTests(DatasetTest):
         dataset = Dataset(*self.variables)
         with self.assertRaises(TypeError):
             dataset.pop_variable(0.5)
+
+
+
+class DatasetRowAddingTests(DatasetTest):
+
+    def test_can_add_row(self):
+        dataset = Dataset(*self.variables)
+        dataset.add_row([10, 20, 30])
+        self.variables[0].add.assert_called_with(10)
+        self.variables[1].add.assert_called_with(20)
+        self.variables[2].add.assert_called_with(30)
+
+
+    def test_can_only_add_row_of_correct_length(self):
+        dataset = Dataset(*self.variables)
+        with self.assertRaises(ValueError):
+            dataset.add_row([10, 20])
+        with self.assertRaises(ValueError):
+            dataset.add_row([10, 20, 30, 40])
 
 
 

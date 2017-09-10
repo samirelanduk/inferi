@@ -197,7 +197,6 @@ class Variable:
         self._error.append(error if error is not None else 0)
 
 
-
     def remove(self, value):
         """Removes a value from the Variable.
 

@@ -84,6 +84,8 @@ class Tests(TestCase):
 
         dataset = inferi.Dataset(v1, v2, v3, v4)
         self.assertEqual(dataset.variables(), (v1, v2, v3, v4))
+        self.assertEqual(len(dataset.rows()), 4)
+        self.assertEqual(dataset.rows()[0], ("Stannis", 1.86, False, 36))
 
         v5 = inferi.Variable(1, 2, 1, 4, name="siblings")
         dataset.add_variable(v5)
@@ -110,3 +112,8 @@ class Tests(TestCase):
         self.assertEqual(v2.values(), (1.56, 1.81, 1.79, 1.86))
         self.assertEqual(v2.error(), (0.2, 0.4, 0.3, 0.1))
         self.assertEqual(v4.values(), (15, 16, 32, 36))
+
+        dataset.add_row(["Jon", "Snow", 1.79, 15])
+        self.assertEqual(
+         v1.values(), ("Joffrey", "Robb", "Renly", "Stannis", "Jon")
+        )

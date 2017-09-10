@@ -32,6 +32,15 @@ class Dataset:
         return tuple(self._variables)
 
 
+    def rows(self):
+        """Returns the rows of the Dataset.
+
+        :rtype: ``tuple``"""
+
+        columns = [var.values() for var in self._variables]
+        return tuple([values for values in zip(*columns)])
+
+
     def add_variable(self, variable):
         """Adds a :py:class:`.Variable` column to the Dataset.
 
@@ -82,6 +91,19 @@ class Dataset:
         :returns: the specified Variable."""
 
         return self._variables.pop(index)
+
+
+    def add_row(self, row):
+        """Adds a row to the Dataset, updating all the Variables in the process.
+
+        :param list row: A list of values to add.
+        :raises ValueError: if the length of the row does not equal the number\
+        of Variables in the Dataset."""
+        
+        if len(row) != len(self._variables):
+            raise ValueError("Row {} is not the correct length".format(row))
+        for value, variable in zip(row, self._variables):
+            variable.add(value)
 
 
     def sort(self, column=None):
