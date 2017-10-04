@@ -99,7 +99,7 @@ class Dataset:
         :param list row: A list of values to add.
         :raises ValueError: if the length of the row does not equal the number\
         of Variables in the Dataset."""
-        
+
         if len(row) != len(self._variables):
             raise ValueError("Row {} is not the correct length".format(row))
         for value, variable in zip(row, self._variables):
@@ -112,7 +112,7 @@ class Dataset:
 
         :param Variable column: the Variable to sort by.
         :raises TypeError: if a non-Variable is given.
-        :raises ValueErrorL if the Variable given isn't in the Dataset."""
+        :raises ValueError: if the Variable given isn't in the Dataset."""
 
         var = self._variables[0]
         if column:

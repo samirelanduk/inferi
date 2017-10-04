@@ -1,5 +1,6 @@
-``inferi.exceptions`` (Custom exceptions)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+inferi.exceptions
+-----------------
 
 .. automodule:: inferi.exceptions
-    :members:
+	:members:
+	:inherited-members:

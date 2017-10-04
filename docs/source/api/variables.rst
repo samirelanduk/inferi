@@ -1,6 +1,6 @@
-``inferi.variables`` (Variables)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+inferi.variables
+----------------
 
 .. automodule:: inferi.variables
-    :members:
-    :inherited-members:
+	:members:
+	:inherited-members:
