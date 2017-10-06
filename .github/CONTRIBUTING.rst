@@ -155,14 +155,14 @@ would check that the function works but it should not execute
 
     class DistanceTests(TestCase):
 
-    	@patch("calculate_hypotenuse")
-    	def test_can_get_distance_between_points(self, mock_hyp):
-    		point1 = [0, 0]
-    		point2 = [4, 3]
-    		mock_hyp.return_value = 5
-    		distance = distance_between(poin1, point2)
-    		mock_hyp.assert_called_with(point1, point2)
-    		self.assertEqual(distance, 5)
+        @patch("calculate_hypotenuse")
+        def test_can_get_distance_between_points(self, mock_hyp):
+            point1 = [0, 0]
+            point2 = [4, 3]
+            mock_hyp.return_value = 5
+            distance = distance_between(point1, point2)
+            mock_hyp.assert_called_with(point1, point2)
+            self.assertEqual(distance, 5)
 
 The ``calculate_hypoteneuse`` function is patched with a mock object
 here. We set its return value and just ensure that it was called, and
@@ -197,3 +197,24 @@ So in this case, you might just add the line:
 .. code::
 
     self.assertEqual(distance_between([0, 0], [3, 4]), 5)
+
+
+Final Checks
+^^^^^^^^^^^^
+
+All tests should be run before submitting the pull request.
+
+Unit tests are run with:
+
+.. code::
+
+    $ python -m unittest discover tests/unit
+
+
+Integration tests are run with:
+
+.. code::
+
+    $ python -m unittest discover tests/integration
+
+

@@ -4,7 +4,7 @@ Changelog
 Release 0.4.0
 ~~~~~~~~~~~~~
 
-`5 October 2017`
+`6 October 2017`
 
 * Added Dataset class for collating Variables.
 

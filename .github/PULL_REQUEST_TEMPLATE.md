@@ -10,4 +10,5 @@
 - [ ] I have documented any new functions.
 - [ ] I have added unit tests for the new code.
 - [ ] I have added an integration test (if appropriate).
+- [ ] I have run all tests.
 - [ ] I am requesting to merge into the appropriate branch.

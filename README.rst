@@ -7,10 +7,10 @@ Example
 -------
 
   >>> import inferi
-  >>> series = inferi.Series(11, 45, 23, 12, 10)
-  >>> series.mean()
+  >>> variable = inferi.Variable(11, 45, 23, 12, 10)
+  >>> variable.mean()
   20.2
-  >>> series.variance()
+  >>> variable.variance()
   219.7
 
 
@@ -129,7 +129,7 @@ Variables have the basic measures of centrality - mean, median and range.
     178
 
 See the full documentation for details on ``Variable.mean``,
-``Variable.mode``. Note that if the
+``Variable.median``, and ``Variable.mode``. Note that if the
 variable has more than one mode, ``None`` will be returned.
 
 
@@ -162,7 +162,7 @@ call the method:
   9.00222194794152
 
 Again, see the full documentation of ``Variable.range``,
-``Variable.st_dev`` for
+``Variable.variance``, and ``Variable.st_dev`` for
 more details.
 
 
@@ -214,9 +214,61 @@ Error values will be retained and combined appropriately across all operations.
 See the `fuzz <https://fuzz.samireland.com/>`_ documentation for details on how
 this is done.
 
+Datasets
+~~~~~~~~
+
+Usually, more than one thing is measured in an experiment, and so you would have
+more than one variable. For example, you might ask someone's name, their age,
+their height, and whether or not they smoke. Each of these four metrics is a
+variable:
+
+  >>> variable1 = inferi.Variable("Jon", "Sue", "Bob", name="Names")
+  >>> variable2 = inferi.Variable(19, 34, 38, name="Ages")
+  >>> variable3 = inferi.Variable(1.87, 1.67, 1.73, name="Heights")
+  >>> variable4 = inferi.Variable(False, True, True, name="Smokes")
+
+These can be combined into a single ``Dataset`` as follows:
+
+  >>> dataset = inferi.Dataset(variable1, variable2, variable3, variable4)
+  >>> dataset.variables()
+  (<Variable 'Names' ('Jon', 'Sue', 'Bob')>, <Variable 'Ages' (19, 34, 38)>, <Va
+  riable 'Heights' (1.87, 1.67, 1.73)>, <Variable 'Smokes' (False, True, True)>)
+
+A dataset can be thought of as representing a table of data, where each variable
+is a column. This dataset represents a table like this::
+
+    Names Ages Heights Smokes
+    
+    Jon   19   1.87    No
+    Sue   34   1.67    Yes
+    Bob   38   1.73    Yes
+
+You can get the rows of a dataset too:
+
+  >>> dataset.rows()
+  (('Jon', 19, 1.87, False), ('Sue', 34, 1.67, True), ('Bob', 38, 1.73, True))
+
+A Dataset can be sorted, by default by the first column but this can be made
+otherwise:
+
+  >>> dataset.sort()
+  >>> datset.rows()
+  (('Bob', 38, 1.73, True), ('Jon', 19, 1.87, False), ('Sue', 34, 1.67, True))
+  >>> dataset.sort(variable3)
+  >>> dataset.rows()
+  (('Sue', 34, 1.67, True), ('Bob', 38, 1.73, True), ('Jon', 19, 1.87, False))
+
 
 Changelog
 ---------
+
+Release 0.4.0
+~~~~~~~~~~~~~
+
+`6 October 2017`
+
+* Added Dataset class for collating Variables.
+
 
 Release 0.3.0
 ~~~~~~~~~~~~~
