@@ -3,5 +3,5 @@ __version__ = "0.5.0"
 
 from .variables import Variable
 from .datasets import Dataset
-from .combinatorics import permutations, combinations
+from .combinatorics import permutations, combinations, permutate, combine
 from .probability import SampleSpace

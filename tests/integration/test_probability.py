@@ -17,6 +17,23 @@ class Tests(TestCase):
         self.assertEqual(inferi.combinations(6, 3), 20)
         self.assertEqual(inferi.combinations(6, 2), 15)
 
+        # These permutations and combinations can actually be produced
+        options = ["A", "B", "C", "D", "E"]
+        self.assertEqual(set(inferi.permutate(options, 2)), set((
+         ("A", "B"), ("B", "A"), ("A", "C"), ("C", "A"), ("A", "D"),
+         ("D", "A"), ("A", "E"), ("E", "A"), ("B", "C"), ("C", "B"),
+         ("B", "D"), ("D", "B"), ("B", "E"), ("E", "B"), ("C", "D"),
+         ("D", "C"), ("C", "E"), ("E", "C"), ("D", "E"), ("E", "D")
+        )))
+        combinations = tuple(inferi.combine(options, 2))
+        self.assertEqual(len(combinations), 10)
+        for set_ in (
+         set(["A", "B"]), set(["A", "C"]), set(["A", "D"]), set(["A", "E"]),
+         set(["B", "C"]), set(["B", "D"]), set(["B", "E"]), set(["C", "D"]),
+         set(["C", "E"]), set(["D", "E"])
+        ):
+            self.assertIn(set_, combinations)
+
 
     def test_events(self):
         # Rolling a die

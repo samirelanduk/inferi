@@ -52,3 +52,41 @@ class CombinationTests(TestCase):
         with self.assertRaises(ValueError) as e:
             combinations(5, 6)
         self.assertIn("is larger than", str(e.exception))
+
+
+
+class PermutatingTests(TestCase):
+
+    def test_can_permutate_collection(self):
+        self.assertEqual(set(permutate([1, 2])), set(((1, 2), (2, 1))))
+
+
+    def test_can_sub_permutate_collection(self):
+        self.assertEqual(set(permutate([1, 2, 3], 2)), set((
+         (1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2)
+        )))
+
+
+    def test_r_must_not_be_larger_than_n(self):
+        with self.assertRaises(ValueError):
+            permutate([1, 2, 3], 4)
+
+
+
+class CombiningTests(TestCase):
+
+    def test_can_combine_collection(self):
+        self.assertEqual(list(combine([1, 2])), list([set([1, 2])]))
+
+
+    def test_can_sub_combine_collection(self):
+        combinations = list(combine([1, 2, 3], 2))
+        self.assertEqual(len(combinations), 3)
+        self.assertIn(set([1, 2]), combinations)
+        self.assertIn(set([1, 3]), combinations)
+        self.assertIn(set([3, 2]), combinations)
+
+
+    def test_r_must_not_be_larger_than_n(self):
+        with self.assertRaises(ValueError):
+            list(combine([1, 2, 3], 4))
