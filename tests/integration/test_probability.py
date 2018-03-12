@@ -9,3 +9,10 @@ class Tests(TestCase):
 
         # How many ways of arranging three of five objects are there?
         self.assertEqual(inferi.permutations(6, 3), 120)
+
+        # How many combinations of six objects are there?
+        self.assertEqual(inferi.combinations(6), 1)
+        self.assertEqual(inferi.combinations(6, 5), 6)
+        self.assertEqual(inferi.combinations(6, 4), 15)
+        self.assertEqual(inferi.combinations(6, 3), 20)
+        self.assertEqual(inferi.combinations(6, 2), 15)
