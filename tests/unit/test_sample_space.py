@@ -66,3 +66,26 @@ class SampleSpaceChancesOfTests(SampleSpaceTest):
         self.assertEqual(space.chances_of("H"), 0.33)
         self.simple_events[0].outcome.assert_called_with()
         self.simple_events[0].probability.assert_called_with()
+
+
+
+class SampleSpaceExperimentTests(SampleSpaceTest):
+
+    def setUp(self):
+        SampleSpaceTest.setUp(self)
+        self.patch1 = patch("inferi.probability.SampleSpace.outcomes")
+        self.mock_outcomes = self.patch1.start()
+        self.mock_outcomes.return_value = set(["H", "T"])
+
+
+    def tearDown(self):
+        self.patch1.stop()
+
+
+    def test_can_run_statistical_experiment(self):
+        space = SampleSpace("H", "T")
+        results = [space.experiment() for _ in range(100)]
+        self.assertEqual(set(results), set(["H", "T"]))
+        self.assertGreaterEqual(results.count("H"), 35)
+        self.assertGreaterEqual(results.count("T"), 35)
+        self.mock_outcomes.assert_called_with()

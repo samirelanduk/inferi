@@ -46,3 +46,11 @@ class Tests(TestCase):
         self.assertEqual(sample_space.chances_of(1), 1 / 6)
         self.assertEqual(sample_space.chances_of(6), 1 / 6)
         self.assertEqual(sample_space.chances_of(7), 0)
+        for i in range(1000):
+            self.assertIn(sample_space.experiment(), range(1, 7))
+
+        # Unfair die
+
+        # Rolling six die
+
+        # Picking cards

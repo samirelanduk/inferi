@@ -56,7 +56,7 @@ class SampleSpace:
         statistical experiment.
 
         :param outcome: The outcome to test for."""
-        
+
         for e in self._simple_events:
             if e.outcome() == outcome:
                 return e.probability()
@@ -78,3 +78,9 @@ class SampleSpace:
         :rtype: ``set``"""
 
         return set([e.outcome() for e in self._simple_events])
+
+
+    def experiment(self):
+        """Generate an outcome."""
+        
+        return random.sample(self.outcomes(), 1)[0]
