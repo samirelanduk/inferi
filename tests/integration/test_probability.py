@@ -40,3 +40,5 @@ class Tests(TestCase):
         sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6)
         self.assertEqual(len(sample_space.simple_events()), 6)
         self.assertEqual(sample_space.outcomes(), set(range(1, 7)))
+        for event in sample_space.simple_events():
+            self.assertEqual(event.probability(), 1 / 6)

@@ -3,10 +3,18 @@ import random
 class SimpleEvent:
     """A simple event - a single outcome of a statistical experiment.
 
-    :param outcome: The result of this event occuring."""
+    :param outcome: The result of this event occuring.
+    :param float probability: The probability of this event occuring.
+    :raises TypeError: if probability isn't numeric.
+    :raises ValueError: if probability is not between 0 and 1."""
 
-    def __init__(self, outcome):
+    def __init__(self, outcome, probability):
         self._outcome = outcome
+        if not isinstance(probability, (int, float)):
+            raise TypeError("probability {} is not numeric".format(probability))
+        if not 0 <= probability <= 1:
+            raise ValueError("probability {} is invalid".format(probability))
+        self._probability = probability
 
 
     def __repr__(self):
@@ -19,6 +27,12 @@ class SimpleEvent:
         return self._outcome
 
 
+    def probability(self):
+        """The probability of this event occuring."""
+
+        return self._probability
+
+
 
 class SampleSpace:
     """The set of all possible things that can result from a statistical
@@ -27,7 +41,8 @@ class SampleSpace:
     :param \*simple_events: All the possible outcomes."""
 
     def __init__(self, *simple_events):
-        self._simple_events = set([SimpleEvent(e) for e in simple_events])
+        p = 1 / len(simple_events)
+        self._simple_events = set([SimpleEvent(e, p) for e in simple_events])
 
 
     def __repr__(self):
@@ -49,5 +64,5 @@ class SampleSpace:
         produce.
 
         :rtype: ``set``"""
-        
+
         return set([e.outcome() for e in self._simple_events])

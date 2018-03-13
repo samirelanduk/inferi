@@ -7,7 +7,7 @@ class SampleSpaceTest(TestCase):
     def setUp(self):
         self.patch1 = patch("inferi.probability.SimpleEvent")
         self.mock_simple_event = self.patch1.start()
-        self.mock_simple_event.side_effect = lambda o: o
+        self.mock_simple_event.side_effect = lambda o, p: o
 
 
     def tearDown(self):
@@ -20,8 +20,8 @@ class SampleSpaceCreationTests(SampleSpaceTest):
     def test_can_create_sample_space(self):
         space = SampleSpace("H", "T")
         self.assertEqual(space._simple_events, set(["H", "T"]))
-        self.mock_simple_event.assert_any_call("H")
-        self.mock_simple_event.assert_any_call("T")
+        self.mock_simple_event.assert_any_call("H", 0.5)
+        self.mock_simple_event.assert_any_call("T", 0.5)
 
 
 
