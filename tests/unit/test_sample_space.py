@@ -7,7 +7,14 @@ class SampleSpaceTest(TestCase):
     def setUp(self):
         self.patch1 = patch("inferi.probability.SimpleEvent")
         self.mock_simple_event = self.patch1.start()
-        self.mock_simple_event.side_effect = lambda o, p: o
+        self.simple_events = [Mock(), Mock(), Mock()]
+        self.simple_events[0].outcome.return_value = "H"
+        self.simple_events[1].outcome.return_value = "T"
+        self.simple_events[2].outcome.return_value = "S"
+        self.simple_events[0].probability.return_value = 0.33
+        self.simple_events[1].probability.return_value = 0.33
+        self.simple_events[2].probability.return_value = 0.33
+        self.mock_simple_event.side_effect = self.simple_events
 
 
     def tearDown(self):
@@ -19,7 +26,7 @@ class SampleSpaceCreationTests(SampleSpaceTest):
 
     def test_can_create_sample_space(self):
         space = SampleSpace("H", "T")
-        self.assertEqual(space._simple_events, set(["H", "T"]))
+        self.assertEqual(space._simple_events, set(self.simple_events[:2]))
         self.mock_simple_event.assert_any_call("H", 0.5)
         self.mock_simple_event.assert_any_call("T", 0.5)
 
@@ -45,12 +52,17 @@ class SampleSpaceSimpleEvents(SampleSpaceTest):
 class SampleSpaceOutcomesTests(SampleSpaceTest):
 
     def test_can_get_outcomes(self):
-        events = [Mock(), Mock(), Mock()]
-        events[0].outcome.return_value = 11
-        events[1].outcome.return_value = 12
-        events[2].outcome.return_value = 13
-        self.mock_simple_event.side_effect = events
         space = SampleSpace("H", "T", "S")
         outcomes = space.outcomes()
-        for event in events: event.outcome.assert_called_with()
-        self.assertEqual(set(outcomes), set([11, 12, 13]))
+        for event in self.simple_events: event.outcome.assert_called_with()
+        self.assertEqual(set(outcomes), set(["H", "T", "S"]))
+
+
+
+class SampleSpaceChancesOfTests(SampleSpaceTest):
+
+    def test_can_get_chances_of(self):
+        space = SampleSpace("H", "T")
+        self.assertEqual(space.chances_of("H"), 0.33)
+        self.simple_events[0].outcome.assert_called_with()
+        self.simple_events[0].probability.assert_called_with()

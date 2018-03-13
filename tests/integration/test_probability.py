@@ -42,3 +42,7 @@ class Tests(TestCase):
         self.assertEqual(sample_space.outcomes(), set(range(1, 7)))
         for event in sample_space.simple_events():
             self.assertEqual(event.probability(), 1 / 6)
+        self.assertEqual(sample_space.chances_of(0), 0)
+        self.assertEqual(sample_space.chances_of(1), 1 / 6)
+        self.assertEqual(sample_space.chances_of(6), 1 / 6)
+        self.assertEqual(sample_space.chances_of(7), 0)

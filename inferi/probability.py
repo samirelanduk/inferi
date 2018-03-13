@@ -51,6 +51,18 @@ class SampleSpace:
         )
 
 
+    def chances_of(self, outcome):
+        """Returns the probability of the given outcome occuring in a single
+        statistical experiment.
+
+        :param outcome: The outcome to test for."""
+        
+        for e in self._simple_events:
+            if e.outcome() == outcome:
+                return e.probability()
+        return 0
+
+
     def simple_events(self):
         """The set of simple events in this sample space.
 
