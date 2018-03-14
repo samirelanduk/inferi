@@ -17,7 +17,12 @@ class Tests(TestCase):
         self.assertEqual(inferi.combinations(6, 3), 20)
         self.assertEqual(inferi.combinations(6, 2), 15)
 
-        # These permutations and combinations can actually be produced
+        # How many outcomes are there of a three-stage experiment?
+        self.assertEqual(inferi.multiplications(6), 6)
+        self.assertEqual(inferi.multiplications(6, 3), 18)
+        self.assertEqual(inferi.multiplications(6, 6, 3), 108)
+
+        # These permutations and combinations etc. can actually be produced
         options = ["A", "B", "C", "D", "E"]
         self.assertEqual(set(inferi.permutate(options, 2)), set((
          ("A", "B"), ("B", "A"), ("A", "C"), ("C", "A"), ("A", "D"),
@@ -33,6 +38,13 @@ class Tests(TestCase):
          set(["C", "E"]), set(["D", "E"])
         ):
             self.assertIn(set_, combinations)
+        self.assertEqual(tuple(inferi.multiply(options, options)), (
+         ("A", "A"), ("A", "B"), ("A", "C"), ("A", "D"), ("A", "E"),
+         ("B", "A"), ("B", "B"), ("B", "C"), ("B", "D"), ("B", "E"),
+         ("C", "A"), ("C", "B"), ("C", "C"), ("C", "D"), ("C", "E"),
+         ("D", "A"), ("D", "B"), ("D", "C"), ("D", "D"), ("D", "E"),
+         ("E", "A"), ("E", "B"), ("E", "C"), ("E", "D"), ("E", "E")
+        ))
 
 
     def test_events(self):
@@ -62,7 +74,13 @@ class Tests(TestCase):
         outcomes = [sample_space.experiment() for _ in range(1000)]
         self.assertGreaterEqual(outcomes.count(4), 200)
 
-
-        # Rolling six die
+        # Rolling two die
+        dice = [1, 2, 3, 4, 5, 6]
+        sample_space = inferi.SampleSpace(*inferi.multiply(dice, dice))
+        self.assertEqual(len(sample_space.simple_events()), 36)
+        self.assertEqual(sample_space.chances_of((6, 6)), 1 / 36)
 
         # Picking cards
+        cards = inferi.multiply(["H", "D", "S", "C"], range(13))
+        sample_space = inferi.SampleSpace(*cards)
+        self.assertEqual(sample_space.chances_of(("S", 0)), 1 / 52)

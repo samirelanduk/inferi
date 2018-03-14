@@ -55,6 +55,20 @@ class CombinationTests(TestCase):
 
 
 
+class MultiplicationTests(TestCase):
+
+    def test_can_get_multiplications(self):
+        self.assertEqual(multiplications(3), 3)
+        self.assertEqual(multiplications(3, 4), 12)
+        self.assertEqual(multiplications(3, 2, 9), 54)
+
+
+    def test_counts_must_be_int(self):
+        with self.assertRaises(TypeError):
+            multiplications(3.4)
+
+
+
 class PermutatingTests(TestCase):
 
     def test_can_permutate_collection(self):
@@ -90,3 +104,17 @@ class CombiningTests(TestCase):
     def test_r_must_not_be_larger_than_n(self):
         with self.assertRaises(ValueError):
             list(combine([1, 2, 3], 4))
+
+
+
+class MultiplyingTests(TestCase):
+
+    def test_can_multiply_collections(self):
+        self.assertEqual(
+         list(multiply([1, 2], [3, 4])), [(1, 3), (1, 4), (2, 3), (2, 4)]
+        )
+        self.assertEqual(
+         list(multiply([1, 2], ["A", "B"], [True, False])), [
+         (1, "A", True), (1, "A", False), (1, "B", True), (1, "B", False),
+         (2, "A", True), (2, "A", False), (2, "B", True), (2, "B", False)
+        ])

@@ -1,4 +1,6 @@
 from math import factorial
+from functools import reduce
+import operator
 import itertools
 
 def permutations(n, r=None):
@@ -39,6 +41,18 @@ def combinations(n, r=None):
     return factorial(n) / (factorial(r) * factorial(n - r))
 
 
+def multiplications(*counts):
+    """Returns the product of the integers given - useful for calculating the
+    number of simple events in a multi-stage process.
+
+    :raises TypeError: if non-integers are given.
+    :rtype: ``int``"""
+
+    if any(not isinstance(count, int) for count in counts):
+        raise TypeError(f"Multiplication counts must be integers: {counts}")
+    return reduce(operator.mul, counts, 1)
+
+
 def permutate(collection, r=None):
     """Generates all the permutations of a given iterable, of a given length.
 
@@ -73,3 +87,15 @@ def combine(collection, r=None):
     r = n if r is None else r
     for combination in itertools.combinations(collection, r=r):
         yield set(combination)
+
+
+def multiply(*collections):
+    """Generates all the multiplications of some iterables. For example, passing
+    ``["A", "B"]`` and ``["+", "_"]`` would yield ``("A", "+")``,
+    ``("A", "-")``, ``("B", "+")`` and ``("B", "-")``.
+
+    :param \* collections: The iterables to put together.
+    :rtype: ``tuple``"""
+
+    for prod in itertools.product(*collections):
+        yield prod
