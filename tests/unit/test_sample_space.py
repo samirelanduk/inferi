@@ -31,6 +31,51 @@ class SampleSpaceCreationTests(SampleSpaceTest):
         self.mock_simple_event.assert_any_call("T", 0.5)
 
 
+    def test_sample_space_needs_events(self):
+        with self.assertRaises(ValueError):
+            SampleSpace()
+
+
+    def test_can_create_sample_space_with_probabilities(self):
+        space = SampleSpace("H", "T", p={"H": 0.2, "T": 0.8})
+        self.assertEqual(space._simple_events, set(self.simple_events[:2]))
+        self.mock_simple_event.assert_any_call("H", 0.2)
+        self.mock_simple_event.assert_any_call("T", 0.8)
+
+
+    def test_can_create_sample_space_with_missing_probabilities(self):
+        space = SampleSpace("H", "T", p={"H": 0.2})
+        self.assertEqual(space._simple_events, set(self.simple_events[:2]))
+        self.mock_simple_event.assert_any_call("H", 0.2)
+        self.mock_simple_event.assert_any_call("T", 0.8)
+
+
+    def test_can_create_sample_space_with_extra_probabilities(self):
+        space = SampleSpace("H", "T", p={"H": 0.2, "S": 0.45})
+        self.assertEqual(space._simple_events, set(self.simple_events))
+        self.mock_simple_event.assert_any_call("H", 0.2)
+        self.mock_simple_event.assert_any_call("T", 0.35)
+        self.mock_simple_event.assert_any_call("S", 0.45)
+
+
+    def test_can_create_sample_space_with_only_probabilities(self):
+        space = SampleSpace(p={"H": 0.2, "S": 0.8})
+        self.assertEqual(space._simple_events, set(self.simple_events[:2]))
+        self.mock_simple_event.assert_any_call("H", 0.2)
+        self.mock_simple_event.assert_any_call("S", 0.8)
+
+
+    def test_probabilities_cant_add_up_to_more_than_1(self):
+        SampleSpace("T", p={"T": 1})
+        with self.assertRaises(ValueError):
+            SampleSpace(p={"T": 1.1})
+
+
+    def test_probabilities_cant_add_up_to_less_than_1(self):
+        with self.assertRaises(ValueError):
+            SampleSpace("H", "T", p={"H": 0.3, "T": 0.4})
+
+
 
 class SampleSpaceReprTests(SampleSpaceTest):
 
@@ -75,7 +120,14 @@ class SampleSpaceOutcomesTests(SampleSpaceTest):
         space = SampleSpace("H", "T", "S")
         outcomes = space.outcomes()
         for event in self.simple_events: event.outcome.assert_called_with()
-        self.assertEqual(set(outcomes), set(["H", "T", "S"]))
+        self.assertEqual(outcomes, set(["H", "T", "S"]))
+
+
+    def test_can_get_outcomes_with_odds(self):
+        space = SampleSpace("H", "T", "S")
+        outcomes = space.outcomes(p=True)
+        for event in self.simple_events: event.outcome.assert_called_with()
+        self.assertEqual(outcomes, {"H": 0.33, "T": 0.33, "S": 0.33})
 
 
 
@@ -119,7 +171,7 @@ class SampleSpaceExperimentTests(SampleSpaceTest):
         SampleSpaceTest.setUp(self)
         self.patch1 = patch("inferi.probability.SampleSpace.outcomes")
         self.mock_outcomes = self.patch1.start()
-        self.mock_outcomes.return_value = set(["H", "T"])
+        self.mock_outcomes.return_value = {"H": 0.33, "T": 0.33}
 
 
     def tearDown(self):
@@ -132,4 +184,4 @@ class SampleSpaceExperimentTests(SampleSpaceTest):
         self.assertEqual(set(results), set(["H", "T"]))
         self.assertGreaterEqual(results.count("H"), 35)
         self.assertGreaterEqual(results.count("T"), 35)
-        self.mock_outcomes.assert_called_with()
+        self.mock_outcomes.assert_called_with(p=True)

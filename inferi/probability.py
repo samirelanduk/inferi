@@ -38,11 +38,26 @@ class SampleSpace:
     """The set of all possible things that can result from a statistical
     experiment.
 
-    :param \*simple_events: All the possible outcomes."""
+    :param \*simple_events: All the possible outcomes.
+    :param dict p: The probabilities for the supplied outcomes. If not given,\
+    these will be weighted equally.
+    :raises ValueError: if you supply probabilities that don't add up to 1."""
 
-    def __init__(self, *simple_events):
-        p = 1 / len(simple_events)
-        self._simple_events = set([SimpleEvent(e, p) for e in simple_events])
+    def __init__(self, *simple_events, p=None):
+        if not simple_events and not p:
+            raise ValueError("Sample spaces need at least one outcome")
+        if p is None:
+            p_per_event = 1 / len(simple_events)
+            p = {event: p_per_event for event in simple_events}
+        else:
+            unaccounted_events = [e for e in simple_events if e not in p]
+            if unaccounted_events:
+                p_per_event = (1 - sum(p.values())) / len(unaccounted_events)
+                for e in unaccounted_events:
+                    p[e] = p_per_event
+        if round(sum(p.values()), 8) != 1:
+            raise ValueError("Probabilities do not add up to 1: {}".format(p))
+        self._simple_events = set([SimpleEvent(e, p[e]) for e in p])
 
 
     def __repr__(self):
@@ -63,12 +78,13 @@ class SampleSpace:
         return set(self._simple_events)
 
 
-    def outcomes(self):
+    def outcomes(self, p=False):
         """The set of outcomes that the sample space's simple events can
         produce.
 
         :rtype: ``set``"""
 
+        if p: return {e.outcome(): e.probability() for e in self._simple_events}
         return set([e.outcome() for e in self._simple_events])
 
 
@@ -97,4 +113,7 @@ class SampleSpace:
     def experiment(self):
         """Generate an outcome."""
 
-        return random.sample(self.outcomes(), 1)[0]
+        outcomes = self.outcomes(p=True)
+        outcomes = [(o, p) for o, p in outcomes.items()]
+        outcomes, odds = zip(*outcomes)
+        return random.choices(outcomes, weights=odds, k=1)[0]

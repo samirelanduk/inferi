@@ -54,6 +54,14 @@ class Tests(TestCase):
             self.assertIn(sample_space.experiment(), range(1, 7))
 
         # Unfair die
+        sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6, p={4: 0.3})
+        self.assertEqual(len(sample_space.simple_events()), 6)
+        self.assertEqual(sample_space.chances_of(6), 0.7 / 5)
+        self.assertEqual(sample_space.chances_of(5), 0.7 / 5)
+        self.assertEqual(sample_space.chances_of(4), 0.3)
+        outcomes = [sample_space.experiment() for _ in range(1000)]
+        self.assertGreaterEqual(outcomes.count(4), 200)
+
 
         # Rolling six die
 
