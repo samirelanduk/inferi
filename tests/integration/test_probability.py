@@ -67,6 +67,9 @@ class Tests(TestCase):
         event = sample_space.event(2, 5, name="2 or 5")
         self.assertEqual(event.name(), "2 or 5")
         self.assertEqual(event.probability(), 1 / 3)
+        event = sample_space.event(lambda o: o % 2 == 0, name="even")
+        self.assertEqual(event.probability(), 1 / 2)
+        self.assertEqual(len(event.simple_events()), 3)
 
         # Unfair die
         sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6, p={4: 0.3})
@@ -76,12 +79,17 @@ class Tests(TestCase):
         self.assertEqual(sample_space.chances_of(4), 0.3)
         outcomes = [sample_space.experiment() for _ in range(1000)]
         self.assertGreaterEqual(outcomes.count(4), 200)
+        event = sample_space.event(lambda o: o % 2 == 0, name="even")
+        self.assertEqual(event.probability(), 2.9 / 5)
+        self.assertEqual(len(event.simple_events()), 3)
 
         # Rolling two die
         dice = [1, 2, 3, 4, 5, 6]
         sample_space = inferi.SampleSpace(*inferi.multiply(dice, dice))
         self.assertEqual(len(sample_space.simple_events()), 36)
         self.assertEqual(sample_space.chances_of((6, 6)), 1 / 36)
+        event = sample_space.event(lambda o: sum(o) == 10, name="ten")
+        self.assertEqual(event.probability(), 3 / 36)
 
         # Picking cards
         cards = inferi.multiply(["H", "D", "S", "C"], range(13))

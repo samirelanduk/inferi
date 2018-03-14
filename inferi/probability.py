@@ -136,19 +136,32 @@ class SampleSpace:
 
 
     def event(self, *outcomes, name=None):
-        """Returns the :py:class:`.SimpleEvent` corresponding to the outcome\
-        given (or ``None`` if there is no such simple event).
+        """If a single outcome is given, this function will return the
+        :py:class:`.SimpleEvent` corresponding to that outcome.
 
-        :param outcome: The outcome to look for.
-        :rtype: ``SimpleEvent``"""
+        If multiple outcomes are given, the function will return the
+        :py:class:`.Event` corresponding to one of those outcomes occuring.
+
+        If a callable is provided, the function will return the
+        :py:class:`.Event` of all the simple events that return ``True`` when
+        the callable is applied to their outcome.
+
+        :param \*outcomes: The outcome(s) to look for.
+        :param str name: The name to apply if a :py:class:`.Event` is returned.
+        :rtype: ``SimpleEvent`` or ``Event``"""
 
         if len(outcomes) == 1:
-            for event in self._simple_events:
-                if event.outcome() == outcomes[0]:
-                    return event
-        else:
-            simple = [e for e in self._simple_events if e.outcome() in outcomes]
-            return Event(*simple, name=name) if name else Event(*simple)
+            if callable(outcomes[0]):
+                f = outcomes[0]
+                outcomes = [
+                 e.outcome() for e in self._simple_events if f(e.outcome())
+                ]
+            else:
+                for event in self._simple_events:
+                    if event.outcome() == outcomes[0]: return event
+                else: return None
+        simple = [e for e in self._simple_events if e.outcome() in outcomes]
+        return Event(*simple, name=name) if name else Event(*simple)
 
 
     def chances_of(self, outcome):

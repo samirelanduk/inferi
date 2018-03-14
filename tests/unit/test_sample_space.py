@@ -166,6 +166,17 @@ class SampleSpaceEventTests(SampleSpaceTest):
         self.assertEqual(e, "EVENT")
 
 
+    @patch("inferi.probability.Event")
+    def test_can_get_event_with_lambda(self, mock_event):
+        mock_event.return_value = "EVENT"
+        space = SampleSpace("H", "T", "S")
+        e = space.event(lambda o: o in ("T", "S"))
+        args, kwargs = mock_event.call_args_list[0]
+        self.assertEqual(set(args), set(self.simple_events[1:]))
+        self.assertEqual(kwargs, {})
+        self.assertEqual(e, "EVENT")
+
+
 
 class SampleSpaceChancesOfTests(SampleSpaceTest):
 
