@@ -133,15 +133,37 @@ class SampleSpaceOutcomesTests(SampleSpaceTest):
 
 class SampleSpaceEventTests(SampleSpaceTest):
 
-    def test_can_get_event(self):
+    def test_can_get_simple_event(self):
         space = SampleSpace("H", "T", "S")
         self.assertIs(space.event("H"), self.simple_events[0])
         self.assertIs(space.event("S"), self.simple_events[2])
 
 
-    def test_can_return_no_event(self):
+    def test_can_return_no_simple_event(self):
         space = SampleSpace("H", "T", "S")
         self.assertIsNone(space.event("A"))
+
+
+    @patch("inferi.probability.Event")
+    def test_can_get_event_from_multiple_outcomes(self, mock_event):
+        mock_event.return_value = "EVENT"
+        space = SampleSpace("H", "T", "S")
+        e = space.event("H", "T")
+        args, kwargs = mock_event.call_args_list[0]
+        self.assertEqual(set(args), set(self.simple_events[:2]))
+        self.assertEqual(kwargs, {})
+        self.assertEqual(e, "EVENT")
+
+
+    @patch("inferi.probability.Event")
+    def test_can_get_event_with_name(self, mock_event):
+        mock_event.return_value = "EVENT"
+        space = SampleSpace("H", "T", "S")
+        e = space.event("H", "T", name="coin")
+        args, kwargs = mock_event.call_args_list[0]
+        self.assertEqual(set(args), set(self.simple_events[:2]))
+        self.assertEqual(kwargs, {"name": "coin"})
+        self.assertEqual(e, "EVENT")
 
 
 

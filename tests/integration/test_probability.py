@@ -64,6 +64,9 @@ class Tests(TestCase):
         self.assertEqual(sample_space.event(5).outcome(), 5)
         for i in range(1000):
             self.assertIn(sample_space.experiment(), range(1, 7))
+        event = sample_space.event(2, 5, name="2 or 5")
+        self.assertEqual(event.name(), "2 or 5")
+        self.assertEqual(event.probability(), 1 / 3)
 
         # Unfair die
         sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6, p={4: 0.3})

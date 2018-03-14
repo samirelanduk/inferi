@@ -34,23 +34,70 @@ class SimpleEvent:
 
 
 
+class Event:
+    """An occurance that is made up of multiple simple events.
+
+    :param \*simple_events: The :py:class:`.SimpleEvent` objects within this\
+    set.
+    :param str name: The name of the event (default is 'E').
+    :raises TypeError: if non-simple-events are given.
+    :raises TypeError: if the name is not a string."""
+
+    def __init__(self, *simple_events, name="E"):
+        if any(not isinstance(e, SimpleEvent) for e in simple_events):
+            raise TypeError(f"Event needs SimpleEvents: {simple_events}")
+        if not isinstance(name, str):
+            raise TypeError(f"Name {name} is not str")
+        self._simple_events = set(simple_events)
+        self._name = name
+
+
+    def __repr__(self):
+        return f"<Event '{self._name}'>"
+
+
+    def simple_events(self):
+        """The set of simple events in this event.
+
+        :rtype: ``set``"""
+
+        return set(self._simple_events)
+
+
+    def name(self):
+        """Returns the name of the Event.
+
+        :rtype: ``str``"""
+
+        return self._name
+
+
+    def probability(self):
+        """Returns the probability of the event happening.
+
+        :rtype: ``float``"""
+
+        return sum(e.probability() for e in self._simple_events)
+
+
+
 class SampleSpace:
     """The set of all possible things that can result from a statistical
     experiment.
 
-    :param \*simple_events: All the possible outcomes.
+    :param \*outcomes: All the possible outcomes.
     :param dict p: The probabilities for the supplied outcomes. If not given,\
     these will be weighted equally.
     :raises ValueError: if you supply probabilities that don't add up to 1."""
 
-    def __init__(self, *simple_events, p=None):
-        if not simple_events and not p:
+    def __init__(self, *outcomes, p=None):
+        if not outcomes and not p:
             raise ValueError("Sample spaces need at least one outcome")
         if p is None:
-            p_per_event = 1 / len(simple_events)
-            p = {event: p_per_event for event in simple_events}
+            p_per_event = 1 / len(outcomes)
+            p = {event: p_per_event for event in outcomes}
         else:
-            unaccounted_events = [e for e in simple_events if e not in p]
+            unaccounted_events = [e for e in outcomes if e not in p]
             if unaccounted_events:
                 p_per_event = (1 - sum(p.values())) / len(unaccounted_events)
                 for e in unaccounted_events:
@@ -88,16 +135,20 @@ class SampleSpace:
         return set([e.outcome() for e in self._simple_events])
 
 
-    def event(self, outcome):
+    def event(self, *outcomes, name=None):
         """Returns the :py:class:`.SimpleEvent` corresponding to the outcome\
         given (or ``None`` if there is no such simple event).
 
         :param outcome: The outcome to look for.
         :rtype: ``SimpleEvent``"""
 
-        for event in self._simple_events:
-            if event.outcome() == outcome:
-                return event
+        if len(outcomes) == 1:
+            for event in self._simple_events:
+                if event.outcome() == outcomes[0]:
+                    return event
+        else:
+            simple = [e for e in self._simple_events if e.outcome() in outcomes]
+            return Event(*simple, name=name) if name else Event(*simple)
 
 
     def chances_of(self, outcome):
