@@ -202,13 +202,14 @@ class SampleSpaceExperimentTests(SampleSpaceTest):
 
     def setUp(self):
         SampleSpaceTest.setUp(self)
-        self.patch1 = patch("inferi.probability.SampleSpace.outcomes")
-        self.mock_outcomes = self.patch1.start()
+        self.patch2 = patch("inferi.probability.SampleSpace.outcomes")
+        self.mock_outcomes = self.patch2.start()
         self.mock_outcomes.return_value = {"H": 0.33, "T": 0.33}
 
 
     def tearDown(self):
-        self.patch1.stop()
+        self.patch2.stop()
+        SampleSpaceTest.tearDown(self)
 
 
     def test_can_run_statistical_experiment(self):

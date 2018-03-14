@@ -1,6 +1,6 @@
 from unittest import TestCase
 from unittest.mock import Mock, patch
-from inferi.probability import SimpleEvent
+from inferi.probability import SimpleEvent, Event
 
 class SimpleEventCreationTests(TestCase):
 
@@ -44,3 +44,27 @@ class SimpleEventProbabilityTests(TestCase):
     def test_simple_event_probability(self):
         e = SimpleEvent("H", 0.5)
         self.assertEqual(e.probability(), e._probability)
+
+
+
+class SimpleEventMutualExclusivityTests(TestCase):
+
+    def test_simple_events_always_mutually_exclusive(self):
+        e = SimpleEvent("H", 0.5)
+        mock_e = Mock(SimpleEvent)
+        self.assertTrue(e.mutually_exclusive_with(mock_e))
+
+
+    def test_can_check_membership_of_events(self):
+        e = SimpleEvent("H", 0.5)
+        mock_e = Mock(Event)
+        mock_e.simple_events.return_value = set(["a", "b"])
+        self.assertTrue(e.mutually_exclusive_with(mock_e))
+        mock_e.simple_events.return_value = set(["a", "b", e])
+        self.assertFalse(e.mutually_exclusive_with(mock_e))
+
+
+    def test_mutually_exclusive_needs_event(self):
+        e = SimpleEvent("H", 0.5)
+        with self.assertRaises(TypeError):
+            e.mutually_exclusive_with("e")

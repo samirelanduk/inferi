@@ -33,6 +33,21 @@ class SimpleEvent:
         return self._probability
 
 
+    def mutually_exclusive_with(self, event):
+        """Looks at some other event and checks if this event is mutually
+        exclusive with the other event. That is, whether it is impossible for
+        them both to happen in a given statistical experiment.
+
+        :param Event event: the other event to check with.
+        :raises TypeError: if a non-Event is given.
+        :rtype: ``bool``"""
+        
+        if isinstance(event, SimpleEvent): return True
+        if isinstance(event, Event):
+            return False if self in event.simple_events() else True
+        raise TypeError(f"{event} is not an event")
+
+
 
 class Event:
     """An occurance that is made up of multiple simple events.
