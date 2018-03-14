@@ -59,13 +59,37 @@ class SampleSpaceOutcomesTests(SampleSpaceTest):
 
 
 
+class SampleSpaceEventTests(SampleSpaceTest):
+
+    def test_can_get_event(self):
+        space = SampleSpace("H", "T", "S")
+        self.assertIs(space.event("H"), self.simple_events[0])
+        self.assertIs(space.event("S"), self.simple_events[2])
+
+
+    def test_can_return_no_event(self):
+        space = SampleSpace("H", "T", "S")
+        self.assertIsNone(space.event("A"))
+
+
+
 class SampleSpaceChancesOfTests(SampleSpaceTest):
 
-    def test_can_get_chances_of(self):
+    @patch("inferi.probability.SampleSpace.event")
+    def test_can_get_chances_of(self, mock_event):
+        mock_event.return_value = self.simple_events[0]
         space = SampleSpace("H", "T")
         self.assertEqual(space.chances_of("H"), 0.33)
-        self.simple_events[0].outcome.assert_called_with()
+        mock_event.assert_called_with("H")
         self.simple_events[0].probability.assert_called_with()
+
+
+    @patch("inferi.probability.SampleSpace.event")
+    def test_can_get_chances_of_no_event(self, mock_event):
+        mock_event.return_value = None
+        space = SampleSpace("H", "T")
+        self.assertEqual(space.chances_of("H"), 0)
+        mock_event.assert_called_with("H")
 
 
 

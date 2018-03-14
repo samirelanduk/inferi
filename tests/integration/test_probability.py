@@ -46,6 +46,8 @@ class Tests(TestCase):
         self.assertEqual(sample_space.chances_of(1), 1 / 6)
         self.assertEqual(sample_space.chances_of(6), 1 / 6)
         self.assertEqual(sample_space.chances_of(7), 0)
+        self.assertIn(sample_space.event(2), sample_space.simple_events())
+        self.assertEqual(sample_space.event(5).outcome(), 5)
         for i in range(1000):
             self.assertIn(sample_space.experiment(), range(1, 7))
 

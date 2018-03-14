@@ -51,18 +51,6 @@ class SampleSpace:
         )
 
 
-    def chances_of(self, outcome):
-        """Returns the probability of the given outcome occuring in a single
-        statistical experiment.
-
-        :param outcome: The outcome to test for."""
-
-        for e in self._simple_events:
-            if e.outcome() == outcome:
-                return e.probability()
-        return 0
-
-
     def simple_events(self):
         """The set of simple events in this sample space.
 
@@ -80,7 +68,29 @@ class SampleSpace:
         return set([e.outcome() for e in self._simple_events])
 
 
+    def event(self, outcome):
+        """Returns the :py:class:`.SimpleEvent` corresponding to the outcome\
+        given (or ``None`` if there is no such simple event).
+
+        :param outcome: The outcome to look for.
+        :rtype: ``SimpleEvent``"""
+
+        for event in self._simple_events:
+            if event.outcome() == outcome:
+                return event
+
+
+    def chances_of(self, outcome):
+        """Returns the probability of the given outcome occuring in a single
+        statistical experiment.
+
+        :param outcome: The outcome to test for."""
+
+        event = self.event(outcome)
+        return event.probability() if event is not None else 0
+
+
     def experiment(self):
         """Generate an outcome."""
-        
+
         return random.sample(self.outcomes(), 1)[0]
