@@ -51,6 +51,10 @@ class SampleSpace:
         )
 
 
+    def __contains__(self, item):
+        return item in self._simple_events or item in self.outcomes()
+
+
     def simple_events(self):
         """The set of simple events in this sample space.
 

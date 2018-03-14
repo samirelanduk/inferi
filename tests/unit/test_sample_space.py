@@ -40,6 +40,26 @@ class SampleSpaceReprTests(SampleSpaceTest):
 
 
 
+class SampleSpaceContainerTests(SampleSpaceTest):
+
+    def test_can_look_for_simple_events(self):
+        space = SampleSpace("H", "T")
+        self.assertIn(self.simple_events[0], space)
+        self.assertIn(self.simple_events[1], space)
+        self.assertNotIn(self.simple_events[2], space)
+
+
+    @patch("inferi.probability.SampleSpace.outcomes")
+    def test_can_look_for_outcomes(self, mock_outcomes):
+        mock_outcomes.return_value = [1, 2]
+        space = SampleSpace("H", "T")
+        self.assertIn(1, space)
+        self.assertIn(2, space)
+        self.assertNotIn(3, space)
+        mock_outcomes.assert_called_with()
+
+
+
 class SampleSpaceSimpleEvents(SampleSpaceTest):
 
     def test_sample_space_simple_events(self):
