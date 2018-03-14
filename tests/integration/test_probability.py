@@ -68,12 +68,17 @@ class Tests(TestCase):
         self.assertEqual(sample_space.event(5).outcome(), 5)
         for i in range(1000):
             self.assertIn(sample_space.experiment(), range(1, 7))
-        event = sample_space.event(2, 5, name="2 or 5")
-        self.assertEqual(event.name(), "2 or 5")
-        self.assertEqual(event.probability(), 1 / 3)
-        event = sample_space.event(lambda o: o % 2 == 0, name="even")
-        self.assertEqual(event.probability(), 1 / 2)
-        self.assertEqual(len(event.simple_events()), 3)
+        event1 = sample_space.event(2, 5, name="2 or 5")
+        self.assertEqual(event1.name(), "2 or 5")
+        self.assertEqual(event1.probability(), 1 / 3)
+        event2 = sample_space.event(lambda o: o % 2 == 0, name="even")
+        self.assertEqual(event2.probability(), 1 / 2)
+        self.assertEqual(len(event2.simple_events()), 3)
+        self.assertTrue(sample_space.event(1).mutually_exclusive_with(event2))
+        self.assertFalse(sample_space.event(2).mutually_exclusive_with(event2))
+        self.assertTrue(event2.mutually_exclusive_with(sample_space.event(1)))
+        self.assertFalse(event2.mutually_exclusive_with(sample_space.event(2)))
+        self.assertFalse(event1.mutually_exclusive_with(event2))
 
         # Unfair die
         sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6, p={4: 0.3})
@@ -99,3 +104,6 @@ class Tests(TestCase):
         cards = inferi.multiply(["H", "D", "S", "C"], range(13))
         sample_space = inferi.SampleSpace(*cards)
         self.assertEqual(sample_space.chances_of(("S", 0)), 1 / 52)
+        self.assertAlmostEqual(
+         sample_space.event(lambda o: o[0] == "H").probability(), 1 / 4, delta=0.0000001
+        )

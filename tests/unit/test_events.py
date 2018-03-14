@@ -72,3 +72,28 @@ class EventProbabilityTests(EventTest):
         self.assertEqual(event.probability(), 0.99)
         for e in self.simple_events:
             e.probability.assert_called_with()
+
+
+
+class EventMutualExclusivityTests(EventTest):
+
+    def test_event_mutually_exclusive_with_simple_event(self):
+        event = Event(*self.simple_events)
+        self.assertFalse(event.mutually_exclusive_with(self.simple_events[0]))
+        event = Event(*self.simple_events[1:])
+        self.assertTrue(event.mutually_exclusive_with(self.simple_events[0]))
+
+
+    def test_event_mutually_exclusive_with_event(self):
+        event = Event(*self.simple_events[:2])
+        mock_event = Mock(Event)
+        mock_event._simple_events = set(self.simple_events[1:])
+        self.assertFalse(event.mutually_exclusive_with(mock_event))
+        mock_event._simple_events = set(self.simple_events[2:])
+        self.assertTrue(event.mutually_exclusive_with(mock_event))
+
+
+    def test_mutually_exclusive_needs_event(self):
+        event = Event(*self.simple_events)
+        with self.assertRaises(TypeError):
+            event.mutually_exclusive_with("e")
