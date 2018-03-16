@@ -86,7 +86,7 @@ def combine(collection, r=None):
         raise ValueError("r {} is larger than n {}".format(r, n))
     r = n if r is None else r
     for combination in itertools.combinations(collection, r=r):
-        yield set(combination)
+        yield frozenset(combination)
 
 
 def multiply(*collections):

@@ -58,8 +58,12 @@ class Tests(TestCase):
             self.assertEqual(event.probability(), 1 / 6)
         for event1 in sample_space.simple_events():
             for event2 in sample_space.simple_events():
-                self.assertTrue(event1.mutually_exclusive_with(event2))
-                self.assertTrue(event2.mutually_exclusive_with(event1))
+                if event1 is event2:
+                    self.assertFalse(event1.mutually_exclusive_with(event2))
+                    self.assertFalse(event2.mutually_exclusive_with(event1))
+                else:
+                    self.assertTrue(event1.mutually_exclusive_with(event2))
+                    self.assertTrue(event2.mutually_exclusive_with(event1))
         self.assertEqual(sample_space.chances_of(0), 0)
         self.assertEqual(sample_space.chances_of(1), 1 / 6)
         self.assertEqual(sample_space.chances_of(6), 1 / 6)

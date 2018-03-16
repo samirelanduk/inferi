@@ -1,6 +1,6 @@
 from unittest import TestCase
 from unittest.mock import Mock, patch
-from inferi.probability import SampleSpace
+from inferi.probability import SampleSpace, Event
 
 class SampleSpaceTest(TestCase):
 
@@ -24,14 +24,14 @@ class SampleSpaceTest(TestCase):
 
 class SampleSpaceCreationTests(SampleSpaceTest):
 
-    def test_can_create_sample_space(self):
+    def test_can_create_sample_space_from_outcomes(self):
         space = SampleSpace("H", "T")
         self.assertEqual(space._simple_events, set(self.simple_events[:2]))
         self.mock_simple_event.assert_any_call("H", 0.5)
         self.mock_simple_event.assert_any_call("T", 0.5)
 
 
-    def test_sample_space_needs_events(self):
+    def test_sample_space_needs_outcomes(self):
         with self.assertRaises(ValueError):
             SampleSpace()
 
@@ -94,14 +94,18 @@ class SampleSpaceContainerTests(SampleSpaceTest):
         self.assertNotIn(self.simple_events[2], space)
 
 
-    @patch("inferi.probability.SampleSpace.outcomes")
-    def test_can_look_for_outcomes(self, mock_outcomes):
-        mock_outcomes.return_value = [1, 2]
+    def test_can_look_for_events(self):
         space = SampleSpace("H", "T")
-        self.assertIn(1, space)
-        self.assertIn(2, space)
-        self.assertNotIn(3, space)
-        mock_outcomes.assert_called_with()
+        event = Mock(Event)
+        event.simple_events.return_value = set(self.simple_events[:2])
+        self.assertIn(event, space)
+
+
+    def test_can_look_for_outcomes(self):
+        space = SampleSpace("H", "T")
+        self.assertIn("H", space)
+        self.assertIn("T", space)
+        self.assertNotIn("S", space)
 
 
 
@@ -184,8 +188,8 @@ class SampleSpaceChancesOfTests(SampleSpaceTest):
     def test_can_get_chances_of(self, mock_event):
         mock_event.return_value = self.simple_events[0]
         space = SampleSpace("H", "T")
-        self.assertEqual(space.chances_of("H"), 0.33)
-        mock_event.assert_called_with("H")
+        self.assertEqual(space.chances_of("H", 5), 0.33)
+        mock_event.assert_called_with("H", 5)
         self.simple_events[0].probability.assert_called_with()
 
 
@@ -193,8 +197,9 @@ class SampleSpaceChancesOfTests(SampleSpaceTest):
     def test_can_get_chances_of_no_event(self, mock_event):
         mock_event.return_value = None
         space = SampleSpace("H", "T")
-        self.assertEqual(space.chances_of("H"), 0)
-        mock_event.assert_called_with("H")
+        f = lambda a: a
+        self.assertEqual(space.chances_of(f), 0)
+        mock_event.assert_called_with(f)
 
 
 

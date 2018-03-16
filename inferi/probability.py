@@ -1,74 +1,35 @@
 import random
 
-class SimpleEvent:
-    """A simple event - a single outcome of a statistical experiment.
-
-    :param outcome: The result of this event occuring.
-    :param float probability: The probability of this event occuring.
-    :raises TypeError: if probability isn't numeric.
-    :raises ValueError: if probability is not between 0 and 1."""
-
-    def __init__(self, outcome, probability):
-        self._outcome = outcome
-        if not isinstance(probability, (int, float)):
-            raise TypeError("probability {} is not numeric".format(probability))
-        if not 0 <= probability <= 1:
-            raise ValueError("probability {} is invalid".format(probability))
-        self._probability = probability
-
-
-    def __repr__(self):
-        return "<SimpleEvent: {}>".format(self._outcome)
-
-
-    def outcome(self):
-        """The result of this event occuring."""
-
-        return self._outcome
-
-
-    def probability(self):
-        """The probability of this event occuring."""
-
-        return self._probability
-
-
-    def mutually_exclusive_with(self, event):
-        """Looks at some other event and checks if this event is mutually
-        exclusive with the other event. That is, whether it is impossible for
-        them both to happen in a given statistical experiment.
-
-        :param Event event: the other event to check with.
-        :raises TypeError: if a non-Event is given.
-        :rtype: ``bool``"""
-
-        if isinstance(event, SimpleEvent): return True
-        if isinstance(event, Event):
-            return False if self in event.simple_events() else True
-        raise TypeError(f"{event} is not an event")
-
-
-
 class Event:
     """An occurance that is made up of multiple simple events.
 
-    :param \*simple_events: The :py:class:`.SimpleEvent` objects within this\
-    set.
+    Events are containers both of their simple events, and the outcomes of those
+    simple events.
+
+    :param \*events: The :py:class:`.Event` objects within this set.
     :param str name: The name of the event (default is 'E').
-    :raises TypeError: if non-simple-events are given.
+    :raises TypeError: if non-events are given.
     :raises TypeError: if the name is not a string."""
 
-    def __init__(self, *simple_events, name="E"):
-        if any(not isinstance(e, SimpleEvent) for e in simple_events):
-            raise TypeError(f"Event needs SimpleEvents: {simple_events}")
+    def __init__(self, *events, name="E"):
+        if any(not isinstance(e, Event) for e in events):
+            raise TypeError(f"{events} contains non-events")
         if not isinstance(name, str):
             raise TypeError(f"Name {name} is not str")
-        self._simple_events = set(simple_events)
+        self._simple_events = set()
+        for event in events: self._simple_events.update(event._simple_events)
         self._name = name
 
 
     def __repr__(self):
-        return f"<Event '{self._name}'>"
+        return f"<{self.__class__.__name__}: {self._name}>"
+
+
+    def __contains__(self, member):
+        if isinstance(member, Event):
+            return member._simple_events.issubset(self._simple_events)
+        for event in self._simple_events:
+            if event._outcome == member: return True
 
 
     def simple_events(self):
@@ -92,7 +53,7 @@ class Event:
 
         :rtype: ``float``"""
 
-        return sum(e.probability() for e in self._simple_events)
+        return sum(event._probability for event in self._simple_events)
 
 
     def mutually_exclusive_with(self, event):
@@ -104,11 +65,36 @@ class Event:
         :raises TypeError: if a non-Event is given.
         :rtype: ``bool``"""
 
-        if isinstance(event, SimpleEvent):
-            return event not in self._simple_events
-        if isinstance(event, Event):
-            return not self._simple_events & event._simple_events
-        raise TypeError(f"{event} is not an event")
+        if not isinstance(event, Event):
+            raise TypeError(f"{event} is not an event")
+        return not self._simple_events & event._simple_events
+
+
+
+class SimpleEvent(Event):
+    """Base class: py:class:`.Event`
+
+    A simple event - a single outcome of a statistical experiment.
+
+    :param outcome: The result of this event occuring.
+    :param float probability: The probability of this event occuring.
+    :raises TypeError: if probability isn't numeric.
+    :raises ValueError: if probability is not between 0 and 1."""
+
+    def __init__(self, outcome, probability):
+        self._outcome = self._name = outcome
+        if not isinstance(probability, (int, float)):
+            raise TypeError("probability {} is not numeric".format(probability))
+        if not 0 <= probability <= 1:
+            raise ValueError("probability {} is invalid".format(probability))
+        self._probability = probability
+        self._simple_events = set((self,))
+
+
+    def outcome(self):
+        """The result of this event occuring."""
+
+        return self._outcome
 
 
 
@@ -134,18 +120,19 @@ class SampleSpace:
                 for e in unaccounted_events:
                     p[e] = p_per_event
         if round(sum(p.values()), 8) != 1:
-            raise ValueError("Probabilities do not add up to 1: {}".format(p))
+            raise ValueError(f"Probabilities do not add up to 1: {p}")
         self._simple_events = set([SimpleEvent(e, p[e]) for e in p])
 
 
     def __repr__(self):
-        return "<SampleSpace ({} simple events)>".format(
-         len(self._simple_events)
-        )
+        return f"<SampleSpace ({len(self._simple_events)} simple events)>"
 
 
     def __contains__(self, item):
-        return item in self._simple_events or item in self.outcomes()
+        for event in self._simple_events:
+            if item is event or item == event.outcome(): return True
+        if isinstance(item, Event):
+            return event._simple_events.issubset(self._simple_events)
 
 
     def simple_events(self):
@@ -195,13 +182,21 @@ class SampleSpace:
         return Event(*simple, name=name) if name else Event(*simple)
 
 
-    def chances_of(self, outcome):
-        """Returns the probability of the given outcome occuring in a single
-        statistical experiment.
+    def chances_of(self, *outcomes):
+        """Returns the probability of the given outcome or outcomes occuring in
+        a single statistical experiment.
 
-        :param outcome: The outcome to test for."""
+        If multiple outcomes are given, the function will return the
+        :py:class:`.Event` corresponding to one of those outcomes occuring.
 
-        event = self.event(outcome)
+        If a callable is provided, the function will return the
+        :py:class:`.Event` of all the simple events that return ``True`` when
+        the callable is applied to their outcome.
+
+        :param \*outcomes: The outcome(s) to look for.
+        :rtype: ``float``"""
+
+        event = self.event(*outcomes)
         return event.probability() if event is not None else 0
 
 
