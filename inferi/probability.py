@@ -32,6 +32,18 @@ class Event:
             if event._outcome == member: return True
 
 
+    def __or__(self, event):
+        if not isinstance(event, Event):
+            raise TypeError(f"{event} is not an Event")
+        return Event(*(self._simple_events | event._simple_events))
+
+
+    def __and__(self, event):
+        if not isinstance(event, Event):
+            raise TypeError(f"{event} is not an Event")
+        return Event(*(self._simple_events & event._simple_events))
+
+
     def simple_events(self):
         """The set of simple events in this event.
 
@@ -68,6 +80,18 @@ class Event:
         if not isinstance(event, Event):
             raise TypeError(f"{event} is not an event")
         return not self._simple_events & event._simple_events
+
+
+    def outcomes(self, p=False):
+        """The set of outcomes that the event's simple events can produce.
+
+        :param bool p: if ``True``, the results will be returned as a dict with
+        probabilities associated.
+
+        :rtype: ``set`` or ``dict``"""
+
+        if p: return {e._outcome: e._probability for e in self._simple_events}
+        return set([e._outcome for e in self._simple_events])
 
 
 
@@ -146,8 +170,11 @@ class SampleSpace:
     def outcomes(self, p=False):
         """The set of outcomes that the sample space's simple events can
         produce.
+        
+        :param bool p: if ``True``, the results will be returned as a dict with
+        probabilities associated.
 
-        :rtype: ``set``"""
+        :rtype: ``set`` or ``dict``"""
 
         if p: return {e.outcome(): e.probability() for e in self._simple_events}
         return set([e.outcome() for e in self._simple_events])

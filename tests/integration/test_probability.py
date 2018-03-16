@@ -83,6 +83,10 @@ class Tests(TestCase):
         self.assertTrue(event2.mutually_exclusive_with(sample_space.event(1)))
         self.assertFalse(event2.mutually_exclusive_with(sample_space.event(2)))
         self.assertFalse(event1.mutually_exclusive_with(event2))
+        combined = event1 | event2
+        self.assertEqual(combined.outcomes(), {2, 4, 5, 6})
+        combined = event1 & event2
+        self.assertEqual(combined.outcomes(), {2})
 
         # Unfair die
         sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6, p={4: 0.3})

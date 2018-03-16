@@ -78,6 +78,48 @@ class EvenntContainerTests(EventTest):
 
 
 
+class EventOrTests(EventTest):
+
+    def test_can_get_event_or(self):
+        event = Event(*self.simple_events[:3])
+        mock_event = Mock(Event)
+        mock_event._simple_events = set(self.simple_events[3:6])
+        new = event | mock_event
+        self.assertEqual(new._simple_events, set(self.simple_events[:6]))
+
+
+    def test_or_needs_event(self):
+        event = Event(*self.simple_events[:3])
+        with self.assertRaises(TypeError):
+            event | "event"
+
+
+
+class EventAndTests(EventTest):
+
+    def test_can_get_event_and(self):
+        event = Event(*self.simple_events[:4])
+        mock_event = Mock(Event)
+        mock_event._simple_events = set(self.simple_events[3:6])
+        new = event & mock_event
+        self.assertEqual(new._simple_events, set(self.simple_events[3:4]))
+
+
+    def test_can_get_empty_event_and(self):
+        event = Event(*self.simple_events[:3])
+        mock_event = Mock(Event)
+        mock_event._simple_events = set(self.simple_events[3:6])
+        new = event & mock_event
+        self.assertEqual(new._simple_events, set())
+
+
+    def test_and_needs_event(self):
+        event = Event(*self.simple_events[:3])
+        with self.assertRaises(TypeError):
+            event | "event"
+
+
+
 class EventSimpleEvents(EventTest):
 
     def test_can_get_event_simple_events(self):
@@ -100,6 +142,22 @@ class EventProbabilityTests(EventTest):
     def test_can_get_event_probability(self):
         event = Event(*self.simple_events)
         self.assertEqual(event.probability(), 50)
+
+
+
+class EventOutcomestests(EventTest):
+
+    def test_can_get_outcomes(self):
+        event = Event(*self.simple_events)
+        outcomes = event.outcomes()
+        self.assertEqual(outcomes, set(range(1, 11)))
+
+
+    def test_can_get_outcomes_with_odds(self):
+        event = Event(*self.simple_events)
+        outcomes = event.outcomes(p=True)
+        self.assertEqual(outcomes, {i: 5 for i in range(1, 11)})
+
 
 
 
