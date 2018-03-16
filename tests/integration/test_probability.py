@@ -87,6 +87,9 @@ class Tests(TestCase):
         self.assertEqual(combined.outcomes(), {2, 4, 5, 6})
         combined = event1 & event2
         self.assertEqual(combined.outcomes(), {2})
+        odd = event2.complement()
+        self.assertEqual(odd.probability(), 0.5)
+        self.assertEqual(odd.outcomes(), {1, 3, 5})
 
         # Unfair die
         sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6, p={4: 0.3})

@@ -11,6 +11,7 @@ class EventTest(TestCase):
             event._simple_events = set([event])
             event._probability = 5
             event._outcome = i
+            event._sample_space = "SPACE"
         for i, event in enumerate(self.events):
             event._simple_events = set(self.simple_events[i * 3: (i + 1) * 3])
 
@@ -120,6 +121,19 @@ class EventAndTests(EventTest):
 
 
 
+class EventComplementTests(EventTest):
+
+    @patch("inferi.probability.Event.sample_space")
+    def test_can_get_event_complement(self, mock_sample_space):
+        space = Mock()
+        mock_sample_space.return_value = space
+        space.simple_events.return_value = set(self.simple_events)
+        event = Event(*self.simple_events[:3])
+        not_ = event.complement()
+        self.assertEqual(not_._simple_events, set(self.simple_events[3:]))
+
+
+
 class EventSimpleEvents(EventTest):
 
     def test_can_get_event_simple_events(self):
@@ -142,6 +156,14 @@ class EventProbabilityTests(EventTest):
     def test_can_get_event_probability(self):
         event = Event(*self.simple_events)
         self.assertEqual(event.probability(), 50)
+
+
+
+class SimpleEventSampleSpaceTests(EventTest):
+
+    def test_event_sample_space(self):
+        event = Event(*self.simple_events)
+        self.assertEqual(event.sample_space(), "SPACE")
 
 
 

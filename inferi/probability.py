@@ -44,6 +44,17 @@ class Event:
         return Event(*(self._simple_events & event._simple_events))
 
 
+    def complement(self):
+        """Returns the complement of the event - the event that this event does
+        not happen.
+
+        :rtype: ``Event``"""
+
+        return Event(
+         *(self.sample_space().simple_events() - self._simple_events)
+        )
+
+
     def simple_events(self):
         """The set of simple events in this event.
 
@@ -66,6 +77,15 @@ class Event:
         :rtype: ``float``"""
 
         return sum(event._probability for event in self._simple_events)
+
+
+    def sample_space(self):
+        """The sample space that event is part of.
+
+        :rtype: ``SampleSpace``"""
+
+        for event in self._simple_events:
+            return event._sample_space
 
 
     def mutually_exclusive_with(self, event):
@@ -105,13 +125,14 @@ class SimpleEvent(Event):
     :raises TypeError: if probability isn't numeric.
     :raises ValueError: if probability is not between 0 and 1."""
 
-    def __init__(self, outcome, probability):
+    def __init__(self, outcome, probability, space):
         self._outcome = self._name = outcome
         if not isinstance(probability, (int, float)):
             raise TypeError("probability {} is not numeric".format(probability))
         if not 0 <= probability <= 1:
             raise ValueError("probability {} is invalid".format(probability))
         self._probability = probability
+        self._sample_space = space
         self._simple_events = set((self,))
 
 
@@ -145,7 +166,7 @@ class SampleSpace:
                     p[e] = p_per_event
         if round(sum(p.values()), 8) != 1:
             raise ValueError(f"Probabilities do not add up to 1: {p}")
-        self._simple_events = set([SimpleEvent(e, p[e]) for e in p])
+        self._simple_events = set([SimpleEvent(e, p[e], self) for e in p])
 
 
     def __repr__(self):
@@ -170,7 +191,7 @@ class SampleSpace:
     def outcomes(self, p=False):
         """The set of outcomes that the sample space's simple events can
         produce.
-        
+
         :param bool p: if ``True``, the results will be returned as a dict with
         probabilities associated.
 

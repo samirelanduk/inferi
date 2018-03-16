@@ -27,8 +27,8 @@ class SampleSpaceCreationTests(SampleSpaceTest):
     def test_can_create_sample_space_from_outcomes(self):
         space = SampleSpace("H", "T")
         self.assertEqual(space._simple_events, set(self.simple_events[:2]))
-        self.mock_simple_event.assert_any_call("H", 0.5)
-        self.mock_simple_event.assert_any_call("T", 0.5)
+        self.mock_simple_event.assert_any_call("H", 0.5, space)
+        self.mock_simple_event.assert_any_call("T", 0.5, space)
 
 
     def test_sample_space_needs_outcomes(self):
@@ -39,30 +39,30 @@ class SampleSpaceCreationTests(SampleSpaceTest):
     def test_can_create_sample_space_with_probabilities(self):
         space = SampleSpace("H", "T", p={"H": 0.2, "T": 0.8})
         self.assertEqual(space._simple_events, set(self.simple_events[:2]))
-        self.mock_simple_event.assert_any_call("H", 0.2)
-        self.mock_simple_event.assert_any_call("T", 0.8)
+        self.mock_simple_event.assert_any_call("H", 0.2, space)
+        self.mock_simple_event.assert_any_call("T", 0.8, space)
 
 
     def test_can_create_sample_space_with_missing_probabilities(self):
         space = SampleSpace("H", "T", p={"H": 0.2})
         self.assertEqual(space._simple_events, set(self.simple_events[:2]))
-        self.mock_simple_event.assert_any_call("H", 0.2)
-        self.mock_simple_event.assert_any_call("T", 0.8)
+        self.mock_simple_event.assert_any_call("H", 0.2, space)
+        self.mock_simple_event.assert_any_call("T", 0.8, space)
 
 
     def test_can_create_sample_space_with_extra_probabilities(self):
         space = SampleSpace("H", "T", p={"H": 0.2, "S": 0.45})
         self.assertEqual(space._simple_events, set(self.simple_events))
-        self.mock_simple_event.assert_any_call("H", 0.2)
-        self.mock_simple_event.assert_any_call("T", 0.35)
-        self.mock_simple_event.assert_any_call("S", 0.45)
+        self.mock_simple_event.assert_any_call("H", 0.2, space)
+        self.mock_simple_event.assert_any_call("T", 0.35, space)
+        self.mock_simple_event.assert_any_call("S", 0.45, space)
 
 
     def test_can_create_sample_space_with_only_probabilities(self):
         space = SampleSpace(p={"H": 0.2, "S": 0.8})
         self.assertEqual(space._simple_events, set(self.simple_events[:2]))
-        self.mock_simple_event.assert_any_call("H", 0.2)
-        self.mock_simple_event.assert_any_call("S", 0.8)
+        self.mock_simple_event.assert_any_call("H", 0.2, space)
+        self.mock_simple_event.assert_any_call("S", 0.8, space)
 
 
     def test_probabilities_cant_add_up_to_more_than_1(self):
