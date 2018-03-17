@@ -1,3 +1,4 @@
+from fractions import Fraction
 from unittest import TestCase
 from unittest.mock import Mock, patch
 from inferi.probability import SimpleEvent, Event, SampleSpace
@@ -12,11 +13,11 @@ class SimpleEventTest(TestCase):
 class SimpleEventCreationTests(SimpleEventTest):
 
     def test_can_create_simple_event(self):
-        e = SimpleEvent("H", 0.5, self.space)
+        e = SimpleEvent("H", Fraction(1, 2), self.space)
         self.assertIsInstance(e, Event)
         self.assertEqual(e._outcome, "H")
         self.assertEqual(e._name, "H")
-        self.assertEqual(e._probability, 0.5)
+        self.assertEqual(e._probability, Fraction(1, 2))
         self.assertEqual(e._sample_space, self.space)
         self.assertEqual(e._simple_events, set([e]))
 

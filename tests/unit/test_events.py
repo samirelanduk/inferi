@@ -1,3 +1,4 @@
+from fractions import Fraction
 from unittest import TestCase
 from unittest.mock import Mock, patch
 from inferi.probability import Event, SimpleEvent
@@ -9,7 +10,7 @@ class EventTest(TestCase):
         self.events = [Mock(Event), Mock(Event), Mock(Event)]
         for i, event in enumerate(self.simple_events, start=1):
             event._simple_events = set([event])
-            event._probability = 5
+            event._probability = Fraction(5, 1)
             event._outcome = i
             event._sample_space = "SPACE"
         for i, event in enumerate(self.events):
@@ -154,8 +155,31 @@ class EventNameTests(EventTest):
 class EventProbabilityTests(EventTest):
 
     def test_can_get_event_probability(self):
-        event = Event(*self.simple_events)
-        self.assertEqual(event.probability(), 50)
+        event = Event(*self.simple_events[:2])
+        self.simple_events[0]._probability = Fraction(1, 6)
+        self.simple_events[1]._probability = Fraction(1, 6)
+        event._probability = Fraction(1, 6)
+        self.assertEqual(event.probability(), 2 / 6)
+
+
+    def test_can_get_event_probability_as_fraction(self):
+        event = Event(*self.simple_events[:2])
+        self.simple_events[0]._probability = Fraction(1, 6)
+        self.simple_events[1]._probability = Fraction(1, 6)
+        event._probability = Fraction(1, 6)
+        self.assertEqual(event.probability(fraction=True), Fraction(1, 3))
+
+
+    def test_can_get_probability_given_other_event(self):
+        event = Event(*self.simple_events[:5])
+        self.events[1].probability.return_value = 2
+        self.assertEqual(event.probability(given=self.events[1]), 5)
+
+
+    def test_given_event_must_be_event(self):
+        event = Event(*self.simple_events[:5])
+        with self.assertRaises(TypeError):
+            event.probability(given="event")
 
 
 
@@ -167,7 +191,7 @@ class SimpleEventSampleSpaceTests(EventTest):
 
 
 
-class EventOutcomestests(EventTest):
+class EventOutcomesTests(EventTest):
 
     def test_can_get_outcomes(self):
         event = Event(*self.simple_events)

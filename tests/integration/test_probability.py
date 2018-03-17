@@ -90,12 +90,16 @@ class Tests(TestCase):
         odd = event2.complement()
         self.assertEqual(odd.probability(), 0.5)
         self.assertEqual(odd.outcomes(), {1, 3, 5})
+        self.assertEqual(odd.probability(given=event2), 0)
+        self.assertEqual(
+         event2.probability(given=sample_space.event(1, 2, 3)), 1 / 3
+        )
 
         # Unfair die
         sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6, p={4: 0.3})
         self.assertEqual(len(sample_space.simple_events()), 6)
-        self.assertEqual(sample_space.chances_of(6), 0.7 / 5)
-        self.assertEqual(sample_space.chances_of(5), 0.7 / 5)
+        self.assertEqual(sample_space.chances_of(6), 0.14)
+        self.assertEqual(sample_space.chances_of(5), 0.14)
         self.assertEqual(sample_space.chances_of(4), 0.3)
         outcomes = [sample_space.experiment() for _ in range(1000)]
         self.assertGreaterEqual(outcomes.count(4), 200)
@@ -118,3 +122,7 @@ class Tests(TestCase):
         self.assertAlmostEqual(
          sample_space.event(lambda o: o[0] == "H").probability(), 1 / 4, delta=0.0000001
         )
+        ace = sample_space.event(lambda o: o[1] == 0)
+        spade = sample_space.event(lambda o: o[0] == "S")
+        self.assertEqual(spade.probability(), 0.25)
+        self.assertEqual(spade.probability(given=ace), 0.25)

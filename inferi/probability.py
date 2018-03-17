@@ -1,4 +1,5 @@
 import random
+from fractions import Fraction
 
 class Event:
     """An occurance that is made up of multiple simple events.
@@ -71,12 +72,23 @@ class Event:
         return self._name
 
 
-    def probability(self):
+    def probability(self, given=None, fraction=False):
         """Returns the probability of the event happening.
 
+        :param Event given: an optional pre-condition to consider.
+        :param bool fraction: If ``True``, the result will be returned as a\
+        ``Fraction``.
+        :raises TypeError: if the given event is not an :py:class:`.Event`
         :rtype: ``float``"""
 
-        return sum(event._probability for event in self._simple_events)
+        if given:
+            if not isinstance(given, Event):
+                raise TypeError(f"{given} is not an event")
+            p = (self & given).probability(fraction=True)
+            p /= given.probability(fraction=True)
+        else:
+            p = sum(event._probability for event in self._simple_events)
+        return p if fraction else p.numerator / p.denominator
 
 
     def sample_space(self):
@@ -127,7 +139,7 @@ class SimpleEvent(Event):
 
     def __init__(self, outcome, probability, space):
         self._outcome = self._name = outcome
-        if not isinstance(probability, (int, float)):
+        if not isinstance(probability, (int, float, Fraction)):
             raise TypeError("probability {} is not numeric".format(probability))
         if not 0 <= probability <= 1:
             raise ValueError("probability {} is invalid".format(probability))
@@ -156,17 +168,21 @@ class SampleSpace:
         if not outcomes and not p:
             raise ValueError("Sample spaces need at least one outcome")
         if p is None:
-            p_per_event = 1 / len(outcomes)
-            p = {event: p_per_event for event in outcomes}
+            p_per_event = Fraction(1, len(outcomes))
+            fraction_p = {event: p_per_event for event in outcomes}
         else:
-            unaccounted_events = [e for e in outcomes if e not in p]
-            if unaccounted_events:
-                p_per_event = (1 - sum(p.values())) / len(unaccounted_events)
-                for e in unaccounted_events:
-                    p[e] = p_per_event
-        if round(sum(p.values()), 8) != 1:
-            raise ValueError(f"Probabilities do not add up to 1: {p}")
-        self._simple_events = set([SimpleEvent(e, p[e], self) for e in p])
+            fraction_p = {k: Fraction(str(p[k])) for k in p}
+            unaccounted_outcomes = [o for o in outcomes if o not in p]
+            if unaccounted_outcomes:
+                remaining_p = 1 - sum(fraction_p.values())
+                p_per_event = (remaining_p / len(unaccounted_outcomes))
+                for e in unaccounted_outcomes:
+                    fraction_p[e] = p_per_event
+        if sum(fraction_p.values()) != 1:
+            raise ValueError(f"Probabilities do not add up to 1: {fraction_p}")
+        self._simple_events = set([
+         SimpleEvent(e, fraction_p[e], self) for e in fraction_p
+        ])
 
 
     def __repr__(self):
