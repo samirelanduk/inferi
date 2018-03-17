@@ -126,6 +126,34 @@ class Event:
         return set([e._outcome for e in self._simple_events])
 
 
+    def independent_of(self, event):
+        """Checks to see if this event is independent of some other event - that
+        is, whether its probability is unaffacted by the occurence of the other
+        event.
+
+        :param Event event: the other event to check with.
+        :raises TypeError: if a non-Event is given.
+        :rtype: ``bool``"""
+
+        if not isinstance(event, Event):
+            raise TypeError(f"{event} is not an event")
+        return self.probability(fraction=True) == self.probability(
+         fraction=True, given=event
+        )
+
+
+    def dependent_on(self, event):
+        """Checks to see if this event is dependent of some other event - that
+        is, whether its probability is affacted by the occurence of the other
+        event.
+
+        :param Event event: the other event to check with.
+        :raises TypeError: if a non-Event is given.
+        :rtype: ``bool``"""
+
+        return not self.independent_of(event)
+
+
 
 class SimpleEvent(Event):
     """Base class: py:class:`.Event`

@@ -94,6 +94,8 @@ class Tests(TestCase):
         self.assertEqual(
          event2.probability(given=sample_space.event(1, 2, 3)), 1 / 3
         )
+        self.assertTrue(event2.dependent_on(sample_space.event(1, 2, 3)))
+        self.assertFalse(event2.independent_of(sample_space.event(1, 2, 3)))
 
         # Unfair die
         sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6, p={4: 0.3})
@@ -126,3 +128,5 @@ class Tests(TestCase):
         spade = sample_space.event(lambda o: o[0] == "S")
         self.assertEqual(spade.probability(), 0.25)
         self.assertEqual(spade.probability(given=ace), 0.25)
+        self.assertFalse(spade.dependent_on(ace))
+        self.assertTrue(spade.independent_of(ace))

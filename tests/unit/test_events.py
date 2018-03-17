@@ -206,7 +206,6 @@ class EventOutcomesTests(EventTest):
 
 
 
-
 class EventMutualExclusivityTests(EventTest):
 
     def test_not_mutually_exclusive_if_simple_events_in_common(self):
@@ -227,3 +226,38 @@ class EventMutualExclusivityTests(EventTest):
         event = Event(*self.simple_events)
         with self.assertRaises(TypeError):
             event.mutually_exclusive_with("e")
+
+
+
+class EventIndependenceTests(EventTest):
+
+    @patch("inferi.probability.Event.probability")
+    def test_independence(self, mock_p):
+        event = Event(*self.simple_events)
+        mock_event = Mock(Event)
+        mock_p.return_value = 0.5, 0.5
+        self.assertTrue(event.independent_of(mock_event))
+        mock_p.assert_any_call(fraction=True)
+        mock_p.assert_any_call(fraction=True, given=mock_event)
+        mock_p.side_effect = (0.5, 0.6)
+        self.assertFalse(event.independent_of(mock_event))
+
+
+    def test_independence_needs_event(self):
+        event = Event(*self.simple_events)
+        with self.assertRaises(TypeError):
+            event.independent_of("e")
+
+
+
+class EventDependenceTests(EventTest):
+
+    @patch("inferi.probability.Event.independent_of")
+    def test_dependence(self, mock_ind):
+        event = Event(*self.simple_events)
+        mock_event = Mock(Event)
+        mock_ind.return_value = False
+        self.assertTrue(event.dependent_on(mock_event))
+        mock_ind.assert_called_with(mock_event)
+        mock_ind.return_value = True
+        self.assertFalse(event.dependent_on(mock_event))
