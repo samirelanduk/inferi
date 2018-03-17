@@ -1,7 +1,7 @@
 from fractions import Fraction
 from unittest import TestCase
 from unittest.mock import Mock, patch
-from inferi.probability import SampleSpace, Event
+from inferi.probability import SampleSpace, Event, EventSpace
 
 class SampleSpaceTest(TestCase):
 
@@ -27,6 +27,7 @@ class SampleSpaceCreationTests(SampleSpaceTest):
 
     def test_can_create_sample_space_from_outcomes(self):
         space = SampleSpace("H", "T")
+        self.assertIsInstance(space, EventSpace)
         self.assertEqual(space._simple_events, set(self.simple_events[:2]))
         self.mock_simple_event.assert_any_call("H", Fraction(1, 2), space)
         self.mock_simple_event.assert_any_call("T", Fraction(1, 2), space)
@@ -83,56 +84,6 @@ class SampleSpaceReprTests(SampleSpaceTest):
     def test_sample_space_repr(self):
         space = SampleSpace("H", "T")
         self.assertEqual(str(space), "<SampleSpace (2 simple events)>")
-
-
-
-class SampleSpaceContainerTests(SampleSpaceTest):
-
-    def test_can_look_for_simple_events(self):
-        space = SampleSpace("H", "T")
-        self.assertIn(self.simple_events[0], space)
-        self.assertIn(self.simple_events[1], space)
-        self.assertNotIn(self.simple_events[2], space)
-
-
-    def test_can_look_for_events(self):
-        space = SampleSpace("H", "T")
-        event = Mock(Event)
-        event.simple_events.return_value = set(self.simple_events[:2])
-        self.assertIn(event, space)
-
-
-    def test_can_look_for_outcomes(self):
-        space = SampleSpace("H", "T")
-        self.assertIn("H", space)
-        self.assertIn("T", space)
-        self.assertNotIn("S", space)
-
-
-
-class SampleSpaceSimpleEvents(SampleSpaceTest):
-
-    def test_sample_space_simple_events(self):
-        space = SampleSpace("H", "T")
-        self.assertEqual(space.simple_events(), space._simple_events)
-        self.assertIsNot(space.simple_events(), space._simple_events)
-
-
-
-class SampleSpaceOutcomesTests(SampleSpaceTest):
-
-    def test_can_get_outcomes(self):
-        space = SampleSpace("H", "T", "S")
-        outcomes = space.outcomes()
-        for event in self.simple_events: event.outcome.assert_called_with()
-        self.assertEqual(outcomes, set(["H", "T", "S"]))
-
-
-    def test_can_get_outcomes_with_odds(self):
-        space = SampleSpace("H", "T", "S")
-        outcomes = space.outcomes(p=True)
-        for event in self.simple_events: event.outcome.assert_called_with()
-        self.assertEqual(outcomes, {"H": 0.33, "T": 0.33, "S": 0.33})
 
 
 

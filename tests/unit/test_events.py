@@ -1,7 +1,7 @@
 from fractions import Fraction
 from unittest import TestCase
 from unittest.mock import Mock, patch
-from inferi.probability import Event, SimpleEvent
+from inferi.probability import Event, SimpleEvent, EventSpace
 
 class EventTest(TestCase):
 
@@ -22,6 +22,7 @@ class EventCreationTests(EventTest):
 
     def test_can_create_event_with_simple_events(self):
         event = Event(*self.simple_events)
+        self.assertIsInstance(event, EventSpace)
         self.assertEqual(event._simple_events, set(self.simple_events))
         self.assertEqual(event._name, "E")
 
@@ -53,30 +54,6 @@ class EventReprTests(EventTest):
     def test_event_repr(self):
         event = Event(*self.simple_events, name="strike")
         self.assertEqual(str(event), "<Event: strike>")
-
-
-
-class EvenntContainerTests(EventTest):
-
-    def test_outcomes_in_event(self):
-        event = Event(*self.simple_events)
-        for n in range(1, 10): self.assertIn(n, event)
-        self.assertNotIn(20, event)
-
-
-    def test_simple_events_in_event(self):
-        event = Event(*self.simple_events[:5])
-        for e in self.simple_events[:5]: self.assertIn(e, event)
-        for e in self.simple_events[5:]: self.assertNotIn(e, event)
-
-
-    def test_events_in_event(self):
-        event = Event(*self.simple_events[3:7])
-        mock_event = Mock(Event)
-        mock_event._simple_events = set(self.simple_events[4:6])
-        self.assertIn(mock_event, event)
-        mock_event._simple_events = set(self.simple_events[4:8])
-        self.assertNotIn(mock_event, event)
 
 
 
@@ -135,15 +112,6 @@ class EventComplementTests(EventTest):
 
 
 
-class EventSimpleEvents(EventTest):
-
-    def test_can_get_event_simple_events(self):
-        event = Event(*self.simple_events)
-        self.assertEqual(event.simple_events(), event._simple_events)
-        self.assertIsNot(event.simple_events(), event._simple_events)
-
-
-
 class EventNameTests(EventTest):
 
     def test_can_get_event_name(self):
@@ -188,21 +156,6 @@ class SimpleEventSampleSpaceTests(EventTest):
     def test_event_sample_space(self):
         event = Event(*self.simple_events)
         self.assertEqual(event.sample_space(), "SPACE")
-
-
-
-class EventOutcomesTests(EventTest):
-
-    def test_can_get_outcomes(self):
-        event = Event(*self.simple_events)
-        outcomes = event.outcomes()
-        self.assertEqual(outcomes, set(range(1, 11)))
-
-
-    def test_can_get_outcomes_with_odds(self):
-        event = Event(*self.simple_events)
-        outcomes = event.outcomes(p=True)
-        self.assertEqual(outcomes, {i: 5 for i in range(1, 11)})
 
 
 

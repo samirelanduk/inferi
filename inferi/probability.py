@@ -1,8 +1,46 @@
 import random
 from fractions import Fraction
 
-class Event:
-    """An occurance that is made up of multiple simple events.
+class EventSpace:
+    """An abstract class for objects which are a container of simple events.
+
+    Any class inheriting from this class should ensure its instances have a
+    ``_simple_events`` property which is a set of :py:class:`.Simple Event`
+    objects."""
+
+    def __contains__(self, member):
+        if isinstance(member, Event):
+            return member.simple_events().issubset(self._simple_events)
+        for event in self._simple_events:
+            if event.outcome() == member: return True
+
+
+    def simple_events(self):
+        """The set of simple events in this space.
+
+        :rtype: ``set``"""
+
+        return set(self._simple_events)
+
+
+    def outcomes(self, p=False):
+        """The set of outcomes that the event space's simple events can
+        produce.
+
+        :param bool p: if ``True``, the results will be returned as a dict with
+        probabilities associated.
+
+        :rtype: ``set`` or ``dict``"""
+
+        if p: return {e.outcome(): e.probability() for e in self._simple_events}
+        return set([e.outcome() for e in self._simple_events])
+
+
+
+class Event(EventSpace):
+    """Base class: :py:class:`.EventSpace`
+
+    An occurance that is made up of multiple simple events.
 
     Events are containers both of their simple events, and the outcomes of those
     simple events.
@@ -26,13 +64,6 @@ class Event:
         return f"<{self.__class__.__name__}: {self._name}>"
 
 
-    def __contains__(self, member):
-        if isinstance(member, Event):
-            return member._simple_events.issubset(self._simple_events)
-        for event in self._simple_events:
-            if event._outcome == member: return True
-
-
     def __or__(self, event):
         if not isinstance(event, Event):
             raise TypeError(f"{event} is not an Event")
@@ -54,14 +85,6 @@ class Event:
         return Event(
          *(self.sample_space().simple_events() - self._simple_events)
         )
-
-
-    def simple_events(self):
-        """The set of simple events in this event.
-
-        :rtype: ``set``"""
-
-        return set(self._simple_events)
 
 
     def name(self):
@@ -92,7 +115,7 @@ class Event:
 
 
     def sample_space(self):
-        """The sample space that event is part of.
+        """The sample space that the event is part of.
 
         :rtype: ``SampleSpace``"""
 
@@ -112,18 +135,6 @@ class Event:
         if not isinstance(event, Event):
             raise TypeError(f"{event} is not an event")
         return not self._simple_events & event._simple_events
-
-
-    def outcomes(self, p=False):
-        """The set of outcomes that the event's simple events can produce.
-
-        :param bool p: if ``True``, the results will be returned as a dict with
-        probabilities associated.
-
-        :rtype: ``set`` or ``dict``"""
-
-        if p: return {e._outcome: e._probability for e in self._simple_events}
-        return set([e._outcome for e in self._simple_events])
 
 
     def independent_of(self, event):
@@ -183,8 +194,10 @@ class SimpleEvent(Event):
 
 
 
-class SampleSpace:
-    """The set of all possible things that can result from a statistical
+class SampleSpace(EventSpace):
+    """Base class: :py:class:`.EventSpace`
+
+    The set of all possible things that can result from a statistical
     experiment.
 
     :param \*outcomes: All the possible outcomes.
@@ -215,34 +228,6 @@ class SampleSpace:
 
     def __repr__(self):
         return f"<SampleSpace ({len(self._simple_events)} simple events)>"
-
-
-    def __contains__(self, item):
-        for event in self._simple_events:
-            if item is event or item == event.outcome(): return True
-        if isinstance(item, Event):
-            return event._simple_events.issubset(self._simple_events)
-
-
-    def simple_events(self):
-        """The set of simple events in this sample space.
-
-        :rtype: ``set``"""
-
-        return set(self._simple_events)
-
-
-    def outcomes(self, p=False):
-        """The set of outcomes that the sample space's simple events can
-        produce.
-
-        :param bool p: if ``True``, the results will be returned as a dict with
-        probabilities associated.
-
-        :rtype: ``set`` or ``dict``"""
-
-        if p: return {e.outcome(): e.probability() for e in self._simple_events}
-        return set([e.outcome() for e in self._simple_events])
 
 
     def event(self, *outcomes, name=None):
