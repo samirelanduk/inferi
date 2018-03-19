@@ -130,3 +130,16 @@ class Tests(TestCase):
         self.assertEqual(spade.probability(given=ace), 0.25)
         self.assertFalse(spade.dependent_on(ace))
         self.assertTrue(spade.independent_of(ace))
+
+        # colour blind
+        space = inferi.SampleSpace(p={
+         ("M", True): 0.04, ("M", False): 0.47,
+         ("F", True): 0.002, ("F", False): 0.488
+        })
+        male = space.event(lambda o: o[0] == "M")
+        female = male.complement()
+        colour_blind = space.event(lambda o: o[1])
+        self.assertEqual(male.probability(), 0.51)
+        self.assertEqual(female.probability(), 0.49)
+        self.assertEqual(colour_blind.probability(), 0.042)
+        self.assertEqual(colour_blind.probability(given=male), 0.04 / 0.51)
