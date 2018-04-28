@@ -1,3 +1,5 @@
+"""Contains probability concept classes."""
+
 import random
 from fractions import Fraction
 
@@ -10,11 +12,12 @@ class EventSpace:
 
     def __contains__(self, member):
         if isinstance(member, Event):
-            return member.simple_events().issubset(self._simple_events)
+            return member.simple_events.issubset(self._simple_events)
         for event in self._simple_events:
-            if event.outcome() == member: return True
+            if event.outcome == member: return True
 
 
+    @property
     def simple_events(self):
         """The set of simple events in this space.
 
@@ -32,8 +35,8 @@ class EventSpace:
 
         :rtype: ``set`` or ``dict``"""
 
-        if p: return {e.outcome(): e.probability() for e in self._simple_events}
-        return set([e.outcome() for e in self._simple_events])
+        if p: return {e.outcome: e.probability() for e in self._simple_events}
+        return set([e.outcome for e in self._simple_events])
 
 
 
@@ -76,6 +79,26 @@ class Event(EventSpace):
         return Event(*(self._simple_events & event._simple_events))
 
 
+    @property
+    def sample_space(self):
+        """The sample space that the event is part of.
+
+        :rtype: ``SampleSpace``"""
+
+        for event in self._simple_events:
+            return event._sample_space
+
+
+    @property
+    def name(self):
+        """Returns the name of the Event.
+
+        :rtype: ``str``"""
+
+        return self._name
+
+
+    @property
     def complement(self):
         """Returns the complement of the event - the event that this event does
         not happen.
@@ -83,16 +106,8 @@ class Event(EventSpace):
         :rtype: ``Event``"""
 
         return Event(
-         *(self.sample_space().simple_events() - self._simple_events)
+         *(self.sample_space.simple_events - self._simple_events)
         )
-
-
-    def name(self):
-        """Returns the name of the Event.
-
-        :rtype: ``str``"""
-
-        return self._name
 
 
     def probability(self, given=None, fraction=False):
@@ -112,15 +127,6 @@ class Event(EventSpace):
         else:
             p = sum(event._probability for event in self._simple_events)
         return p if fraction else p.numerator / p.denominator
-
-
-    def sample_space(self):
-        """The sample space that the event is part of.
-
-        :rtype: ``SampleSpace``"""
-
-        for event in self._simple_events:
-            return event._sample_space
 
 
     def mutually_exclusive_with(self, event):
@@ -187,6 +193,7 @@ class SimpleEvent(Event):
         self._simple_events = set((self,))
 
 
+    @property
     def outcome(self):
         """The result of this event occuring."""
 
@@ -249,13 +256,13 @@ class SampleSpace(EventSpace):
             if callable(outcomes[0]):
                 f = outcomes[0]
                 outcomes = [
-                 e.outcome() for e in self._simple_events if f(e.outcome())
+                 e.outcome for e in self._simple_events if f(e.outcome)
                 ]
             else:
                 for event in self._simple_events:
-                    if event.outcome() == outcomes[0]: return event
+                    if event.outcome == outcomes[0]: return event
                 else: return None
-        simple = [e for e in self._simple_events if e.outcome() in outcomes]
+        simple = [e for e in self._simple_events if e.outcome in outcomes]
         return Event(*simple, name=name) if name else Event(*simple)
 
 

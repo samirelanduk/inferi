@@ -9,9 +9,9 @@ class SampleSpaceTest(TestCase):
         self.patch1 = patch("inferi.probability.SimpleEvent")
         self.mock_simple_event = self.patch1.start()
         self.simple_events = [Mock(), Mock(), Mock()]
-        self.simple_events[0].outcome.return_value = "H"
-        self.simple_events[1].outcome.return_value = "T"
-        self.simple_events[2].outcome.return_value = "S"
+        self.simple_events[0].outcome = "H"
+        self.simple_events[1].outcome = "T"
+        self.simple_events[2].outcome = "S"
         self.simple_events[0].probability.return_value = 0.33
         self.simple_events[1].probability.return_value = 0.33
         self.simple_events[2].probability.return_value = 0.33

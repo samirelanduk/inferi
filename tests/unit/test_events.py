@@ -1,6 +1,6 @@
 from fractions import Fraction
 from unittest import TestCase
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, PropertyMock
 from inferi.probability import Event, SimpleEvent, EventSpace
 
 class EventTest(TestCase):
@@ -99,16 +99,11 @@ class EventAndTests(EventTest):
 
 
 
-class EventComplementTests(EventTest):
+class SimpleEventSampleSpaceTests(EventTest):
 
-    @patch("inferi.probability.Event.sample_space")
-    def test_can_get_event_complement(self, mock_sample_space):
-        space = Mock()
-        mock_sample_space.return_value = space
-        space.simple_events.return_value = set(self.simple_events)
-        event = Event(*self.simple_events[:3])
-        not_ = event.complement()
-        self.assertEqual(not_._simple_events, set(self.simple_events[3:]))
+    def test_event_sample_space(self):
+        event = Event(*self.simple_events)
+        self.assertEqual(event.sample_space, "SPACE")
 
 
 
@@ -116,7 +111,20 @@ class EventNameTests(EventTest):
 
     def test_can_get_event_name(self):
         event = Event(*self.simple_events, name="strike")
-        self.assertEqual(event._name, event.name())
+        self.assertEqual(event._name, event.name)
+
+
+
+class EventComplementTests(EventTest):
+
+    @patch("inferi.probability.Event.sample_space", new_callable=PropertyMock)
+    def test_can_get_event_complement(self, mock_sample_space):
+        space = Mock()
+        mock_sample_space.return_value = space
+        space.simple_events = set(self.simple_events)
+        event = Event(*self.simple_events[:3])
+        not_ = event.complement
+        self.assertEqual(not_._simple_events, set(self.simple_events[3:]))
 
 
 
@@ -148,14 +156,6 @@ class EventProbabilityTests(EventTest):
         event = Event(*self.simple_events[:5])
         with self.assertRaises(TypeError):
             event.probability(given="event")
-
-
-
-class SimpleEventSampleSpaceTests(EventTest):
-
-    def test_event_sample_space(self):
-        event = Event(*self.simple_events)
-        self.assertEqual(event.sample_space(), "SPACE")
 
 
 

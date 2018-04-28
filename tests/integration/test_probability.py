@@ -50,14 +50,14 @@ class Tests(TestCase):
     def test_events(self):
         # Rolling a die
         sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6)
-        self.assertEqual(len(sample_space.simple_events()), 6)
+        self.assertEqual(len(sample_space.simple_events), 6)
         self.assertEqual(sample_space.outcomes(), set(range(1, 7)))
         self.assertIn(4, sample_space)
         self.assertNotIn(4.5, sample_space)
-        for event in sample_space.simple_events():
+        for event in sample_space.simple_events:
             self.assertEqual(event.probability(), 1 / 6)
-        for event1 in sample_space.simple_events():
-            for event2 in sample_space.simple_events():
+        for event1 in sample_space.simple_events:
+            for event2 in sample_space.simple_events:
                 if event1 is event2:
                     self.assertFalse(event1.mutually_exclusive_with(event2))
                     self.assertFalse(event2.mutually_exclusive_with(event1))
@@ -68,16 +68,16 @@ class Tests(TestCase):
         self.assertEqual(sample_space.chances_of(1), 1 / 6)
         self.assertEqual(sample_space.chances_of(6), 1 / 6)
         self.assertEqual(sample_space.chances_of(7), 0)
-        self.assertIn(sample_space.event(2), sample_space.simple_events())
-        self.assertEqual(sample_space.event(5).outcome(), 5)
+        self.assertIn(sample_space.event(2), sample_space.simple_events)
+        self.assertEqual(sample_space.event(5).outcome, 5)
         for i in range(1000):
             self.assertIn(sample_space.experiment(), range(1, 7))
         event1 = sample_space.event(2, 5, name="2 or 5")
-        self.assertEqual(event1.name(), "2 or 5")
+        self.assertEqual(event1.name, "2 or 5")
         self.assertEqual(event1.probability(), 1 / 3)
         event2 = sample_space.event(lambda o: o % 2 == 0, name="even")
         self.assertEqual(event2.probability(), 1 / 2)
-        self.assertEqual(len(event2.simple_events()), 3)
+        self.assertEqual(len(event2.simple_events), 3)
         self.assertTrue(sample_space.event(1).mutually_exclusive_with(event2))
         self.assertFalse(sample_space.event(2).mutually_exclusive_with(event2))
         self.assertTrue(event2.mutually_exclusive_with(sample_space.event(1)))
@@ -87,7 +87,7 @@ class Tests(TestCase):
         self.assertEqual(combined.outcomes(), {2, 4, 5, 6})
         combined = event1 & event2
         self.assertEqual(combined.outcomes(), {2})
-        odd = event2.complement()
+        odd = event2.complement
         self.assertEqual(odd.probability(), 0.5)
         self.assertEqual(odd.outcomes(), {1, 3, 5})
         self.assertEqual(odd.probability(given=event2), 0)
@@ -99,7 +99,7 @@ class Tests(TestCase):
 
         # Unfair die
         sample_space = inferi.SampleSpace(1, 2, 3, 4, 5, 6, p={4: 0.3})
-        self.assertEqual(len(sample_space.simple_events()), 6)
+        self.assertEqual(len(sample_space.simple_events), 6)
         self.assertEqual(sample_space.chances_of(6), 0.14)
         self.assertEqual(sample_space.chances_of(5), 0.14)
         self.assertEqual(sample_space.chances_of(4), 0.3)
@@ -107,12 +107,12 @@ class Tests(TestCase):
         self.assertGreaterEqual(outcomes.count(4), 200)
         event = sample_space.event(lambda o: o % 2 == 0, name="even")
         self.assertEqual(event.probability(), 2.9 / 5)
-        self.assertEqual(len(event.simple_events()), 3)
+        self.assertEqual(len(event.simple_events), 3)
 
         # Rolling two die
         dice = [1, 2, 3, 4, 5, 6]
         sample_space = inferi.SampleSpace(*inferi.multiply(dice, dice))
-        self.assertEqual(len(sample_space.simple_events()), 36)
+        self.assertEqual(len(sample_space.simple_events), 36)
         self.assertEqual(sample_space.chances_of((6, 6)), 1 / 36)
         event = sample_space.event(lambda o: sum(o) == 10, name="ten")
         self.assertEqual(event.probability(), 3 / 36)
@@ -137,7 +137,7 @@ class Tests(TestCase):
          ("F", True): 0.002, ("F", False): 0.488
         })
         male = space.event(lambda o: o[0] == "M")
-        female = male.complement()
+        female = male.complement
         colour_blind = space.event(lambda o: o[1])
         self.assertEqual(male.probability(), 0.51)
         self.assertEqual(female.probability(), 0.49)

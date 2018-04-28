@@ -47,4 +47,4 @@ class SimpleEventOutcomeTests(SimpleEventTest):
 
     def test_simple_event_outcome(self):
         e = SimpleEvent("H", 0.5, self.space)
-        self.assertEqual(e.outcome(), e._outcome)
+        self.assertEqual(e.outcome, e._outcome)
