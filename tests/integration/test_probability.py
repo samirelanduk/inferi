@@ -143,3 +143,4 @@ class Tests(TestCase):
         self.assertEqual(female.probability(), 0.49)
         self.assertEqual(colour_blind.probability(), 0.042)
         self.assertEqual(colour_blind.probability(given=male), 0.04 / 0.51)
+        self.assertTrue(colour_blind.dependent_on(male))

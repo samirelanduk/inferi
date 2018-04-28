@@ -13,7 +13,7 @@ class Dataset:
         for variable in variables:
             if not isinstance(variable, Variable):
                 raise TypeError("{} is not a Variable".format(variable))
-            if variable.length() != variables[0].length():
+            if variable.length != variables[0].length:
                 raise ValueError(
                  "Can't make Dataset with different-length Variables"
                 )
@@ -24,21 +24,13 @@ class Dataset:
         return "<Dataset ({} Variables)>".format(len(self._variables))
 
 
+    @property
     def variables(self):
         """Returns the :py:class:`.Variable` objects in the Dataset.
 
         :rtype: ``tuple``"""
 
         return tuple(self._variables)
-
-
-    def rows(self):
-        """Returns the rows of the Dataset.
-
-        :rtype: ``tuple``"""
-
-        columns = [var.values() for var in self._variables]
-        return tuple([values for values in zip(*columns)])
 
 
     def add_variable(self, variable):
@@ -50,10 +42,8 @@ class Dataset:
 
         if not isinstance(variable, Variable):
             raise TypeError("{} is not a Variable".format(variable))
-        if self._variables and variable.length() != self._variables[0].length():
-            raise ValueError(
-             "Can't have Dataset with different-length Variables"
-            )
+        if self._variables and variable.length != self._variables[0].length:
+            raise ValueError("Can't have Dataset of different-length Variables")
         self._variables.append(variable)
 
 
@@ -68,7 +58,7 @@ class Dataset:
 
         if not isinstance(variable, Variable):
             raise TypeError("{} is not a Variable".format(variable))
-        if self._variables and variable.length() != self._variables[0].length():
+        if self._variables and variable.length != self._variables[0].length:
             raise ValueError(
              "Can't have Dataset with different-length Variables"
             )
@@ -91,6 +81,16 @@ class Dataset:
         :returns: the specified Variable."""
 
         return self._variables.pop(index)
+
+
+    @property
+    def rows(self):
+        """Returns the rows of the Dataset.
+
+        :rtype: ``tuple``"""
+
+        columns = [var._values for var in self._variables]
+        return tuple([values for values in zip(*columns)])
 
 
     def add_row(self, row):
@@ -125,4 +125,3 @@ class Dataset:
         indeces.sort(key=var._values.__getitem__)
         for variable in self._variables:
             variable._values = list(map(variable._values.__getitem__, indeces))
-            variable._error = list(map(variable._error.__getitem__, indeces))

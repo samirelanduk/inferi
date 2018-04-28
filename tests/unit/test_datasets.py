@@ -8,7 +8,7 @@ class DatasetTest(TestCase):
     def setUp(self):
         self.variables = [Mock(Variable), Mock(Variable), Mock(Variable)]
         for var in self.variables:
-            var.length.return_value = 4
+            var.length = 4
 
 
 
@@ -25,7 +25,7 @@ class DatasetCreationTests(DatasetTest):
 
 
     def test_dataset_variables_must_be_equal_length(self):
-        self.variables[0].length.return_value = 3
+        self.variables[0].length = 3
         with self.assertRaises(ValueError):
             Dataset(*self.variables)
 
@@ -43,17 +43,7 @@ class DatasetVariablesTests(DatasetTest):
 
     def test_can_get_variables(self):
         dataset = Dataset(*self.variables)
-        self.assertEqual(dataset.variables(), tuple(self.variables))
-
-
-
-class DatasetRowsTests(DatasetTest):
-
-    def test_can_get_dataset_rows(self):
-        for index, var in enumerate(self.variables):
-            var.values.return_value = (index * 10 + 5, index * 10 + 7)
-        dataset = Dataset(*self.variables)
-        self.assertEqual(dataset.rows(), ((5, 15, 25), (7, 17, 27)))
+        self.assertEqual(dataset.variables, tuple(self.variables))
 
 
 
@@ -81,7 +71,7 @@ class DatasetVariableAdditionTests(DatasetTest):
 
     def test_can_only_add_variables_of_correct_length(self):
         dataset = Dataset(self.variables[0])
-        self.variables[1].length.return_value = 3
+        self.variables[1].length = 3
         with self.assertRaises(ValueError):
             dataset.add_variable(self.variables[1])
 
@@ -112,7 +102,7 @@ class DatasetVariableInsertionTests(DatasetTest):
 
     def test_can_only_insert_variables_of_correct_length(self):
         dataset = Dataset(self.variables[0])
-        self.variables[1].length.return_value = 3
+        self.variables[1].length = 3
         with self.assertRaises(ValueError):
             dataset.insert_variable(0, self.variables[1])
 
@@ -143,16 +133,14 @@ class DatasetVariablePoppingTests(DatasetTest):
         self.assertEqual(variable, self.variables[0])
 
 
-    def test_cannot_pop_wrong_index(self):
-        dataset = Dataset(*self.variables)
-        with self.assertRaises(IndexError):
-            dataset.pop_variable(4)
 
+class DatasetRowsTests(DatasetTest):
 
-    def test_index_must_be_int(self):
+    def test_can_get_dataset_rows(self):
+        for index, var in enumerate(self.variables):
+            var._values = (index * 10 + 5, index * 10 + 7)
         dataset = Dataset(*self.variables)
-        with self.assertRaises(TypeError):
-            dataset.pop_variable(0.5)
+        self.assertEqual(dataset.rows, ((5, 15, 25), (7, 17, 27)))
 
 
 
@@ -182,9 +170,6 @@ class DatasetSortingTests(DatasetTest):
         self.variables[0]._values = [2, 6, 4, 1]
         self.variables[1]._values = [0.7, 0.2, 0.9, -1]
         self.variables[2]._values = [100, 900, 90, 200]
-        self.variables[0]._error = [0.1, 0.15, 0.12, 0.18]
-        self.variables[1]._error = [0.01, 0.015, 0.012, 0.018]
-        self.variables[2]._error = [10, 15, 12, 18]
 
 
     def test_can_sort_dataset(self):
@@ -193,9 +178,6 @@ class DatasetSortingTests(DatasetTest):
         self.assertEqual(self.variables[0]._values, [1, 2, 4, 6])
         self.assertEqual(self.variables[1]._values, [-1, 0.7, 0.9, 0.2])
         self.assertEqual(self.variables[2]._values, [200, 100, 90, 900])
-        self.assertEqual(self.variables[0]._error, [0.18, 0.1, 0.12, 0.15])
-        self.assertEqual(self.variables[1]._error, [0.018, 0.01, 0.012, 0.015])
-        self.assertEqual(self.variables[2]._error, [18, 10, 12, 15])
 
 
     def test_can_sort_dataset_by_column(self):
@@ -204,9 +186,6 @@ class DatasetSortingTests(DatasetTest):
         self.assertEqual(self.variables[0]._values, [4, 2, 1, 6])
         self.assertEqual(self.variables[1]._values, [0.9, 0.7, -1, 0.2])
         self.assertEqual(self.variables[2]._values, [90, 100, 200, 900])
-        self.assertEqual(self.variables[0]._error, [0.12, 0.1, 0.18, 0.15])
-        self.assertEqual(self.variables[1]._error, [0.012, 0.01, 0.018, 0.015])
-        self.assertEqual(self.variables[2]._error, [12, 10, 18, 15])
 
 
     def test_column_must_be_variable(self):
