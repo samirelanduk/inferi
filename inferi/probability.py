@@ -30,7 +30,7 @@ class EventSpace:
         """The set of outcomes that the event space's simple events can
         produce.
 
-        :param bool p: if ``True``, the results will be returned as a dict with
+        :param bool p: if ``True``, the results will be returned as a dict with\
         probabilities associated.
 
         :rtype: ``set`` or ``dict``"""

@@ -1,6 +1,24 @@
 Changelog
 ---------
 
+Release 0.5.0
+~~~~~~~~~~~~~
+
+`1 May 2018`
+
+* Implemented combinatorics and permutations.
+
+* Added basic probability tools:
+
+  * Events, simple events and event spaces.
+
+  * Conditional probability.
+
+  * Concept of 'and' and 'or'.
+
+* Turned certain property methods into actual properties.
+
+
 Release 0.4.0
 ~~~~~~~~~~~~~
 

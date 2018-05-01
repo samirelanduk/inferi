@@ -8,7 +8,7 @@ Example
 
   >>> import inferi
   >>> variable = inferi.Variable(11, 45, 23, 12, 10)
-  >>> variable.mean()
+  >>> variable.mean
   20.2
   >>> variable.variance()
   219.7

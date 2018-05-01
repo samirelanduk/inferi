@@ -1,3 +1,5 @@
+"""Contains tools for combining and permutating collections."""
+
 from math import factorial
 from functools import reduce
 import operator

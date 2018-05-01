@@ -2,7 +2,9 @@ Full API
 --------
 
 .. toctree ::
-	api/datasets
-	api/exceptions
 	api/variables
+	api/exceptions
+	api/combinatorics
+	api/datasets
+	api/probability
 

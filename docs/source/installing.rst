@@ -8,7 +8,8 @@ inferi can be installed using pip:
 
 ``$ pip3 install inferi``
 
-inferi is written for Python 3, and does not support Python 2.
+inferi is written for Python 3, and does not support Python 2. It currently
+supports Python 3.6.
 
 If you get permission errors, try using ``sudo``:
 
@@ -28,6 +29,4 @@ inferi repository directly from there, use:
 Requirements
 ~~~~~~~~~~~~
 
-inferi requires the Python library
-`fuzz <https://fuzz.samireland.com/>`_ - pip will install this
-automatically when it installs inferi.
+inferi currently has no dependencies, compiled or otherwise.
