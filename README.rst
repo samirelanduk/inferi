@@ -1,3 +1,14 @@
+|travis| |coveralls| |pypi|
+
+.. |travis| image:: https://api.travis-ci.org/samirelanduk/inferi.svg?branch=0.5
+  :target: https://travis-ci.org/samirelanduk/inferi/
+
+.. |coveralls| image:: https://coveralls.io/repos/github/samirelanduk/inferi/badge.svg?branch=0.5
+  :target: https://coveralls.io/github/samirelanduk/inferi/
+
+.. |pypi| image:: https://img.shields.io/pypi/pyversions/inferi.svg
+  :target: https://pypi.org/project/inferi/
+
 inferi
 =======
 
@@ -8,7 +19,7 @@ Example
 
   >>> import inferi
   >>> variable = inferi.Variable(11, 45, 23, 12, 10)
-  >>> variable.mean()
+  >>> variable.mean
   20.2
   >>> variable.variance()
   219.7
@@ -26,7 +37,8 @@ inferi can be installed using pip:
 
 ``$ pip3 install inferi``
 
-inferi is written for Python 3, and does not support Python 2.
+inferi is written for Python 3, and does not support Python 2. It currently
+supports Python 3.6.
 
 If you get permission errors, try using ``sudo``:
 
@@ -46,9 +58,7 @@ inferi repository directly from there, use:
 Requirements
 ~~~~~~~~~~~~
 
-inferi requires the Python library
-`fuzz <https://fuzz.samireland.com/>`_ - pip will install this
-automatically when it installs inferi.
+inferi currently has no dependencies, compiled or otherwise.
 
 
 Overview
@@ -69,13 +79,13 @@ sense of the word.
     >>> heights = inferi.Variable(178, 156, 181, 175, 178)
     >>> heights
     '<Variable (178, 156, 181, 175, 178)>'
-    >>> heights.length()
+    >>> heights.length
     5
 
 If you like, you can give the variable a name as an appropriate label:
 
     >>> heights = inferi.Variable(178, 156, 181, 175, 178, name="heights")
-    >>> heights.name()
+    >>> heights.name
     'heights'
 
 You can also give an existing sequence, such as a list, and the result will be
@@ -85,35 +95,18 @@ the same:
   >>> heights
   '<Variable (178, 156, 181, 175, 178)>'
 
-Finally, you can choose to provide error values for the values in the
-Variable, like so:
+Values can be accessed by indexing:
 
-  >>> weights = inferi.Variable(12, 19, 11, error=[0.9, 1.1, 0.7])
-
-You must provide an equal number of error values as regular values.
-
-Values can be accessed by indexing or with ``Variable.get``:
-
-  >>> weights.values()
+  >>> weights.values
   (12, 19, 11)
-  >>> weights.error()
-  (0.9, 1.1, 0.7)
   >>> weights[0]
   12
   >>> weights[-1]
   11
-  >>> weights.get(1)
+  >>> weights.max
   19
-  >>> weights.get(1, error=True)
-  19 ± 1.1
-  >>> weights.max()
-  19
-  >>> weights.min(error=True)
-  11 ± 0.7
-
-Many Variable methods which return a value can be given ``error=True`` and the
-result will be returned as a `fuzz <https://fuzz.samireland.com/>`_ ``Value``
-object, with error built in.
+  >>> weights.min
+  11
 
 Measures of Centrality
 ######################
@@ -121,11 +114,11 @@ Measures of Centrality
 Variables have the basic measures of centrality - mean, median and range.
 
     >>> heights = inferi.Variable(178, 156, 181, 175, 178)
-    >>> heights.mean()
+    >>> heights.mean
     173.6
-    >>> heights.median()
+    >>> heights.median
     178
-    >>> heights.mode()
+    >>> heights.mode(
     178
 
 See the full documentation for details on ``Variable.mean``,
@@ -140,7 +133,7 @@ Variables can also calculate various measures of dispersion, the simplest being
 the range:
 
     >>> heights = inferi.Variable(178, 156, 181, 175, 178)
-    >>> heights.range()
+    >>> heights.range
     25
 
 You can also calculate the variance and the standard deviation - measures of
@@ -195,25 +188,6 @@ calculate this:
     >>> variable1.correlation_with(variable2)
     0.662573882203029
 
-
-Combining Variables
-###################
-
-Variables can be added, subtracted, and averaged:
-
-  >>> variable1 = inferi.Variable(2.1, 2.5, 4.0, 3.6)
-  >>> variable2 = inferi.Variable(8, 12, 14, 10)
-  >>> variable1 + variable2
-  <Variable (10.1, 14.5, 18.0, 13.6)>
-  >>> variable2 - variable1
-  <Variable (5.9, 9.5, 10.0, 6.4)>
-  >>> inferi.Variable.average(variable1, variable2)
-  <Variable (5.05, 7.25, 9.0, 6.8)>
-
-Error values will be retained and combined appropriately across all operations.
-See the `fuzz <https://fuzz.samireland.com/>`_ documentation for details on how
-this is done.
-
 Datasets
 ~~~~~~~~
 
@@ -230,7 +204,7 @@ variable:
 These can be combined into a single ``Dataset`` as follows:
 
   >>> dataset = inferi.Dataset(variable1, variable2, variable3, variable4)
-  >>> dataset.variables()
+  >>> dataset.variables
   (<Variable 'Names' ('Jon', 'Sue', 'Bob')>, <Variable 'Ages' (19, 34, 38)>, <Va
   riable 'Heights' (1.87, 1.67, 1.73)>, <Variable 'Smokes' (False, True, True)>)
 
@@ -238,29 +212,112 @@ A dataset can be thought of as representing a table of data, where each variable
 is a column. This dataset represents a table like this::
 
     Names Ages Heights Smokes
-    
+
     Jon   19   1.87    No
     Sue   34   1.67    Yes
     Bob   38   1.73    Yes
 
 You can get the rows of a dataset too:
 
-  >>> dataset.rows()
+  >>> dataset.rows
   (('Jon', 19, 1.87, False), ('Sue', 34, 1.67, True), ('Bob', 38, 1.73, True))
 
 A Dataset can be sorted, by default by the first column but this can be made
 otherwise:
 
   >>> dataset.sort()
-  >>> datset.rows()
+  >>> datset.rows
   (('Bob', 38, 1.73, True), ('Jon', 19, 1.87, False), ('Sue', 34, 1.67, True))
   >>> dataset.sort(variable3)
-  >>> dataset.rows()
+  >>> dataset.rows
   (('Sue', 34, 1.67, True), ('Bob', 38, 1.73, True), ('Jon', 19, 1.87, False))
+
+Probability
+~~~~~~~~~~~
+
+Probabilty is a way of looking all the ways something *can* happen and assessing
+how likely the outcomes are.
+
+Everyone's favourite example is rolling a die - there are six possible outcomes
+in the Sample Space:
+
+  >>> space = inferi.SampleSpace(1, 2, 3, 4, 5, 6)
+
+This defines a sample space with six outcomes. Each of these is a simple event:
+
+  >>> space.simple_events
+  {<SimpleEvent: 1>, <SimpleEvent: 2>, <SimpleEvent: 3>, <SimpleEvent: 4>, <Simp
+  leEvent: 5>, <SimpleEvent: 6>}
+  >>> space.event(5)
+  <SimpleEvent: 5>
+  >>> space.event(5).probability()
+  0.16666666666666666
+  >>> space.event(5).probability(fraction=True)
+  Fraction(1, 6)
+  >>> space.chances_of(5)
+  0.16666666666666666
+
+Events are some combination of simple events. For example, to define the event
+that a rolled die produces an even number:
+
+  >>> even_event = space.event(lambda o: o % 2 == 0, name="even")
+  >>> even_event
+  <Event: even>
+  >>> even_event.name
+  'even'
+  >>> even_event.probability()
+  0.5
+  >>> even_event.outcomes()
+  {2, 4, 6}
+  >>> even_event.outcomes(p=True)
+  {2: 0.16666666666666666, 4: 0.16666666666666666, 6: 0.16666666666666666}
+  >>> even_event in space
+  True
+
+Two events can be compared. Here we create two more events:
+
+  >>> odd_event = space.event(lambda o: o % 2 != 0, name="odd")
+  >>> large_event = space.event(lambda o: o > 4)
+  >>> odd_event.mutually_exclusive_with(even_event)
+  True
+  >>> large_event.mutually_exclusive_with(even_event)
+  False
+  # Does knowing number is even affect chances of being odd? (Obviously...)
+  >>> odd_event.dependent_on(even_event)
+  True
+  # Does knowing number is even affect chances of being greater than 4?
+  >>> large_event.dependent_on(even_event)
+  False
+
+You can even make new events from them...
+
+  >>> small_and_even = large_event.complement & even_event
+  >>> small_and_even.probability()
+  0.333333333333333
+  >>> small_and_even.outcomes()
+  {2, 4}
 
 
 Changelog
 ---------
+
+Release 0.5.0
+~~~~~~~~~~~~~
+
+`1 May 2018`
+
+* Implemented combinatorics and permutations.
+
+* Added basic probability tools:
+
+  * Events, simple events and event spaces.
+
+  * Conditional probability.
+
+  * Concept of 'and' and 'or'.
+
+* Turned certain property methods into actual properties.
+
 
 Release 0.4.0
 ~~~~~~~~~~~~~

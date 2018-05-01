@@ -42,19 +42,15 @@ Once you are finished, push your changes to your forked repository on
 GitHub. You are now ready to make the pull request.
 
 Find the 'New Pull Request' button and click it, and you will be given
-an overview of the pull request. Assuming you did your work on the
-master branch of your fork, the default behaviour will be to merge the
-master branch of your fork into the master branch of the original inferi
-repository. If there is a more recent branch, use that! I don't like
-merging pull requests into the master branch, as it makes the feature
-outside a development cycle. So if inferi is currently on version 0.8,
-and you see a branch called 0.9, change the dropdown so that the pull
-request is for 0.9, so that your new feature will make it into the next
-release (it will be credited to you).
+an overview of the pull request. The default branch to merge into is
+master, which is fine - I will manually change this to whatever the
+current branch being worked on is at the time. That way your feature (if
+accepted) will appear in the next release (you will be credited).
 
 Look over the changes one last time, and if it's all good, click 'create
 pull request'. It then gets sent to me to look over, and either accept
 and merge, close, or request changes.
+
 
 What does and doesn't make a good Pull Request?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,7 +107,7 @@ The text should be in RST format. For example:
         :rtype: ``float``"""
 
         if side1 < 0 or side2 < 0:
-        	raise ValueError("Sides can't be negative")
+            raise ValueError("Sides can't be negative")
         return math.sqrt((side1 ** 2) + (side2 ** 2))
 
 If in doubt, just look at the other functions.
@@ -132,7 +128,7 @@ function. You might add the following:
     	"""Takes two (x, y) points and returns the distance between them.
 
     	:param list point1: The first point in the form ``[x, y]``.
-    	:param list point1: The first point in the form ``[x, y]``.
+    	:param list point2: The first point in the form ``[x, y]``.
     	:rtype: ``float``"""
 
     	delta_x = point2[0] - point1[0]
