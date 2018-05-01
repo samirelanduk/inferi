@@ -18,5 +18,5 @@ setup(
  ],
  keywords="statistics probability data-science",
  packages=["inferi"],
- install_requires=["fuzz"]
+ install_requires=[]
 )
